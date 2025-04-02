@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <InvariantGlobalization>false</InvariantGlobalization>
+    <AssemblyName>ShopTex</AssemblyName>
+    <RootNamespace>ShopTex</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

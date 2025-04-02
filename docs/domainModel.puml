@@ -1,0 +1,143 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+left to right direction
+
+hide empty members
+
+title Domain Model
+
+package "User Aggregate" {
+    class User <<(E, cadetblue) Root Entity>>
+
+    class UserId <<(V, lightgreen) Value Object>>
+    class UserEmail <<(V, lightgreen) Value Object>>
+    class Name <<(V, lightgreen) Value Object>>
+    class Password <<(V, lightgreen) Value Object>>
+    class Address <<(V, lightgreen) Value Object>>
+    class Phone <<(V, lightgreen) Value Object>>
+    class UserStatus <<(V, lightgreen) Value Object>>
+
+
+
+    User -->"1" UserEmail
+    User -->"1" Name
+    User -->"1" Password
+    User -->"1" Address
+    User -->"1" Phone
+    User -->"1" UserStatus
+    User -->"1" UserId
+
+
+    class Role <<(V, lightgreen) Value Object>>
+    class RoleId <<(V, lightgreen) Value Object>>
+    class RoleName <<(V, lightgreen) Value Object>>
+    class RoleDescription <<(V, lightgreen) Value Object>>
+
+    User -->"1" Role
+    Role -->"1" RoleId
+    Role -->"1" RoleName
+    Role -->"1" RoleDescription
+}
+
+package "Order Aggregate" {
+    class Order <<(E, cadetblue) Root Entity>>
+    class OrderId <<(V, lightgreen) Value Object>>
+    class OrderStatus <<(V, lightgreen) Value Object>>
+
+    Order -->"1" OrderId
+    Order -->"1" OrderStatus
+}
+package "Order Product Aggregate"{
+    class Order_Product <<(E, cadetblue) Root Entity>>
+    class Amount <<(V, lightgreen) Value Object>>
+    class Price <<(V, lightgreen) Value Object>>
+
+    Order_Product -->"1" Amount
+    Order_Product -->"1" Price
+}
+
+package "Product Aggregate" {
+
+    class Product <<(E, cadetblue) Root Entity>>
+    class ProductId <<(V, lightgreen) Value Object>>
+    class ProductName <<(V, lightgreen) Value Object>>
+    class ProductDescription <<(V, lightgreen) Value Object>>
+    class ProductCategory <<(V, lightgreen) Value Object>>
+    class ProductStatus <<(V, lightgreen) Value Object>>
+    class ProductPrice <<(V, lightgreen) Value Object>>
+
+    Product -->"1" ProductId
+    Product -->"1" ProductName
+    Product -->"1" ProductDescription
+    Product -->"1" ProductPrice
+    Product -->"1" ProductCategory
+    Product -->"1" ProductStatus
+
+    class Discount <<(V, lightgreen) Value Object>>
+    class DiscountId <<(V, lightgreen) Value Object>>
+    class DiscountAmount <<(V, lightgreen) Value Object>>
+    class DiscountStatus <<(V, lightgreen) Value Object>>
+    class DiscountEndDate <<(V, lightgreen) Value Object>>
+    class DiscountStartDate <<(V, lightgreen) Value Object>>
+
+    Product -->"*" Discount
+    Discount -->"1" DiscountId
+    Discount -->"1" DiscountAmount
+    Discount -->"1" DiscountStatus
+    Discount -->"1" DiscountEndDate
+    Discount -->"1" DiscountStartDate
+}
+
+package "Store Aggregate"{
+
+    class Store <<(E, cadetblue) Root Entity>>
+    class StoreId <<(V, lightgreen) Value Object>>
+    class StoreName <<(V, lightgreen) Value Object>>
+    class StoreAddress <<(V, lightgreen) Value Object>>
+    class StoreStatus <<(V, lightgreen) Value Object>>
+
+    Store -->"1" StoreId
+    Store -->"1" StoreName
+    Store -->"1" StoreAddress
+    Store -->"1" StoreStatus
+}
+
+package "Payment Aggregate" {
+    class Payment <<(E, cadetblue) Root Entity>>
+    class PaymentId <<(V, lightgreen) Value Object>>
+    class PaymentStatus <<(V, lightgreen) Value Object>>
+    class PaymentAmount <<(V, lightgreen) Value Object>>
+
+    Payment -->"1" PaymentId
+    Payment -->"1" PaymentStatus
+    Payment -->"1" PaymentAmount
+
+}
+
+package "Payment Method Aggregate" {
+    class PaymentMethod <<(E, cadetblue) Root Entity>>
+    class PaymentMethodId <<(V, lightgreen) Value Object>>
+    class PaymentMethodType <<(V, lightgreen) Value Object>>
+
+    PaymentMethod -->"1" PaymentMethodId
+    PaymentMethod -->"1" PaymentMethodType
+}
+
+User --> Order
+User --> PaymentMethod
+User --> Store
+
+Order --> Product
+Order --> Payment
+Order --> Order_Product
+
+Product --> Store
+
+Payment --> PaymentMethod
+
+Order_Product --> Product
+
+
+
+@enduml
