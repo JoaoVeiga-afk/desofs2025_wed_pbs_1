@@ -1,0 +1,72 @@
+{
+  "version": "2.2.0",
+  "summary": {
+    "title": "ShopTex",
+    "owner": "João Veiga",
+    "description": "",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "1211106@isep.ipp.pt"
+      }
+    ],
+    "diagrams": [
+      {
+        "id": 0,
+        "title": "Threat Model",
+        "diagramType": "STRIDE",
+        "placeholder": "New STRIDE diagram description",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "version": "2.2.0",
+        "cells": [
+          {
+            "position": {
+              "x": 1670,
+              "y": 850
+            },
+            "size": {
+              "width": 120,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "MySQL Database"
+              },
+              "topLine": {
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "strokeWidth": 1.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "id": "6097bdda-cd9f-404c-b58a-1cc2d6beaede",
+            "zIndex": 1,
+            "data": {
+              "type": "tm.Store",
+              "name": "MySQL Database",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isALog": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesCredentials": false,
+              "storesInventory": false,
+              "threats": []
+            }
+          }
+        ]
+      }
+    ],
+    "diagramTop": 1,
+    "reviewer": "Rui Barbosa",
+    "threatTop": 0
+  }
+}
