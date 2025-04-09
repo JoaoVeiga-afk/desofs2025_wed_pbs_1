@@ -12,19 +12,19 @@ package "User Aggregate" {
 
     class UserId <<(V, lightgreen) Value Object>>
     class UserEmail <<(V, lightgreen) Value Object>>
-    class Name <<(V, lightgreen) Value Object>>
+    class UserName <<(V, lightgreen) Value Object>>
     class Password <<(V, lightgreen) Value Object>>
-    class Address <<(V, lightgreen) Value Object>>
-    class Phone <<(V, lightgreen) Value Object>>
+    class UserAddress <<(V, lightgreen) Value Object>>
+    class UserPhone <<(V, lightgreen) Value Object>>
     class UserStatus <<(V, lightgreen) Value Object>>
 
 
 
     User -->"1" UserEmail
-    User -->"1" Name
+    User -->"1" UserName
     User -->"1" Password
-    User -->"1" Address
-    User -->"1" Phone
+    User -->"1" UserAddress
+    User -->"1" UserPhone
     User -->"1" UserStatus
     User -->"1" UserId
 
@@ -66,6 +66,7 @@ package "Product Aggregate" {
     class ProductCategory <<(V, lightgreen) Value Object>>
     class ProductStatus <<(V, lightgreen) Value Object>>
     class ProductPrice <<(V, lightgreen) Value Object>>
+    class ProductImage <<(V, lightgreen) Value Object>>
 
     Product -->"1" ProductId
     Product -->"1" ProductName
@@ -73,6 +74,7 @@ package "Product Aggregate" {
     Product -->"1" ProductPrice
     Product -->"1" ProductCategory
     Product -->"1" ProductStatus
+    Product -->"1" ProductImage
 
     class Discount <<(V, lightgreen) Value Object>>
     class DiscountId <<(V, lightgreen) Value Object>>
