@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using UserManager.Domain.Shared;
+using ShopTex.Domain.Shared;
 
-namespace UserManager.Infrastructure.Shared
+namespace ShopTex.Infrastructure.Shared
 {
     public class EntityIdValueConverter<TTypedIdValue> : ValueConverter<TTypedIdValue, String>
         where TTypedIdValue : EntityId

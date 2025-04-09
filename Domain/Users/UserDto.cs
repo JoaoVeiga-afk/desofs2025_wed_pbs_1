@@ -1,4 +1,4 @@
-﻿namespace UserManager.Domain.Users;
+﻿namespace ShopTex.Domain.Users;
 
 public class UserDto
 {

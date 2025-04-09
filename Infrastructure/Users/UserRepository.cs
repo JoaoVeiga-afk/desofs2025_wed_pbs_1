@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UserManager.Domain.Users;
-using UserManager.Infrastructure.Shared;
-using UserManager.Models;
+using ShopTex.Domain.Users;
+using ShopTex.Infrastructure.Shared;
+using ShopTex.Models;
 
-namespace UserManager.Infrastructure.Users;
+namespace ShopTex.Infrastructure.Users;
 
 public class UserRepository : BaseRepository<User,UserId>,IUserRepository
 {

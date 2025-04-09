@@ -1,5 +1,5 @@
-using UserManager.Domain.Shared;
-using UserManager.Models;
+using ShopTex.Domain.Shared;
+using ShopTex.Models;
 
 namespace DDDSample1.Infrastructure
 {

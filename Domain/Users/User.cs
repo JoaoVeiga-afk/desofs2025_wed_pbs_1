@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.CompilerServices;
-using UserManager.Domain.Shared;
+using ShopTex.Domain.Shared;
 
-namespace UserManager.Domain.Users;
+namespace ShopTex.Domain.Users;
 
 public class User : Entity<UserId>, IAggregateRoot
 {

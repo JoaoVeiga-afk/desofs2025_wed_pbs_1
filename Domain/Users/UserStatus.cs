@@ -1,6 +1,6 @@
-﻿using UserManager.Domain.Shared;
+﻿using ShopTex.Domain.Shared;
 
-namespace UserManager.Domain.Users;
+namespace ShopTex.Domain.Users;
 
 /// <summary>
 /// Stores the user's status (true is enabled and false is disabled)

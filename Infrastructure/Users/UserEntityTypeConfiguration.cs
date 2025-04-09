@@ -2,9 +2,9 @@
 using Microsoft.Build.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using UserManager.Domain.Users;
+using ShopTex.Domain.Users;
 
-namespace UserManager.Infrastructure.Users;
+namespace ShopTex.Infrastructure.Users;
 
 public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
 {

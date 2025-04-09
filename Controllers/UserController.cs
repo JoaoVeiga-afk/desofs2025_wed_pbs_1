@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
-using UserManager.Domain.Shared;
-using UserManager.Domain.Users;
-using UserManager.Services;
+using ShopTex.Domain.Shared;
+using ShopTex.Domain.Users;
+using ShopTex.Services;
 
 //dotnet aspnet-codegenerator controller -name UserController -async -api -m User -dc DatabaseContext -outDir Controllers -f
-namespace UserManager.Controllers
+namespace ShopTex.Controllers
 {
     [Route("api/auth")]
     [ApiController]

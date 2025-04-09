@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
-using UserManager;
-using UserManager.Models;
+using ShopTex;
+using ShopTex.Models;
 
-namespace UserManager;
+namespace ShopTex;
 
 public class Program
 {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using UserManager.Domain.Users;
-using UserManager.Infrastructure.Users;
+using ShopTex.Domain.Users;
+using ShopTex.Infrastructure.Users;
 
-namespace UserManager.Models;
+namespace ShopTex.Models;
 
 public class DatabaseContext : DbContext
 {

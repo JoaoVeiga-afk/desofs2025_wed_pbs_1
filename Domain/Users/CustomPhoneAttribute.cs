@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 
-namespace UserManager.Domain.Users;
+namespace ShopTex.Domain.Users;
 
 public class CustomPhoneAttribute : ValidationAttribute
 {

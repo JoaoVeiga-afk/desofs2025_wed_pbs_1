@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
-namespace UserManager.Controllers;
+namespace ShopTex.Controllers;
 
 [ApiController]
 [Route("Error")]

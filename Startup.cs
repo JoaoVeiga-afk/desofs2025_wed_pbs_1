@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
-using UserManager.Domain.Shared;
-using UserManager.Domain.Users;
-using UserManager.Infrastructure.Shared;
-using UserManager.Infrastructure.Users;
-using UserManager.Models;
-using UserManager.Services;
+using ShopTex.Domain.Shared;
+using ShopTex.Domain.Users;
+using ShopTex.Infrastructure.Shared;
+using ShopTex.Infrastructure.Users;
+using ShopTex.Models;
+using ShopTex.Services;
 
-namespace UserManager;
+namespace ShopTex;
 
 public class Startup
 {

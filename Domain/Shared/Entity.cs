@@ -1,4 +1,4 @@
-namespace UserManager.Domain.Shared
+namespace ShopTex.Domain.Shared
 {
     /// <summary>
     /// Base class for entities.

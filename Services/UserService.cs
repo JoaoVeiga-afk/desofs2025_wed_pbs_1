@@ -4,10 +4,10 @@ using System.Security.Cryptography;
 using System.Text;
 using Konscious.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
-using UserManager.Domain.Shared;
-using UserManager.Domain.Users;
+using ShopTex.Domain.Shared;
+using ShopTex.Domain.Users;
 
-namespace UserManager.Services;
+namespace ShopTex.Services;
 
 public class UserService
 {

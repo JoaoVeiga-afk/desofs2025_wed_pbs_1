@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
-using UserManager.Domain.Shared;
+using ShopTex.Domain.Shared;
 
-namespace UserManager.Domain.Users;
+namespace ShopTex.Domain.Users;
 
 public class UserId : EntityId
 {

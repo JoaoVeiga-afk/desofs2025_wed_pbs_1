@@ -1,4 +1,4 @@
-﻿namespace UserManager;
+﻿namespace ShopTex;
 
 public class Configs
 {

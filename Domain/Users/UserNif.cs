@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UserManager.Domain.Users;
+namespace ShopTex.Domain.Users;
 
 public class UserNif
 {
