@@ -16,6 +16,10 @@ This section lists the main functional and non-functional requirements for the s
 ## Security
 ![Link to Security](Security.md)
 
+## Deployment Diagram
+
+![Deployment Diagram](Deployment%20Diagram.jpg)
+
 ## Other
 
 In this folder you can find also the Thread Model in the TM.json file for the Threat Dragon tool and the report in the threat_model_report.pdf file.
