@@ -18,5 +18,5 @@ This section lists the main functional and non-functional requirements for the s
 
 ## Other
 
-In this folder you can find also the Thread Model in the TM.json file for the Threat Dragon tool.
+In this folder you can find also the Thread Model in the TM.json file for the Threat Dragon tool and the report in the threat_model_report.pdf file.
 You can also find the ASVS (Application Security Verification Standard) checklist in the excel file.
