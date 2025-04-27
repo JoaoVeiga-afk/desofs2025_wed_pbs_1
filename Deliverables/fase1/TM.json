@@ -251,6 +251,10 @@
             },
             "vertices": [
               {
+                "x": 150,
+                "y": 390
+              },
+              {
                 "x": 110,
                 "y": 430
               }
@@ -344,7 +348,7 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Boundary",
-              "name": "",
+              "name": "Trust Boundary",
               "description": "",
               "isTrustBoundary": true,
               "hasOpenThreats": false
@@ -369,8 +373,147 @@
             },
             "vertices": [
               {
+                "x": 390,
+                "y": 530
+              },
+              {
                 "x": 510,
                 "y": 440
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Web App Write Log",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": []
+            },
+            "labels": [
+              "Web App Write \nLog"
+            ],
+            "id": "11371dd2-0528-46fc-99f7-f808402d052b",
+            "source": {
+              "cell": "8c14c06b-8618-4c2f-a30e-dd1fa0c09cb5"
+            },
+            "target": {
+              "cell": "27310524-54c2-49bc-961a-e38346b686ee",
+              "port": "4f528ab5-5ec4-4ce7-9831-115d6dae3bad"
+            },
+            "vertices": [
+              {
+                "x": 510,
+                "y": 285
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Web App Read Log",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": []
+            },
+            "labels": [
+              "Web App Read Log"
+            ],
+            "id": "b2be1b07-8209-4c09-b5bc-84c30ab69e18",
+            "source": {
+              "cell": "27310524-54c2-49bc-961a-e38346b686ee",
+              "port": "4f528ab5-5ec4-4ce7-9831-115d6dae3bad"
+            },
+            "target": {
+              "cell": "8c14c06b-8618-4c2f-a30e-dd1fa0c09cb5",
+              "port": "815a2a99-d697-47d9-8b52-a11dde81c1ff"
+            },
+            "vertices": [
+              {
+                "x": 470,
+                "y": 220
+              }
+            ]
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Trust Boundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            },
+            "labels": [
+              "Trust Boundary"
+            ],
+            "id": "764fa6d4-52af-42be-90a9-3347d2e08d0d",
+            "source": {
+              "x": 580,
+              "y": 140
+            },
+            "target": {
+              "x": 810,
+              "y": 230
+            },
+            "vertices": [
+              {
+                "x": 590,
+                "y": 260
+              },
+              {
+                "x": 670,
+                "y": 280
               }
             ]
           },
@@ -380,7 +523,7 @@
               "y": 240
             },
             "size": {
-              "width": 160,
+              "width": 90,
               "height": 90
             },
             "attrs": {
@@ -1113,13 +1256,6 @@
                 "informationDisclosure": 8,
                 "denialOfService": 1
               }
-            },
-            "tools": {
-              "items": [
-                "boundary",
-                "button-remove"
-              ],
-              "name": null
             }
           },
           {
@@ -1738,12 +1874,320 @@
                 "repudiation": 4
               }
             }
+          },
+          {
+            "shape": "trust-boundary-curve",
+            "width": 200,
+            "height": 100,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Boundary",
+              "name": "Trust Boundary",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            },
+            "labels": [
+              {
+                "attrs": {
+                  "label": {
+                    "text": "Trust Boundary"
+                  }
+                }
+              }
+            ],
+            "id": "8101ecb6-38ef-48a6-b5b5-9a3ac58c5817",
+            "source": {
+              "x": -38,
+              "y": 622
+            },
+            "target": {
+              "x": 302,
+              "y": 582
+            },
+            "vertices": [
+              {
+                "x": 22,
+                "y": 542
+              },
+              {
+                "x": 60,
+                "y": 490
+              },
+              {
+                "x": 142,
+                "y": 452
+              }
+            ],
+            "zIndex": 15
+          },
+          {
+            "position": {
+              "x": 610,
+              "y": 190
+            },
+            "size": {
+              "width": 120,
+              "height": 60
+            },
+            "attrs": {
+              "text": {
+                "text": "Log System"
+              },
+              "topLine": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              },
+              "bottomLine": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": null
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "ports": {
+              "groups": {
+                "top": {
+                  "position": "top",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "right": {
+                  "position": "right",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "bottom": {
+                  "position": "bottom",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                },
+                "left": {
+                  "position": "left",
+                  "attrs": {
+                    "circle": {
+                      "r": 4,
+                      "magnet": true,
+                      "stroke": "#5F95FF",
+                      "strokeWidth": 1,
+                      "fill": "#fff",
+                      "style": {
+                        "visibility": "hidden"
+                      }
+                    }
+                  }
+                }
+              },
+              "items": [
+                {
+                  "group": "top",
+                  "id": "38b97aaf-58a1-43b9-9e61-e36fbc482cc4"
+                },
+                {
+                  "group": "right",
+                  "id": "bdda7381-a4b5-4244-af8b-01e494e90e62"
+                },
+                {
+                  "group": "bottom",
+                  "id": "95ffbfa9-23b6-4b51-b6b1-0a05f9389c40"
+                },
+                {
+                  "group": "left",
+                  "id": "4f528ab5-5ec4-4ce7-9831-115d6dae3bad"
+                }
+              ]
+            },
+            "id": "27310524-54c2-49bc-961a-e38346b686ee",
+            "data": {
+              "type": "tm.Store",
+              "name": "Log System",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": true,
+              "isALog": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesCredentials": false,
+              "storesInventory": false,
+              "threats": [
+                {
+                  "id": "a0da2851-8f25-44a9-bc18-bdf8aa5e4eaf",
+                  "title": "Log Injection / Forgery",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Attacker crafts inputs (headers, user-agents, etc.) to write fake or malicious entries that mislead analysts.",
+                  "mitigation": "Sanitize all log fields \nUse structured logging (JSON) \nEscape control characters",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 73,
+                  "score": "3"
+                },
+                {
+                  "id": "c7597d4e-f170-4d55-9538-e51fa9826ff7",
+                  "title": "Log Tampering After Write",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Insider or attacker with access modifies or deletes existing log files to cover tracks.",
+                  "mitigation": "Write-once / append-only storage (WORM, immutability) \nCryptographic signing / hash-chaining \nRBAC on logs",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 74,
+                  "score": "4"
+                },
+                {
+                  "id": "47e8c471-86b9-4dd5-a4c7-cf841edfc06a",
+                  "title": "Unencrypted Log Transport",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Logs shipped over the network (Syslog, Fluentd, Beats) without TLS can be sniffed or altered.",
+                  "mitigation": "TLS/Mutual-TLS for log shippers \nVPN or private network links",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 75,
+                  "score": "3"
+                },
+                {
+                  "id": "645c7769-1088-4d46-9ef0-6cc800b5588c",
+                  "title": "Sensitive Data in Logs (PII / Secrets)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Application logs inadvertently capture credentials, tokens, or personal data.",
+                  "mitigation": "Log scrubbing / redaction middleware \nClassification & DLP scans \nDeveloper guidelines",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 76,
+                  "score": "4"
+                },
+                {
+                  "id": "4d63b733-21db-4dac-a88c-04818a32eec7",
+                  "title": "Excessive Log Retention",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "Logs kept indefinitely increase breach impact and cost.",
+                  "mitigation": "Retention policy (e.g., 90 days) \nLifecycle rules / automatic deletion",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 78,
+                  "score": "2"
+                },
+                {
+                  "id": "d84b37f2-aae7-423c-a696-995be831effc",
+                  "title": "Insufficient Log Retention",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Repudiation",
+                  "description": "Logs rolled-over too quickly, hampering investigations / compliance.",
+                  "mitigation": "Align retention with regulatory & forensic needs \nCapacity planning",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 79,
+                  "score": "2"
+                },
+                {
+                  "id": "3e6a5dc1-0d4d-4a9e-abc0-71c129fd5624",
+                  "title": "Log Overflow / Disk Exhaustion",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Denial of service",
+                  "description": "Massive log volume fills disk, crashing services (DoS).",
+                  "mitigation": "Log rotation & compression \nDedicated partition \nAlert on utilisation",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 80,
+                  "score": "3"
+                },
+                {
+                  "id": "847ed117-8967-4bbd-8f72-dfc46286294f",
+                  "title": "Unsecured Central Log Repository",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Central log directory or network share is world-readable or lacks encryption/ACLs, exposing all logs to any user on the network.",
+                  "mitigation": "Tight filesystem / share permissions (read-only for SIEM, no public “others” access) \nEncrypt logs at rest \nNetwork segmentation / VPN for log collectors \nRegular audits of share permissions",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 81,
+                  "score": "4"
+                },
+                {
+                  "id": "9b8c31c3-99dc-437b-9c9a-c6d3335d4f6d",
+                  "title": "Missing Integrity Monitoring",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "No mechanism to verify logs weren’t altered in transit or at rest.",
+                  "mitigation": "HMAC / digital signatures \nChain-of-custody audit trails \nSIEM alerts on hash mismatch",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 82,
+                  "score": "3"
+                },
+                {
+                  "id": "5b1cb5ff-9145-4cd3-9b13-45f85ac51c20",
+                  "title": "Lack of Real-Time Alerting",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Critical events are logged but no alert is raised, delaying response.",
+                  "mitigation": "Define alert rules / thresholds \nRegular rule testing",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 83,
+                  "score": "3"
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 3,
+                "repudiation": 3,
+                "informationDisclosure": 4,
+                "denialOfService": 2
+              }
+            },
+            "zIndex": 16
           }
         ]
       }
     ],
     "diagramTop": 1,
     "reviewer": "Rui Barbosa",
-    "threatTop": 72
+    "threatTop": 83
   }
 }
