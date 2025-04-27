@@ -377,7 +377,7 @@
           {
             "position": {
               "x": 230,
-              "y": 240.00000000000023
+              "y": 240
             },
             "size": {
               "width": 160,
@@ -388,8 +388,8 @@
                 "text": "Web \nApplication"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -485,12 +485,281 @@
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "handlesCardPayment": false,
               "handlesGoodsOrServices": false,
               "isWebApplication": false,
               "privilegeLevel": "",
-              "threats": []
+              "threats": [
+                {
+                  "id": "732547b1-f701-4ff5-8554-d6870d13fa2b",
+                  "title": "Code Injection",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Attackers inject malicious code into input fields or URLs",
+                  "mitigation": "Input validation / escaping; WAF; SAST/DAST",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 17,
+                  "score": "4"
+                },
+                {
+                  "id": "38ba39d0-f45f-4191-b3d4-6c7d197cb0b6",
+                  "title": "Remote Code Execution (RCE)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "Exploiting vulnerabilities that let attackers run arbitrary code on your server.",
+                  "mitigation": "Rapid patching; container isolation; SAST",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 18,
+                  "score": "5"
+                },
+                {
+                  "id": "17dcc307-941b-4f10-870a-fa7023ea9585",
+                  "title": "DDoS",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Botnets exhaust bandwidth/resources.",
+                  "mitigation": "CDN/Anycast; auto‑scaling; rate‑limiting",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 19,
+                  "score": "4"
+                },
+                {
+                  "id": "501b2e3d-060f-4841-ad20-8ab128f316a4",
+                  "title": "DoS",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Single‑source resource exhaustion (e.g., slow‑loris).",
+                  "mitigation": "Short timeouts; connection limits",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 20,
+                  "score": "3"
+                },
+                {
+                  "id": "1b995216-02bb-42eb-a3f0-fa4f77b88013",
+                  "title": "Broken Authentication",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Poor session management or credential flaws.",
+                  "mitigation": "MFA; strong hashing (bcrypt); token rotation",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 21,
+                  "score": "4"
+                },
+                {
+                  "id": "5b8f8380-fff2-448f-85fc-0b3fb9d94744",
+                  "title": "Directory Traversal",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Using ../ in URLs to access restricted files.",
+                  "mitigation": "Path normalization; whitelists; chroot/jail",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 22,
+                  "score": "3"
+                },
+                {
+                  "id": "a7de9264-4407-4af3-87ba-a3c3f83576eb",
+                  "title": "Server-Side Request Forgery (SSRF)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Exploiting a web server's ability to make HTTP requests on behalf of the attacker.",
+                  "mitigation": "Destination allow‑list; block metadata IPs; WAF",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 23,
+                  "score": "4"
+                },
+                {
+                  "id": "807281f3-26ca-4e4e-b3f8-2ec035b4be99",
+                  "title": "Cross-Site Scripting (XSS)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Injecting malicious scripts into web pages served to users.",
+                  "mitigation": "Output encoding; CSP; input sanitization",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 24,
+                  "score": "4"
+                },
+                {
+                  "id": "dbbd14b0-c183-46a7-aca2-3007db37a557",
+                  "title": "Misconfigured Security Headers",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Missing or misconfigured HTTP response headers.",
+                  "mitigation": "Set headers like Content-Security-Policy, X-Frame-Options, X-XSS-Protection.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 25,
+                  "score": "2"
+                },
+                {
+                  "id": "bfa156b8-0953-4a9c-a8de-ee5d1da66a26",
+                  "title": "Information Leakage",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "Server discloses sensitive info (e.g., stack traces, headers, debug messages).",
+                  "mitigation": "Disable debug in prod; sanitize error output",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 26,
+                  "score": "3"
+                },
+                {
+                  "id": "fc8e9dbf-31a7-4181-8ec4-de82ebbce157",
+                  "title": "Open Redirects",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Web server accepts unvalidated redirects.",
+                  "mitigation": "Allow‑list destinations; state tokens",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 27,
+                  "score": "3"
+                },
+                {
+                  "id": "f0c73910-5aa3-4df0-ba54-681b33b1eeca",
+                  "title": "Cross-Site Request Forgery (CSRF)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": " Trick users into submitting unwanted requests to your server while they’re logged in.",
+                  "mitigation": "CSRF tokens; SameSite cookies; origin check",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 28,
+                  "score": "3"
+                },
+                {
+                  "id": "0e858212-03b6-4274-b06e-f8bd6439c56e",
+                  "title": "Broken Access Control / IDOR",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "Endpoints allow unauthorized access or modification of resources (Insecure Direct Object Reference).",
+                  "mitigation": "Enforce server‑side authorization checks; least‑privilege APIs; rigorous test cases",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 29,
+                  "score": "5"
+                },
+                {
+                  "id": "0866cf01-9266-40e2-9b57-9e7340df6393",
+                  "title": "Insecure Deserialization",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "Untrusted data is deserialized leading to RCE, data tampering or DOS.",
+                  "mitigation": "Avoid native serialization of untrusted data; integrity signatures; deserialization firewalls",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 30,
+                  "score": "4"
+                },
+                {
+                  "id": "93a84ed4-0e50-4553-b42c-4bf183d54cb2",
+                  "title": "XML External Entity (XXE)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "XML parsers process external entities allowing file read, SSRF or DOS.",
+                  "mitigation": "Disable DTDs/external entities; switch to safe parsers; WAF regex filters",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 31,
+                  "score": "4"
+                },
+                {
+                  "id": "1d83fb6a-1cd7-47f4-9f03-26cfe4c6787d",
+                  "title": "Server‑Side Template Injection (SSTI)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Elevation of privilege",
+                  "description": "User input injected into template engine expressions leading to code execution.",
+                  "mitigation": "Strict template delimiters; sandbox templates; input validation",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 32,
+                  "score": "4"
+                },
+                {
+                  "id": "e39d6633-bc0a-4b06-b92c-b74eea253d5f",
+                  "title": "Mass Assignment",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Automatic binding of HTTP parameters to object fields lets attacker overwrite sensitive properties.",
+                  "mitigation": "Allow list bindable fields; DTOs; security-focused frameworks",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 33,
+                  "score": "3"
+                },
+                {
+                  "id": "0215ab6b-4d84-46cf-82a7-96a11efda9a7",
+                  "title": "Business Logic Abuse",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Legitimate features mis‑used in unexpected order/volume to subvert business rules.",
+                  "mitigation": "Threat modeling; usage rate‑limits; server‑side invariant checks",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 34,
+                  "score": "4"
+                },
+                {
+                  "id": "4aa2826c-3604-4588-a660-043e003e527e",
+                  "title": "Insecure Randomness",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Predictable tokens, IDs or OTPs allow guessing and takeover.",
+                  "mitigation": "Use cryptographically secure PRNGs; sufficient entropy; periodic rotation",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 35,
+                  "score": "3"
+                },
+                {
+                  "id": "d7baca1c-c391-424c-be90-b54eaa1c30d4",
+                  "title": "HTTP Request Smuggling (Back‑end)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Front/back proxy parsing mismatch enabling cache poisoning or credential bypass.",
+                  "mitigation": "Consistent parser versions; disable conflicting encodings; detailed logging",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 36,
+                  "score": "3"
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 3,
+                "tampering": 6,
+                "repudiation": 2,
+                "informationDisclosure": 5,
+                "denialOfService": 3,
+                "elevationOfPrivilege": 4
+              }
             }
           },
           {
@@ -507,11 +776,13 @@
                 "text": "File System"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -607,13 +878,248 @@
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "ce3fabf6-6dff-4127-9a46-f8966e6cf68e",
+                  "title": "Web Shell Uploads",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Attackers upload malicious files (like PHP, JSP, or Python scripts) that give remote shell access via the browser.",
+                  "mitigation": "- Strict file validation (type, size, extension).\n- Block script execution in upload directories via .htaccess, Nginx rules, etc\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 56,
+                  "score": "4"
+                },
+                {
+                  "id": "e845b81c-647f-4cbf-bd33-d22bd85c424d",
+                  "title": "Directory Traversal",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Attackers manipulate paths like ../../etc/passwd to access sensitive files.",
+                  "mitigation": "\"- Normalize paths, whitelist directories, never rely on user input for file paths.\n- Disable directory listings in web server config.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 57,
+                  "score": "3"
+                },
+                {
+                  "id": "7db90696-684b-46ef-be28-ee873dad4593",
+                  "title": "Unauthorized File Downloads",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Improper access controls allow direct file downloads (e.g., logs, configs, private PDFs).",
+                  "mitigation": "- Enforce access controls on all files.\n- Move sensitive files outside the web root.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 58,
+                  "score": "3"
+                },
+                {
+                  "id": "889c0931-fa6c-4789-b661-e38ada81def1",
+                  "title": "Insecure Permissions",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Files or folders have overly permissive access (chmod 777, or owner is www-data for everything).",
+                  "mitigation": "- Use chown, chmod, and group ownership properly.\n- Enforce least privilege for web server users\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 59,
+                  "score": "3"
+                },
+                {
+                  "id": "fd56eb01-e9da-45b4-895e-dd4df114f2b9",
+                  "title": "Symbolic Link Abuse",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Malicious symlinks point from a web-accessible folder to sensitive areas (like /etc/ or /home/).",
+                  "mitigation": "- Scan for unexpected symlinks.\n- Use chroot or container isolation.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 60,
+                  "score": "3"
+                },
+                {
+                  "id": "cb1e5514-254a-49b6-bddc-8f23259a81af",
+                  "title": "Exposed Backup Files",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Developers leave .bak, .zip, .tar, .sql, or .old files in the web root.",
+                  "mitigation": "- Never store backup or development artifacts in web-accessible folders.\n- Automate cleanup with scripts or CI/CD checks.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 61,
+                  "score": "3"
+                },
+                {
+                  "id": "435748bc-4c25-4252-ad20-529070331ed2",
+                  "title": "Tampered Static Assets",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "JavaScript, CSS, or images modified to inject malware or tracking (supply chain attacks).",
+                  "mitigation": "- Use Subresource Integrity (SRI).\n- Monitor file hashes for changes (integrity scanning).\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 62,
+                  "score": "3"
+                },
+                {
+                  "id": "8154d846-af2f-4e6c-8a86-b76a250a0cd0",
+                  "title": "Log Injection / Poisoning",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Attacker injects malicious data into logs (e.g., via headers, user agents).",
+                  "mitigation": "- Sanitize all user-controlled log inputs.\n- Store logs in write-only or append-only formats.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 63,
+                  "score": "2"
+                },
+                {
+                  "id": "5ba37c10-5f03-4e9c-82f3-563dba0cc3e2",
+                  "title": "Insecure File Inclusion (LFI/RFI)",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Repudiation",
+                  "description": "Web apps dynamically include files using user input (e.g., include($_GET['page'])).",
+                  "mitigation": "Sanitize/validate all paths before inclusion.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 64,
+                  "score": "4"
+                },
+                {
+                  "id": "f04d2e59-df7c-4641-825c-01cb0b9bb995",
+                  "title": "Sensitive Config Files in Web Root",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Files like .env, config.php, wp-config.php, or .htaccess are exposed.",
+                  "mitigation": "- Move configs outside web root.\n- Deny access via web server rules (e.g., location ~ /\\.(env|htaccess)$ in Nginx).\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 65,
+                  "score": "4"
+                },
+                {
+                  "id": "04e5c151-fad1-45c3-92a7-0e58e095890d",
+                  "title": "Ransomware Encryption",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": "Malware encrypts application data and demands ransom.",
+                  "mitigation": "Offline backups; SELinux/AppArmor; real‑time AV; incident playbooks",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 66,
+                  "score": "5"
+                },
+                {
+                  "id": "08f2aafa-ac52-4634-8d95-a816ae394c2d",
+                  "title": "World‑Readable Temp Files",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Temporary files created with insecure permissions leak sensitive data.",
+                  "mitigation": "umask hardening; secure tmp dirs; periodic scans",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 67,
+                  "score": "3"
+                },
+                {
+                  "id": "1124584a-cdbd-4975-bf54-950e838575ab",
+                  "title": "Hard Link Abuse",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Attackers create hard links to sensitive files to bypass ACL changes.",
+                  "mitigation": "fs.protected_hardlinks; disallow links in upload dirs; integrity scans",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 68,
+                  "score": "3"
+                },
+                {
+                  "id": "b1bbb7fb-df69-4e3d-ae50-d1ac570a01d4",
+                  "title": "Residual Data in Deleted Files",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "Deleted files remain recoverable on disk snapshots or backups.",
+                  "mitigation": "Secure wipe; encrypted filesystems; snapshot lifecycle management",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 69,
+                  "score": "2"
+                },
+                {
+                  "id": "5b739d9c-7bf0-495d-98d9-20b576e21ca7",
+                  "title": "Credential Leakage via OS Crash Dumps",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Core dumps containing secrets stored in accessible locations.",
+                  "mitigation": "Disable core dumps or restrict path; scrub sensitive data; limit ulimit -c",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 70,
+                  "score": "3"
+                },
+                {
+                  "id": "8d24f0d8-3893-4b6f-a052-d6490b248e5e",
+                  "title": "Insecure File Metadata Exposure",
+                  "status": "Open",
+                  "severity": "Low",
+                  "type": "Information disclosure",
+                  "description": "File metadata (EXIF, document properties) leaks sensitive info to users.",
+                  "mitigation": "Strip metadata on upload; content scanning; user education",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 71,
+                  "score": "2"
+                },
+                {
+                  "id": "eae2a6f0-adb2-4959-b798-c4e5f22be2af",
+                  "title": "Mounting External Volumes Insecurely",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": " External drives or mounted folders are readable/writable by the web server without proper security.",
+                  "mitigation": "- Mount with noexec, nosuid, nodev where applicable.\n- Use access control lists (ACLs) to restrict users.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 72,
+                  "score": "3"
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 7,
+                "repudiation": 2,
+                "informationDisclosure": 8,
+                "denialOfService": 1
+              }
+            },
+            "tools": {
+              "items": [
+                "boundary",
+                "button-remove"
+              ],
+              "name": null
             }
           },
           {
@@ -630,11 +1136,13 @@
                 "text": "MySQL\nDatabase"
               },
               "topLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               },
               "bottomLine": {
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -730,13 +1238,267 @@
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "isALog": false,
               "isEncrypted": false,
               "isSigned": false,
               "storesCredentials": false,
               "storesInventory": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "fcaa37f9-1ff9-470d-aa42-f5affe27ffc0",
+                  "title": "SQL Injection (SQLi)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": " Unsanitized input is used to inject malicious SQL queries.",
+                  "mitigation": "Prepared statements; ORM; WAF",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 37,
+                  "score": "5"
+                },
+                {
+                  "id": "7a134391-4f60-4da6-a116-8fde17ab3d48",
+                  "title": "File Upload Vulnerabilities",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Web apps allow file uploads but fail to properly validate the files.",
+                  "mitigation": "Strict MIME/extension checks; disable execution",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 38,
+                  "score": "4"
+                },
+                {
+                  "id": "03cd9dd7-88dc-4385-8795-9f8f485da155",
+                  "title": "Weak or Default Credentials",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Using usernames like root with weak passwords (or none at all).",
+                  "mitigation": "Enforce strong passwords, disable remote root login, and use least privilege.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 39,
+                  "score": "4"
+                },
+                {
+                  "id": "9c2bb581-3fa6-46d0-8d22-0cc820ae8263",
+                  "title": "Exposed MySQL Port (3306)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "MySQL server is publicly accessible.",
+                  "mitigation": "\"- Bind MySQL to localhost (or use a private network).\n- Use a firewall to restrict access to trusted IPs.\"",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 40,
+                  "score": "3"
+                },
+                {
+                  "id": "edf8f058-9d0a-430d-993d-039f5d6d352a",
+                  "title": "Privilege Escalation",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": " Overprivileged accounts can modify or execute harmful queries.",
+                  "mitigation": " Apply principle of least privilege for all accounts.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 41,
+                  "score": "4"
+                },
+                {
+                  "id": "a39d5022-31ad-4937-99c6-87d91e967dac",
+                  "title": "Data Exfiltration via SELECT / INTO OUTFILE",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": " If attackers gain access, they can dump data to a file and retrieve it.",
+                  "mitigation": "Disable INTO OUTFILE and restrict write permissions to MySQL user.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 42,
+                  "score": "4"
+                },
+                {
+                  "id": "62877572-7158-44be-8fcc-5a0e412a5571",
+                  "title": "Unencrypted Connections (No TLS)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Data, including credentials, flows in cleartext over the network.",
+                  "mitigation": "Enable SSL/TLS for MySQL connections.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 43,
+                  "score": "3"
+                },
+                {
+                  "id": "bb5dff94-ff40-4d86-a079-495d5a5f6fe5",
+                  "title": "Local File Inclusion via LOAD DATA INFILE",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "If not disabled, attackers can use this command to read sensitive files.",
+                  "mitigation": "Disable LOAD DATA LOCAL INFILE unless absolutely required.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 44,
+                  "score": "4"
+                },
+                {
+                  "id": "8be5829a-1b9c-4409-ae59-5af76eb8b5fd",
+                  "title": "Unpatched Vulnerabilities",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Running outdated versions of MySQL can expose you to known exploits.",
+                  "mitigation": "Regularly patch and monitor security advisories.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 45,
+                  "score": "4"
+                },
+                {
+                  "id": "f31c4d01-78f0-4b04-903f-47364b30e845",
+                  "title": "Information Disclosure via Errors",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "MySQL error messages reveal schema names, structure, or even partial queries.",
+                  "mitigation": "Sanitize errors before sending them to clients; disable verbose errors in production.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 46,
+                  "score": "3"
+                },
+                {
+                  "id": "7fcb8aa8-6f33-49f0-bbd6-1b7dca428da6",
+                  "title": "Backup Theft or Exposure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "Backups stored insecurely (e.g., in /tmp, public S3 buckets).",
+                  "mitigation": "Encrypt and store backups securely, and restrict access.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 47,
+                  "score": "4"
+                },
+                {
+                  "id": "9a99f66c-03ea-41db-8f51-fadc6b17ca99",
+                  "title": "Denial of Service via Heavy Queries",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Denial of service",
+                  "description": " Resource-intensive queries lock tables or spike CPU/IO.",
+                  "mitigation": " Rate-limit users, enforce query timeouts, and monitor for unusual activity.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 48,
+                  "score": "3"
+                },
+                {
+                  "id": "12aa9b02-3a5b-4a12-9a1f-1bedc11f335a",
+                  "title": "Brute Force Attack on User Accounts",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Attackers try lots of passwords on known users (root, admin, etc.).",
+                  "mitigation": "Use fail2ban or other login attempt monitoring tools.",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 49,
+                  "score": "3"
+                },
+                {
+                  "id": "c9197bf3-7152-47b0-9af4-e20b5d30989e",
+                  "title": "Unsafe Stored Procedures / Functions",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Procedures created with SQL SECURITY DEFINER run with elevated privileges and can be abused.",
+                  "mitigation": "Review DEFINER privileges; limit CREATE ROUTINE; code review",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 50,
+                  "score": "4"
+                },
+                {
+                  "id": "5d14dd0f-678b-4f19-b5b8-a7e5d9dea122",
+                  "title": "Binary Log Poisoning",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Tampering",
+                  "description": "Malicious statements inserted into replication binlogs compromise replicas.",
+                  "mitigation": "Encrypt/validate binlogs; restricted REPLICATE privilege; checksum enforcement",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 51,
+                  "score": "4"
+                },
+                {
+                  "id": "75e4d2ef-bbf7-46e9-9492-682822c72cf2",
+                  "title": "Federated Table Abuse",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "FEDERATED engine queries remote servers, allowing SSRF or data leak if misconfigured.",
+                  "mitigation": "Disable FEDERATED unless needed; validate hostnames; network ACLs",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 52,
+                  "score": "3"
+                },
+                {
+                  "id": "61a5e191-f245-46e6-aae3-c6d2ebd33230",
+                  "title": "Malicious Triggers for Persistence",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Tampering",
+                  "description": "Triggers added to run malicious code or leak data whenever rows change.",
+                  "mitigation": "Audit triggers; least‑privilege on TRIGGER; metadata integrity checks",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 53,
+                  "score": "3"
+                },
+                {
+                  "id": "96edb347-6f86-4b42-a354-edc612f0d4f2",
+                  "title": "Unencrypted Data at Rest",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Information disclosure",
+                  "description": "Data files and backups stored unencrypted, exposing data if disk stolen.",
+                  "mitigation": "TDE (InnoDB encryption); disk/LUKS encryption; secure backup keys",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 54,
+                  "score": "4"
+                },
+                {
+                  "id": "89167fda-fda4-449e-823a-6b786ca067c4",
+                  "title": "General Query Log Exposure",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Information disclosure",
+                  "description": "General query log left enabled and world‑readable, leaking credentials and queries.",
+                  "mitigation": "Disable in production; secure file permissions; rotate logs",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 55,
+                  "score": "3"
+                }
+              ],
+              "threatFrequency": {
+                "tampering": 6,
+                "repudiation": 4,
+                "informationDisclosure": 9,
+                "denialOfService": 3
+              }
             }
           },
           {
@@ -753,8 +1515,8 @@
                 "text": "User"
               },
               "body": {
-                "stroke": "#333333",
-                "strokeWidth": 1.5,
+                "stroke": "red",
+                "strokeWidth": 2.5,
                 "strokeDasharray": null
               }
             },
@@ -850,9 +1612,131 @@
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
-              "hasOpenThreats": false,
+              "hasOpenThreats": true,
               "providesAuthentication": false,
-              "threats": []
+              "threats": [
+                {
+                  "id": "4436f491-268f-4432-b6b9-4212595e99ba",
+                  "title": "Eavesdropping",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "Attacker captures clear-text traffic between client and server.",
+                  "mitigation": "Enforce HTTPS (HSTS) • TLS 1.2+ • Disable plain HTTP",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 8,
+                  "score": "4"
+                },
+                {
+                  "id": "f79fe804-10a5-4b7e-a768-d787ebeff8a8",
+                  "title": "Replay Attack",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Re-sending captured legitimate requests (e.g., payments).",
+                  "mitigation": "Nonces/time-stamps Unique session tokens TLS",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 9,
+                  "score": "3"
+                },
+                {
+                  "id": "8ed47be9-114e-4954-b59b-990d7a313c22",
+                  "title": "SSL/TLS stripping or downgrade attack",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "The attacker downgrades an HTTPS connection to HTTP, allowing them to read the unencrypted data being exchanged. ",
+                  "mitigation": "Redirect HTTP access attempts to HTTPS, among others",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 10,
+                  "score": "4"
+                },
+                {
+                  "id": "a19b7151-a6d2-48a2-8555-556dee04a65c",
+                  "title": "Weak Encryption Standard",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Using weak or deprecated encryption standards such as SSL",
+                  "mitigation": "Disable weak suites; TLS 1.2/1.3‑only; modern ciphers",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 11,
+                  "score": "3"
+                },
+                {
+                  "id": "f1a1b310-0ed7-4355-b276-fb4f580b6709",
+                  "title": "Transparent Proxy Interception",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "he attacker sits between the user and server (e.g., via a rogue router or compromised ISP), acting as a silent proxy.",
+                  "mitigation": "Certificate pinning; DNSSEC / DoH; TLS",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 12,
+                  "score": "3"
+                },
+                {
+                  "id": "04eed093-d5b9-4169-a776-205ee5104750",
+                  "title": "Session Hijacking (Cookie Theft / Sidejacking)",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Spoofing",
+                  "description": "Compromising session cookies via network sniffing or injection to impersonate a user.",
+                  "mitigation": "Secure & HttpOnly cookies; SameSite; TLS; re‑authentication; token rotation",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 13,
+                  "score": "4"
+                },
+                {
+                  "id": "146b6e07-a187-4514-b7f1-c18b128b5aa6",
+                  "title": "DNS Spoofing / Cache Poisoning",
+                  "status": "Open",
+                  "severity": "High",
+                  "type": "Repudiation",
+                  "description": "Attacker poisons DNS responses to redirect user traffic to a malicious host.",
+                  "mitigation": "DNSSEC; DoH/DoT; short TTLs; monitor for DNS anomalies",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 14,
+                  "score": "4"
+                },
+                {
+                  "id": "2a688e95-fd55-42d3-960c-01f0f4e3f873",
+                  "title": "HTTP Request Smuggling",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Repudiation",
+                  "description": "Abusing inconsistencies between front‑end and back‑end HTTP parsing to smuggle requests.",
+                  "mitigation": "Align proxy/server parsing; disable legacy transfer encodings; WAF rules",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 15,
+                  "score": "3"
+                },
+                {
+                  "id": "7263b758-8622-4e0f-b39c-a3a91b0ae168",
+                  "title": "TLS Interception (with Forged Certificates)",
+                  "status": "Open",
+                  "severity": "Medium",
+                  "type": "Spoofing",
+                  "description": "Attacker presents a forged TLS certificate to the client while communicating with the server using the real certificate.",
+                  "mitigation": "Certificate pinning; trusted public CAs; OCSP stapling",
+                  "modelType": "STRIDE",
+                  "new": false,
+                  "number": 16,
+                  "score": "4"
+                }
+              ],
+              "threatFrequency": {
+                "spoofing": 5,
+                "repudiation": 4
+              }
             }
           }
         ]
@@ -860,6 +1744,6 @@
     ],
     "diagramTop": 1,
     "reviewer": "Rui Barbosa",
-    "threatTop": 0
+    "threatTop": 72
   }
 }
