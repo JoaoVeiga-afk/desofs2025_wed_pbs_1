@@ -18,6 +18,9 @@ This section lists the main functional and non-functional requirements for the s
 
 ## Deployment Diagram
 
+The server for the ShopTex will use Fedora 38 and for the requests it will use HTTPS.
+The databases will HTTPS for the connections with the backend and it won't have open ports open to outside internet. This databases will use MySQL version 8.0.
+
 ![Deployment Diagram](Deployment%20Diagram.jpg)
 
 ## Other
