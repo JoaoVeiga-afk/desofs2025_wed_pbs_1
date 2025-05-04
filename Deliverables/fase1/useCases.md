@@ -51,12 +51,12 @@ Based on the requirements of the defining system, we defined the following use c
 3. If the data is valid, the system creates a new user record.
 4. The system confirms successful registration to the customer.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid Data** - The system rejects the request and provides error messages for the invalid fields.
 - **A2: Existing Email** - The system informs you that the email is already registered.
 - **A3: Username Already Existing** - The system informs you that the username is already registered.
 
-**Postconditions:**
+**Post conditions:**
 - The new user account is successfully created in the system.
 
 ---
@@ -77,11 +77,11 @@ Based on the requirements of the defining system, we defined the following use c
 3. If valid, the system generates and returns an authentication token.
 4. The user uses this token to access all the API's protected endpoints.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid Credentials** - The system rejects the request with an authentication error.
 - **A2: Account Not Confirmed** - The system informs you that the account needs confirmation.
 
-**Postconditions:**
+**Post conditions:**
 - The customer has a valid authentication token.
 - The client can now access any protected API resource using this token.
 
@@ -102,11 +102,11 @@ Based on the requirements of the defining system, we defined the following use c
 3. The system updates the user's information in the database.
 4. The system confirms that the operation was successful.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid Data** - The system rejects the request and indicates which fields are in error.
 - **A2: Invalid or Expired Token** - The system responds with an authentication error.
 
-**Postconditions
+**Post conditions:**
 - User information is updated in the system.
 
 ---
@@ -126,12 +126,12 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system validates the authentication and parameters of the request.
 3. The system returns the available products, with support for filters such as category, price, availability, etc.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid Token** - The system rejects the request with an authentication error.
 - **A2: Inexistent or Inactive Store** - The system returns an error indicating that the store is not accessible.
 - **A3: No Products Available** - The system returns an empty list or an informative message.
 
-**Postconditions:**
+**Post conditions:**
 - The user receives a list of products.
 
 ---
@@ -152,11 +152,11 @@ Based on the requirements of the defining system, we defined the following use c
 3. The system saves the status of the cart associated with the user.
 4. The cart can be persisted between sessions.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Non-existent product** - The system returns an error when trying to add an invalid product.
 - **A2: Invalid Quantity** - The system rejects the order and reports the error.
 
-**Postconditions:**
+**Post conditions:**
 - The current status of the cart is stored in the system.
 
 ---
@@ -176,13 +176,13 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system creates the order and stores the data.
 3. The system sends confirmation to the user.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Payment Failure** - The system reports failure and does not create the order.
 - **A2: Incomplete Data** - The system rejects the order and requests corrections.
 - **A3: Invalid/Expired Discount** – The system ignores the discount and informs the user.
 
 
-**Postconditions:**
+**Post conditions:**
 - The order is created or registered.
 
 ---
@@ -226,10 +226,10 @@ Based on the requirements of the defining system, we defined the following use c
 3. The user accesses the link and sets a new password.
 4. The system updates the password and confirms.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Unregistered Email** - The system may return a generic response to avoid account enumeration.
 
-**Postconditions:**
+**Post conditions:**
 - The new password replaces the previous one and can be used for login.
 
 ---
@@ -251,7 +251,7 @@ Based on the requirements of the defining system, we defined the following use c
 **Alternate Flows:**
 - **A1: Pending Financial Transactions** – Deletion is blocked until all payments are settled.
 
-**Postconditions:**
+**Post conditions:**
 - Personal data is erased/anonymised; the account can no longer be used.
 
 ---
@@ -271,10 +271,10 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system validates the data and applies the changes.
 3. The system confirms the operation to the administrator.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid Data** - The system rejects the request with error messages.
 
-**Postconditions:**
+**Post conditions:**
 - The store database is updated as requested.
 
 ---
@@ -294,10 +294,10 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system validates the data and updates the records.
 3. The products become available or updated for users.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Product Not Associated with Valid Store** - The system rejects the operation.
 
-**Postconditions:**
+**Post conditions:**
 - The product database reflects the changes made.
 
 ---
@@ -316,10 +316,10 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system applies and saves the data.
 3. The discount becomes available on the affected products.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid dates or non-existent product** - The system rejects and reports the error.
 
-**Postconditions:**
+**Post conditions:**
 - The products reflect the active discounts.
 
 ---
@@ -339,10 +339,10 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system validates the operation and updates the data.
 3. The system can notify the customer of changes.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Invalid Status** - The system rejects with an error.
 
-**Postconditions:**
+**Post conditions:**
 - The order status is updated in the system.
 
 ---
@@ -364,7 +364,7 @@ Based on the requirements of the defining system, we defined the following use c
 **Alternate Flows:**
 - **A1: Invalid Permission** - The system rejects the request.
 
-**Postconditions:**
+**Post conditions:**
 - The user's permissions are updated.
 
 ---
@@ -383,10 +383,10 @@ Based on the requirements of the defining system, we defined the following use c
 2. It receives the response and records the result.
 3. Associates the payment with the order.
 
-**Alternate Flows
+**Alternate Flows:**
 - **A1: Payment Rejected** - The system notifies the user and does not create the order.
 
-**Postconditions:**
+**Post conditions:**
 - The payment is processed and registered.
 
 ---
@@ -404,7 +404,7 @@ Based on the requirements of the defining system, we defined the following use c
 2. The system identifies the recipients and channels.
 3. Sends the notification.
 
-**Postconditions:**
+**Post conditions:**
 - The recipients receive the appropriate notification.
 
 ---
@@ -421,7 +421,7 @@ Based on the requirements of the defining system, we defined the following use c
 1. The system is tested under load to keep the checkout time below 3 seconds (p95).
 2. Metrics are monitored.
 
-**Postconditions:**
+**Post conditions:**
 - Platform performance is maintained within the defined parameters.
 
 ---
@@ -439,7 +439,7 @@ Based on the requirements of the defining system, we defined the following use c
 2. Automatically launches new instances/resources.
 3. Reduces resources when load drops.
 
-**Postconditions:**
+**Post conditions:**
 - The system automatically adapts to demand.
 
 ---
@@ -457,7 +457,7 @@ Based on the requirements of the defining system, we defined the following use c
 2. Data is encrypted and stored securely.
 3. The user can request the deletion of their data.
 
-**Postconditions:**
+**Post conditions:**
 - Compliance with the GDPR is ensured.
 
 ---
@@ -475,7 +475,7 @@ Based on the requirements of the defining system, we defined the following use c
 2. In the event of a failure, it fails over to a secondary region.
 3. Restores the service with minimal interruption.
 
-**Postconditions:**
+**Post conditions:**
 - Availability is maintained (99.9%) and data is preserved.
 
 ---
@@ -493,7 +493,7 @@ Based on the requirements of the defining system, we defined the following use c
 2. If any test fails, the merge is blocked.
 3. Only validated code is integrated into main.
 
-**Postconditions:**
+**Post conditions:**
 - Code in production maintains the defined quality standards.
 
 ---
@@ -512,6 +512,6 @@ Based on the requirements of the defining system, we defined the following use c
 3. Dashboards and alerts notify the operations team of anomalies.
 4. Logs are retained for at least 90 days (or as required by policy).
 
-**Postconditions:**
+**Post conditions:**
 - Administrators can detect and resolve issues quickly; audit evidence is available.
 ---
