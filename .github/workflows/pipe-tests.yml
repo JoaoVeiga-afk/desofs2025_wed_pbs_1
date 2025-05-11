@@ -3,7 +3,7 @@
 on:
   push:
     branches:
-      - main
+      - issue_12
   pull_request:
 
 jobs:
