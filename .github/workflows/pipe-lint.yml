@@ -19,10 +19,10 @@ jobs:
       - name: Set up .NET 8
         uses: actions/setup-dotnet@v2
         with:
-          dotnet-version: '8.0'  
+          dotnet-version: '8.0'
 
       - name: Restore dependencies
-        run: dotnet restore  
+        run: dotnet restore
 
       - name: Run linting (dotnet format)
-        run: dotnet format --check
+        run: dotnet format --verify-no-changes  # Verifica se há alterações de formatação
