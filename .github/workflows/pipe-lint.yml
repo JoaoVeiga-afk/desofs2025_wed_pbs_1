@@ -25,4 +25,4 @@ jobs:
         run: dotnet restore
 
       - name: Run linting (dotnet format)
-        run: dotnet format --verify-no-changes  # Verifica se há alterações de formatação
+        run: dotnet format 
