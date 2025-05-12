@@ -19,7 +19,7 @@ jobs:
       - name: Use Node.js (latest stable version)
         uses: actions/setup-node@v2
         with:
-          node-version: 'stable' 
+          node-version: '21' 
 
       - name: Install dependencies
         run: npm install
