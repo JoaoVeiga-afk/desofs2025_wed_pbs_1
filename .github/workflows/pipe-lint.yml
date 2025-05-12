@@ -24,5 +24,16 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Run linting (dotnet format)
-        run: dotnet format 
+      - name: Get modified files
+        id: files
+        run: |
+          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.cs$' > changed_files.txt
+          cat changed_files.txt
+
+      - name: Run linting and format on modified files
+        run: |
+          if [ -s changed_files.txt ]; then
+            dotnet format $(cat changed_files.txt) 
+          else
+            echo "No C# files modified"
+          fi
