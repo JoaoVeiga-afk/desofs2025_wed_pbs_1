@@ -1,5 +1,40 @@
 # Fase 1
 
+## Application Description
+
+This document is used for planning and documenting the ShopTex application.
+ShopTex is an E-Commerce platform, consisting of multiple stores. Each store controls it own products, but never accesses any user data or info.
+
+## Assets
+This section presents all assets of the application, both physical and virtual (data).
+The Confidentiality, Integrity and Availability (CIA) parameters are defined either Low, Medium or High, applied as defined in [CIA Definition](#cia-definitions)
+
+### Assets Table
+| ID      | Name  | Description                         | Confidentiality | Integrity | Availability | Total/Priority |
+|---------|-------|-------------------------------------|-----------------|-----------|--------------|----------------|
+| SRV-001 | vs531 | Server hosting the main application |                 |           |              |                |
+| SRV-002 | vs204 | Server hosting the main database    |                 |           |              |                |
+| SRV-003 | vs285 | Server hosting the logging database |                 |           |              |                |
+|         |       |                                     |                 |           |              |                |
+|         |       |                                     |                 |           |              |                |
+|         |       |                                     |                 |           |              |                |
+|         |       |                                     |                 |           |              |                |
+|         |       |                                     |                 |           |              |                |
+|         |       |                                     |                 |           |              |                |
+
+### CIA Definitions
+
+| Level  | Confidentiality                                                          | Integrity                                                                                 | Availability                                                                                  |
+|--------|--------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
+| Low    | There is no personal or identifying data                                 | The integrity of the asset does not impact the application                                | The asset can be unavailable without affecting the usability or continuity of the application |
+| Medium | Contains personal data that cannot be used to identify a particular user | The asset can have it's integrity compromised, if it only impacts some function/feature   | The unavailability of the asset only compromises some features/functions.                     |
+| High   | Personal data that can identify and/or track a particular user           | The asset cannot have it's integrity compromised, without affecting the whole application | The unavailability of the asset makes the application unusable and impacts continuity         |
+
+## Requirements
+The functional and non-functional requirements are defined in the document linked bellow.
+
+[Requirements Document](Requirements.md)
+
 ## Logic Diagram
 ![Logic Diagram](Logic.jpg)
 
