@@ -52,17 +52,17 @@ The functional and non-functional requirements are defined in the document linke
 
 This section lists the main functional and non-functional requirements for the system/application.
 
-![Link to Requirements](Requirements.md)
+[Link to Requirements](Requirements.md)
 
 ## Use Case
 This section lists the Use Cases and the Use Case Diagram for the system/application.
 
-![Link to Use Cases](useCases.md)
+[Link to Use Cases](useCases.md)
 
-![Link to Use Case Diagram](usecaseDiagram.puml)
+[Link to Use Case Diagram](usecaseDiagram.puml)
 
 ## Security
-![Link to Security](Security.md)
+[Link to Security](Security.md)
 
 ## Deployment Diagram
 
