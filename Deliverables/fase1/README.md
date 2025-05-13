@@ -10,17 +10,18 @@ This section presents all assets of the application, both physical and virtual (
 The Confidentiality, Integrity and Availability (CIA) parameters are defined either Low, Medium or High, applied as defined in [CIA Definition](#cia-definitions)
 
 ### Assets Table
-| ID      | Name          | Description                                                                    | Confidentiality               | Integrity  | Availability | Total/Priority |
-|---------|---------------|--------------------------------------------------------------------------------|-------------------------------|------------|--------------|----------------|
-| SRV-001 | vs531         | Server hosting the main application                                            | 1 - Low (No data stored here) | 1 - Low    | 3 - High     | 5/9            |
-| SRV-002 | vs204         | Server hosting the main database                                               | 3 - High                      | 3 - High   | 3 - High     | 9/9            |
-| SRV-003 | vs285         | Server hosting the logging database                                            | 2 - Medium                    | 3 - High   | 1 - Low      | 6/9            |
-| USRD-00 | User data     | The agglomeration of all user data                                             |                               |            |              |                |
-| USRD-01 | User Personal | Personal information of the user (Name, Date of Birth, Address, E-mail, ID)    | 3 - High                      | 2 - Medium | 1 - Low      |                |
-| USRD-02 | User Payment  | Payment information of the user (Payment Method, Billing Address, NIF)         | 3 - High                      | 2 - Medium | 1 - Low      |                |
-| USRD-03 | User Other    | Other information about the user (Purchase History, Review info, Display name) | 2 - Medium                    | 1 - Low    | 1 - Low      |                |
-|         |               |                                                                                |                               |            |              |                |
-|         |               |                                                                                |                               |            |              |                |
+| ID      | Name          | Description                                                                       | Confidentiality               | Integrity  | Availability | Total/Priority |
+|---------|---------------|-----------------------------------------------------------------------------------|-------------------------------|------------|--------------|----------------|
+| SRV-001 | vs531         | Server hosting the main application                                               | 1 - Low (No data stored here) | 1 - Low    | 3 - High     | 5/9            |
+| SRV-002 | vs204         | Server hosting the main database                                                  | 3 - High                      | 3 - High   | 3 - High     | 9/9            |
+| SRV-003 | vs285         | Server hosting the logging database                                               | 2 - Medium                    | 3 - High   | 1 - Low      | 6/9            |
+| USRD-00 | User data     | The agglomeration of all user data                                                |                               |            |              |                |
+| USRD-01 | User Personal | Personal information of the user (Name, Date of Birth, Address, E-mail, ID, Hash) | 3 - High                      | 2 - Medium | 3 - High     | 8/9            |
+| USRD-02 | User Payment  | Payment information of the user (Payment Method, Billing Address, NIF)            | 3 - High                      | 2 - Medium | 1 - Low      | 6/9            |
+| USRD-03 | User Other    | Other information about the user (Purchase History, Review info, Display name)    | 2 - Medium                    | 1 - Low    | 1 - Low      | 4/9            |
+| PRDD-00 | Product Data  | The agglomeration of all product data                                             |                               |            |              |                |
+| PRDD-01 | Product Base  | Basic information of the product (Name, Price, Seller)                            | 1 - Low                       | 2 - Medium | 3 - High     | 6/9            |
+| PRDD-02 | Product Extra | Extra information of the product (Description, Images, Discount)                  | 1 - Low                       | 1 - Low    | 1 - Low      | 3/9            |
 
 ### CIA Definitions
 
