@@ -49,12 +49,6 @@ The functional and non-functional requirements are defined in the document linke
 
 ![Domain Model](domainModel.png)
 
-## Requirements
-
-This section lists the main functional and non-functional requirements for the system/application.
-
-[Link to Requirements](Requirements.md)
-
 ## Use Case
 This section lists the Use Cases and the Use Case Diagram for the system/application.
 
