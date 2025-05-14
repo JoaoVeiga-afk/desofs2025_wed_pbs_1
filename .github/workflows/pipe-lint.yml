@@ -46,8 +46,6 @@ jobs:
           echo "Changed C# files:"
           echo "${{ needs.detect-changes.outputs.cs_files }}"
 
-          # Convert to space-separated list
-          FILES=$(echo "${{ needs.detect-changes.outputs.cs_files }}" | jq -r '.[]' | tr '\n' ' ')
-          
-          # Run format only on changed files
+          FILES="${{ needs.detect-changes.outputs.cs_files }}"
           dotnet format ./ShopTex.sln --include $FILES --verify-no-changes --verbosity diagnostic
+      
