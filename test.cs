@@ -1,6 +1,4 @@
-﻿namespace ShopTex;
-
-                                                                                                                public class test
-                                                                                                                {
-                                                                                                                    
-                                                                                                   c            }
+﻿using System;
+namespace TestApp
+{class Program
+    {static void Main(string[] args){Console.WriteLine("Hello World!");}}}
