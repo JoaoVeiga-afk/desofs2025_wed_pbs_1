@@ -29,4 +29,4 @@ jobs:
         uses: wearerequired/lint-action@v2
         with:
           dotnet_format: true
-          dotnet_format_args: 'desofs2025_wed_pbs_1.sln'
+          dotnet_format_args: './ShopTex.sln'
