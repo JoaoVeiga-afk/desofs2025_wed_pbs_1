@@ -2,7 +2,7 @@
 ## Branch Rules
 ### Branch Naming Rules
 
-### \<type>/issue-<issue-ID>
+### \<type>/issue-\<issue-ID>
 
 Types:
 - **feature** – New feature development
