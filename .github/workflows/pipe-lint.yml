@@ -30,3 +30,5 @@ jobs:
         with:
           dotnet_format: true
           dotnet_format_args: './ShopTex.sln'
+          fail_on_error: true
+          only_changed: true
