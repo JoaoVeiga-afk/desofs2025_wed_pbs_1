@@ -1,4 +1,4 @@
-﻿name: Lint changed files
+﻿name: Pipeline for Lint
 
 on:
   push:
@@ -10,27 +10,27 @@ on:
 permissions:
   contents: read
   checks: write
-
+  
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
     outputs:
-      cs_changed: ${{ steps.filter.outputs.cs }}
+      cs_files: ${{ steps.filter.outputs.cs_files }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Detect changed files
-        uses: dorny/paths-filter@v2
+      - name: Detect changed C# files
         id: filter
+        uses: dorny/paths-filter@v2
         with:
           filters: |
-            cs:
+            cs_files:
               - '**/*.cs'
 
   lint-changed-files:
     needs: detect-changes
-    if: needs.detect-changes.outputs.cs_changed == 'true'
+    if: needs.detect-changes.outputs.cs_files != ''
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -41,7 +41,13 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Run dotnet format only if C# files changed
+      - name: Run dotnet format only on changed files
         run: |
-          echo "C# files changed. Running dotnet format."
-          dotnet format ./ShopTex.sln --verify-no-changes --verbosity diagnostic
+          echo "Changed C# files:"
+          echo "${{ needs.detect-changes.outputs.cs_files }}"
+
+          # Convert to space-separated list
+          FILES=$(echo "${{ needs.detect-changes.outputs.cs_files }}" | jq -r '.[]' | tr '\n' ' ')
+          
+          # Run format only on changed files
+          dotnet format ./ShopTex.sln --include $FILES --verify-no-changes --verbosity diagnostic
