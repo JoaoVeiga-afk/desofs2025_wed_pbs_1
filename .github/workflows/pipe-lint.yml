@@ -1,23 +1,37 @@
-﻿name: Pipeline for Lint
+﻿name: Lint changed files
 
 on:
-  push:
-    branches:
-      - '*'
   pull_request:
     branches:
       - '*'
+
 permissions:
   contents: read
   checks: write
-  
-jobs:
-  run-linters:
-    name: Run linters
-    runs-on: ubuntu-latest
 
+jobs:
+  detect-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      cs_changed: ${{ steps.filter.outputs.cs }}
     steps:
-      - name: Check out Git repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Detect changed files
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            cs:
+              - '**/*.cs'
+
+  lint-changed-files:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.cs_changed == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up .NET
@@ -25,10 +39,7 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Run linters
-        uses: wearerequired/lint-action@v2
-        with:
-          dotnet_format: true
-          dotnet_format_args: './ShopTex.sln'
-          fail_on_error: true
-          only_changed: true
+      - name: Run dotnet format only if C# files changed
+        run: |
+          echo "C# files changed. Running dotnet format."
+          dotnet format ./ShopTex.sln --verify-no-changes --verbosity diagnostic
