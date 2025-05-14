@@ -9,31 +9,20 @@ on:
       - '*'
 
 jobs:
-  lint:
+  run-linters:
+    name: Run linters
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Check out Git repository
+        uses: actions/checkout@v4
 
-      - name: Set up .NET 8
-        uses: actions/setup-dotnet@v2
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '8.0'
+          dotnet-version: "9.0.x"
 
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Get modified files
-        id: files
-        run: |
-          git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '\.cs$' > changed_files.txt
-          cat changed_files.txt
-
-      - name: Run linting and format on modified files
-        run: |
-          if [ -s changed_files.txt ]; then
-            dotnet format $(cat changed_files.txt) 
-          else
-            echo "No C# files modified"
-          fi
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          dotnet_format: true
