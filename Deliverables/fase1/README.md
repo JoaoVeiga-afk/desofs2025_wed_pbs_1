@@ -46,10 +46,6 @@ the data flow diagram, threat categorization, threat analysis, threat ranking, a
 
 ### External Dependencies
 
-No external dependencies were identified.
-
-_or_
-
 | ID | Description                                                                                                                                                                                                                                                 |
 |----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | 1  | The MySQL database server will be MySQL version 8.0 and it will run on a linux server. This server will be hardened according to ISEP's hardening standard. This includes the installation of the latest operating system and application security patches. |
@@ -138,10 +134,7 @@ When used together to evaluate an asset, the level numbers can be summed to dete
 ![Data Flow Diagram](data_flow_diagram_lvl1.png)
 
 ### Threat Categorization Criteria
-#TODO
-
-### Threat Ranking Criteria
-#TODO
+We used STRIDE for Threat Categorization.
 
 ## Other
 In this folder you can find the ASVS (Application Security Verification Standard) checklist in the [excel file](v4-ASVS-checklist-en.xlsx).
