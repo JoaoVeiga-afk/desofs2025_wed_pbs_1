@@ -2,17 +2,19 @@
 
 on:
   push:
-    branches: ["*"]
+    branches:
+      - '*'
   pull_request:
-    branches: ["*"]
+    branches:
+      - '*'
 
 permissions:
-  contents: read
+  contents: write
   checks: write
 
 jobs:
   run-linters:
-    name: Run dotnet format on changed files
+    name: Run linters
     runs-on: ubuntu-latest
 
     steps:
@@ -24,35 +26,12 @@ jobs:
         with:
           dotnet-version: "9.0.x"
 
-      - name: Detect changed C# files
-        id: detect-changes
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            git fetch origin ${{ github.base_ref }}
-            FILES=$(git diff --name-only origin/${{ github.base_ref }} | grep '\.cs$' || true)
-          else
-            FILES=$(git diff --name-only HEAD^ | grep '\.cs$' || true)
-          fi
-
-          echo "Changed files:"
-          echo "$FILES"
-
-          echo "CHANGED_FILES=$FILES" >> $GITHUB_ENV
-          echo "::set-output name=changed::$FILES"
-
-      - name: Run dotnet format on changed files
-        if: steps.detect-changes.outputs.changed != ''
-        run: |
-          echo "Formatting: $CHANGED_FILES"
-          dotnet format --include $CHANGED_FILES --folder || echo "::warning::Formatting issues fixed."
-
-      - name: Commit fixes (if any)
-        if: steps.detect-changes.outputs.changed != ''
-        run: |
-          if [[ $(git status --porcelain) ]]; then
-            git config user.name "github-actions"
-            git config user.email "github-actions@github.com"
-            git add .
-            git commit -m "fix: auto-format C# files via dotnet format"
-            git push
-          fi
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dotnet_format: true
+          dotnet_format_args: 'ShopTex.sln'
+          dotnet_format_auto_fix: true
+          commit: true
+          commit_message: "fix: apply dotnet-format auto fixes"
