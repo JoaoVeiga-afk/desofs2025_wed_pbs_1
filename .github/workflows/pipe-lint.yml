@@ -28,4 +28,8 @@ jobs:
       - name: Run linters
         uses: wearerequired/lint-action@v2
         with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           dotnet_format: true
+          dotnet_format_auto_fix: true
+          commit: true
+          commit_message: "fix: auto-fix linting issues"
