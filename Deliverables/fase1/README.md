@@ -45,31 +45,79 @@ the data flow diagram, threat categorization, threat analysis, threat ranking, a
 [Threat Model Report](threat_model_report.pdf)
 
 ### External Dependencies
-#TODO
+
+No external dependencies were identified.
+
+_or_
+
+| ID | Description                                                                                                                                                                                                                                                 |
+|----|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | The MySQL database server will be MySQL version 8.0 and it will run on a linux server. This server will be hardened according to ISEP's hardening standard. This includes the installation of the latest operating system and application security patches. |
+| 2  | The Log System will run on a linux server. This server will be hardened according to ISEP's hardening standard. This includes the installation of the latest operating system and application security patches.                                             |
+| 3  | The File System will run on a linux server. This server will be hardened according to ISEP's hardening standard. This includes the installation of the latest operating system and application security patches.                                            |
+| 4  | The connection between the web server and the MySQL database will be over a private network.                                                                                                                                                                |
+| 5  | The connection between the web server and the log system will be over a private network.                                                                                                                                                                    |
+| 6  | The connection between the web server and the file system will be over a private network.                                                                                                                                                                   |
+
 
 ### Entry Points
-[Entry Points](entrypoints.md)
 
-### Exit Points
-#TODO
+| ID | Name                  | Description                                                  | Trust Level                                                                                                                                 |
+|----|-----------------------|--------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| 1  | Login                 | `POST /auth/login` – Validate credentials and return JWT     | (1) Anonymous Web User (2) User with Valid Login Credentials (3) User with Invalid Login Credentials (4) Store Admin (5) Store Collaborator |
+| 2  | Register              | `POST /auth/register` – Create a new user account            | (1) Anonymous Web User (2) User with Valid Login Credentials (3) User with Invalid Login Credentials (4) Store Admin (5) Store Collaborator |
+| 3  | List Users            | `GET /user` – List all users                                 | (4) Store Admin                                                                                                                             |
+| 4  | Get User Detail       | `GET /user/{username}` – Get details for a single user       | (4) Store Admin (5) Store Collaborator                                                                                                      |
+| 5  | Create User           | `POST /user` – Create a new user                             | (4) Store Admin                                                                                                                             |
+| 6  | Update User           | `PATCH /user/{username}` – Update an existing user           | (2) User with Valid Login Credentials (4) Store Admin                                                                                       |
+| 7  | Delete User           | `DELETE /user/{username}` – Permanently delete a user        | (2) User with Valid Login Credentials (4) Store Admin                                                                                       |
+| 8  | Create Store          | `POST /stores` – Create a new store                          | (4) Store Admin                                                                                                                             |
+| 9  | Update Store          | `PATCH /stores/{storeId}` – Update an existing store         | (4) Store Admin                                                                                                                             |
+| 10 | Delete Store          | `DELETE /stores/{storeId}` – Remove a store                  | (4) Store Admin                                                                                                                             |
+| 11 | List Products         | `GET /product` – List products (with query parameters)       | (1) Anonymous Web User (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator                                         |
+| 12 | Get Product Detail    | `GET /product/{productId}` – Get product by ID               | (1) Anonymous Web User (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator                                         |
+| 13 | Create Product        | `POST /product` – Create a new product                       | (4) Store Admin                                                                                                                             |
+| 14 | Update Product        | `PATCH /product/{productId}` – Update an existing product    | (4) Store Admin                                                                                                                             |
+| 15 | Delete Product        | `DELETE /product/{productId}` – Delete a product             | (4) Store Admin                                                                                                                             |
+| 16 | Create Discount       | `POST /discounts` – Create a new discount                    | (4) Store Admin                                                                                                                             |
+| 17 | Update Discount       | `PUT/PATCH /discounts/{discountId}` – Update a discount      | (4) Store Admin                                                                                                                             |
+| 18 | Delete Discount       | `DELETE /discounts/{discountId}` – Remove a discount         | (4) Store Admin                                                                                                                             |
+| 19 | Get Cart              | `GET /cart` – Get items in the authenticated user’s cart     | (2) User with Valid Login Credentials                                                                                                       |
+| 20 | Upsert Cart Item      | `POST /cart` – Add or update an item in the cart             | (2) User with Valid Login Credentials                                                                                                       |
+| 21 | Remove Cart Item      | `DELETE /cart/{productId}` – Remove an item from cart        | (2) User with Valid Login Credentials                                                                                                       |
+| 22 | List Orders           | `GET /order` – List authenticated user’s orders              | (2) User with Valid Login Credentials                                                                                                       |
+| 23 | Get Order Detail      | `GET /order/{orderId}` – Get order by ID                     | (2) User with Valid Login Credentials                                                                                                       |
+| 24 | Create Order          | `POST /order` – Create an order from current cart            | (2) User with Valid Login Credentials                                                                                                       |
+| 25 | Update Order Status   | `PATCH /order/{orderId}` – Update order status               | (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator                                                                |
+| 26 | Cancel Order          | `DELETE /order/{orderId}` – Cancel or remove an order        | (2) User with Valid Login Credentials                                                                                                       |
+| 27 | List Payment Methods  | `GET /payments-methods` – List user’s payment methods        | (2) User with Valid Login Credentials                                                                                                       |
+| 28 | Get Payment Detail    | `GET /payment/{paymentId}` – Get payment by ID               | (2) User with Valid Login Credentials                                                                                                       |
+| 29 | Process Payment       | `POST /payments` – Process a payment via gateway             | (2) User with Valid Login Credentials                                                                                                       |
+| 30 | Add Payment Method    | `POST /payment-methods` – Add a new payment method           | (2) User with Valid Login Credentials                                                                                                       |
+| 31 | Remove Payment Method | `DELETE /payment-methods/{methodId}` – Remove payment method | (2) User with Valid Login Credentials                                                                                                       |
+| 32 | Send Notification     | `POST /notifications` – Send notification to a user          | (4) Store Admin (5) Store Collaborator                                                                                                      |
+
+
+For a more detailed explanation of the entry points:
+[Entry Points](entrypoints.md)
 
 ### Assets
 This section presents all assets of the application, both physical and virtual (data).
 The Confidentiality, Integrity and Availability (CIA) parameters are defined either Low, Medium or High, applied as defined in [CIA Definition](#cia-definitions)
 
 #### Assets Table
-| ID      | Name          | Description                                                                       | Confidentiality               | Integrity  | Availability | Total/Priority |
-|---------|---------------|-----------------------------------------------------------------------------------|-------------------------------|------------|--------------|----------------|
-| SRV-001 | vs531         | Server hosting the main application                                               | 1 - Low (No data stored here) | 1 - Low    | 3 - High     | 5/9            |
-| SRV-002 | vs204         | Server hosting the main database                                                  | 3 - High                      | 3 - High   | 3 - High     | 9/9            |
-| SRV-003 | vs285         | Server hosting the logging database                                               | 2 - Medium                    | 3 - High   | 1 - Low      | 6/9            |
-| USRD-00 | User data     | The agglomeration of all user data                                                |                               |            |              |                |
-| USRD-01 | User Personal | Personal information of the user (Name, Date of Birth, Address, E-mail, ID, Hash) | 3 - High                      | 2 - Medium | 3 - High     | 8/9            |
-| USRD-02 | User Payment  | Payment information of the user (Payment Method, Billing Address, NIF)            | 3 - High                      | 2 - Medium | 1 - Low      | 6/9            |
-| USRD-03 | User Other    | Other information about the user (Purchase History, Review info, Display name)    | 2 - Medium                    | 1 - Low    | 1 - Low      | 4/9            |
-| PRDD-00 | Product Data  | The agglomeration of all product data                                             |                               |            |              |                |
-| PRDD-01 | Product Base  | Basic information of the product (Name, Price, Seller)                            | 1 - Low                       | 2 - Medium | 3 - High     | 6/9            |
-| PRDD-02 | Product Extra | Extra information of the product (Description, Images, Discount)                  | 1 - Low                       | 1 - Low    | 1 - Low      | 3/9            |
+| ID      | Name          | Description                                                                       | Trust Levels                                                                                        | Confidentiality                | Integrity  | Availability | Total/Priority | 
+|---------|---------------|-----------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------|--------------------------------|------------|--------------|----------------|
+| SRV-001 | vs531         | Server hosting the main application                                               | (6) System Administrator                                                                            | 1 - Low (No data stored here)  | 1 - Low    | 3 - High     | 5/9            |
+| SRV-002 | vs204         | Server hosting the main database                                                  | (6) System Administrator                                                                            | 3 - High                       | 3 - High   | 3 - High     | 9/9            |
+| SRV-003 | vs285         | Server hosting the logging database                                               | (6) System Administrator                                                                            | 2 - Medium                     | 3 - High   | 1 - Low      | 6/9            |
+| USRD-00 | User data     | The agglomeration of all user data                                                | (6) System Administrator                                                                            |                                |            |              |                |
+| USRD-01 | User Personal | Personal information of the user (Name, Date of Birth, Address, E-mail, ID, Hash) | (2) User with Valid Login Credentials                                                               | 3 - High                       | 2 - Medium | 3 - High     | 8/9            |
+| USRD-02 | User Payment  | Payment information of the user (Payment Method, Billing Address, NIF)            | (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator                        | 3 - High                       | 2 - Medium | 1 - Low      | 6/9            |
+| USRD-03 | User Other    | Other information about the user (Purchase History, Review info, Display name)    | (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator                        | 2 - Medium                     | 1 - Low    | 1 - Low      | 4/9            |
+| PRDD-00 | Product Data  | The agglomeration of all product data                                             | (4) Store Admin (6) System Administrator                                                            |                                |            |              |                |
+| PRDD-01 | Product Base  | Basic information of the product (Name, Price, Seller)                            | (1) Anonymous Web User (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator | 1 - Low                        | 2 - Medium | 3 - High     | 6/9            |
+| PRDD-02 | Product Extra | Extra information of the product (Description, Images, Discount)                  | (1) Anonymous Web User (2) User with Valid Login Credentials (4) Store Admin (5) Store Collaborator | 1 - Low                        | 1 - Low    | 1 - Low      | 3/9            |
 
 #### CIA Definitions
 
