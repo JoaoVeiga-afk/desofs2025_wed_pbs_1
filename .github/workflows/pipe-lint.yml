@@ -1,48 +1,30 @@
-﻿name: Pipeline for Lint
+﻿name: Lint
 
 on:
-  pull_request:
-    branches:
-      - '*'
+  # Trigger the workflow on push or pull request,
+  # but only for the main branch
   push:
     branches:
-      - '*'
-
-permissions:
-  contents: read
-  checks: write
+      - *
+  pull_request:
+    branches:
+      - *
 
 jobs:
-  detect-changes:
+  run-linters:
+    name: Run linters
     runs-on: ubuntu-latest
-    outputs:
-      cs_files: ${{ steps.filter.outputs.cs }}
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out Git repository
+        uses: actions/checkout@v4
 
-      - name: Detect changed files
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            cs:
-              - '**/*.cs'
-
-  run-lint:
-    needs: detect-changes
-    if: ${{ needs.detect-changes.outputs.cs_files != '' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup .NET SDK
+      - name: Set up .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: "9.0.x"
 
-      - name: Run dotnet format only on changed files
-        run: |
-          echo "Changed files:"
-          echo "${{ needs.detect-changes.outputs.cs_files }}"
-          
-          dotnet format ./ShopTex.sln --include ${{ needs.detect-changes.outputs.cs_files }} --verify-no-changes --verbosity diagnostic
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          dotnet_format: true
