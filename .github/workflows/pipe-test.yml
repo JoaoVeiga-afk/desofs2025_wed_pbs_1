@@ -27,6 +27,7 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore
-
-      - name: Run tests
-        run: dotnet test ShopTex.Tests/ShopTex.Tests.csproj --verbosity normal
+        
+      -  name: Run tests
+         working-directory: ShopTex.Tests
+         run: dotnet test --verbosity normal
