@@ -1,15 +1,6 @@
-﻿using System;
-namespace TestApp
-{class Program
-    {static void MaiWAWRFVBAEFVÇLMAERGFG+
-        wekrf,~Q3WÇfEV~P´
-        private KWFRMLº k;_merQDWçfAEºDLPV´+
-        LPÇ~QDWMLºEK"M: n,qd3wm.afksvlpc+ç" +
-    "b´« +vçgfd+lewrmºq32 .N,M.RKÇWFLPG+B´V N" +
-    "+GFPÇ" +
-    "TRLQA3w2m4.1n ,,e3wmkçolpf«+" +
-    "v n+´hpç" +
-    "gfltmker4.£@1NDCVCAWRGFAERFARFG<BDGFDSGn2M13KOLº(string[] args){Console.WriteLine("
-ljknkfvpoijaefvgfpijaedrfgvpçOJaegrfo*JewgrjOLªdzFKOªPbº^KPdgfbklºpÇdgfb-l3qç3rf+q
-e3oprkgf+
-    oeg~+oaerg+´~aergk+r3gfqe3rgfqe3rfqerfqrfrf3epãekr+p~gfae+p~rtvo+p~ºetakgºoLq3rmLªsrolllaewgrwetgwetrgwe4gtwegtwegtrq3gt5jikopétbhqjnklºeqtbnmklçadfmnkççadsrmkn  World!");}}}
+﻿namespace ShopTex;
+
+public class test
+{
+    
+}erfq3rq3rfgqw4rE4W FQAWER<F4ERW    2RQ4WERQG4WER:;wrvvserverfAWRFºMAWFKD QFWRAJLW4 QKºAERGÇSK31MR
