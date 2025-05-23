@@ -23,5 +23,5 @@ jobs:
     uses: ./.github/workflows/pipe-sonar.yml
 
   test:
-    needs: build
+    needs: sonar
     uses: ./.github/workflows/pipe-test.yml
