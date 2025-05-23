@@ -1,0 +1,23 @@
+﻿name: Main Pipeline
+
+on:
+  push:
+    branches: ['*']
+  pull_request:
+    branches: ['*']
+
+permissions:
+  contents: write
+  checks: write
+
+jobs:
+  build:
+    uses: ./.github/workflows/pipe-build.yml
+
+  lint:
+    needs: build
+    uses: ./.github/workflows/pipe-lint.yml
+
+  test:
+    needs: lint
+    uses: ./.github/workflows/pipe-test.yml
