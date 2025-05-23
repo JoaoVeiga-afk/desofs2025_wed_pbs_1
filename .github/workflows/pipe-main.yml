@@ -11,13 +11,13 @@ permissions:
   checks: write
 
 jobs:
+  lint:
+    uses: ./.github/workflows/pipe-lint.yml
+    
   build:
+    needs: lint
     uses: ./.github/workflows/pipe-build.yml
 
-  lint:
-    needs: build
-    uses: ./.github/workflows/pipe-lint.yml
-
   test:
-    needs: lint
+    needs: build
     uses: ./.github/workflows/pipe-test.yml
