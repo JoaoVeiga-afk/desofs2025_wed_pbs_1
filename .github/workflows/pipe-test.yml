@@ -29,4 +29,4 @@ jobs:
         run: dotnet restore
 
       - name: Run tests
-        run: dotnet test --verbosity normal
+        run: dotnet test ShopTex.Tests/ShopTex.Tests.csproj --verbosity normal
