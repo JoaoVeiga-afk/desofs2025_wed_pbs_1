@@ -1,9 +1,8 @@
 ﻿name: SonarQube
+
 on:
-  push:
-    branches: ['*']
-  pull_request:
-    branches: ['*']
+  workflow_call:
+    
 jobs:
   build:
     name: Build and analyze
