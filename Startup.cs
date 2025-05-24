@@ -24,9 +24,10 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<DatabaseContext>(opt => 
-            opt.UseSqlServer(Configs.DbConnection).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
+        services.AddDbContext<DatabaseContext>(opt =>
+            //opt.UseSqlServer(Configs.DbConnection).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+            opt.UseMySQL(Configs.DbConnection)
+                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
         ConfigureMyServices(services);
         
         services.AddCors(options =>
@@ -86,6 +87,12 @@ public class Startup
         app.UseAuthorization();
         
         app.UseEndpoints(endpoints => endpoints.MapControllers());
+        
+        using (var scope = app.ApplicationServices.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            dbContext.Database.Migrate(); // This applies migrations and creates tables
+        }
     }
 
     public void ConfigureMyServices(IServiceCollection services)
