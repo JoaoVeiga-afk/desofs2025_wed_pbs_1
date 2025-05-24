@@ -18,6 +18,9 @@ jobs:
     needs: lint
     uses: ./.github/workflows/pipe-build.yml
 
-  test:
+  sonar:
     needs: build
+    uses: ./.github/workflows/pipe-sonar.yml
+  test:
+    needs: sonar
     uses: ./.github/workflows/pipe-test.yml
