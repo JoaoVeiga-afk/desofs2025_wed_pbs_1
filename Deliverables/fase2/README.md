@@ -29,3 +29,16 @@ This section documents:
 - Workflow orchestration
 
 [View CI/CD pipelines](content/Pipelines_description.md)
+
+---
+
+## 🔐 Security Testing
+
+We have implemented several security-focused practices as part of our CI/CD pipeline and development process:
+
+- **Static analysis (SAST)** with **SonarQube (SonarCloud)**
+- **Dependency vulnerability scanning (SCA)** using **Dependabot**
+- **Code scanning alerts** enabled via **GitHub Advanced Security**
+- **Unit testing** to validate core application logic
+
+📄 [View detailed security testing](content/Security_testing.md)  
