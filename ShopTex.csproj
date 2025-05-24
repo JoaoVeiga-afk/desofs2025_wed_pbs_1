@@ -49,6 +49,7 @@
     <Content Include=".github\workflows\pipe-build.yml" />
     <Content Include=".github\workflows\pipe-lint.yml" />
     <Content Include=".github\workflows\pipe-main.yml" />
+    <Content Include=".github\workflows\pipe-scan-leaks.yml" />
     <Content Include=".github\workflows\pipe-sonar.yml" />
     <Content Include=".github\workflows\pipe-test.yml" />
     <Content Include=".git\COMMIT_EDITMSG" />
