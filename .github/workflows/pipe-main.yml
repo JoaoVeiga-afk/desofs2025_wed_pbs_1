@@ -17,10 +17,11 @@ jobs:
   build:
     needs: lint
     uses: ./.github/workflows/pipe-build.yml
-
+    
   sonar:
     needs: build
     uses: ./.github/workflows/pipe-sonar.yml
+    
   test:
     needs: sonar
     uses: ./.github/workflows/pipe-test.yml
