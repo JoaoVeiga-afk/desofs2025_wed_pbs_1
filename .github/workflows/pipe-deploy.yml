@@ -44,5 +44,5 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             pkill -f "dotnet" || true
-            nohup dotnet /home//dotnet-app/publish/ShopTex.dll > /home//dotnet-app/log.txt 2>&1 &
+            nohup dotnet /home//dotnet-app/publish/ShopTex.dll &
 
