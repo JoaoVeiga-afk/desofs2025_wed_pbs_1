@@ -1,0 +1,32 @@
+﻿name: Lint
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+  checks: write
+
+jobs:
+  run-linters:
+    name: Run linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: "9.0.x"
+
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          dotnet_format: true
+          dotnet_format_args: 'ShopTex.sln'
+          dotnet_format_auto_fix: true
+          commit: true
+          commit_message: "fix: apply dotnet-format auto fixes"
