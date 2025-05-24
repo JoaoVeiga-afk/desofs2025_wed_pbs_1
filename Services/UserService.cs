@@ -101,7 +101,7 @@ public class UserService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    private static byte[] GeneratePasswordSalt()
+    public static byte[] GeneratePasswordSalt()
     {
         byte[] salt = new byte[32];
         var rng = RandomNumberGenerator.Create();
@@ -110,7 +110,7 @@ public class UserService
         return salt;
     }
 
-    private static string HashString(string source, byte[] salt)
+    public static string HashString(string source, byte[] salt)
     {
         var hasher = new Argon2id(Encoding.UTF8.GetBytes(source));
         hasher.Salt = salt;
