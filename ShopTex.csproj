@@ -35,6 +35,9 @@
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
     <PackageReference Include="Serilog.Sinks.MySQL" Version="5.0.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.MySQL" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
@@ -46,6 +49,33 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\project.assets.json" />
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\ShopTex.Tests.csproj.nuget.dgspec.json" />
+<<<<<<< HEAD
+    <_ContentIncludedByDefault Remove="publish\publish\web.config" />
+=======
+>>>>>>> dc03d79 (#25-sys: Test deploy)
+    <_ContentIncludedByDefault Remove="publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\Deliverables\fase1\TM.json" />
+    <_ContentIncludedByDefault Remove="publish\global.json" />
+<<<<<<< HEAD
+    <_ContentIncludedByDefault Remove="publish\publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\Deliverables\fase1\TM.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\global.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\ShopTex.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\ShopTex.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\ShopTex.staticwebassets.endpoints.json" />
+=======
+>>>>>>> dc03d79 (#25-sys: Test deploy)
+    <_ContentIncludedByDefault Remove="publish\ShopTex.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.staticwebassets.endpoints.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include=".github\workflows\pipe-build.yml" />
+    <Content Include=".github\workflows\pipe-deploy.yml" />
     <_ContentIncludedByDefault Remove="publish\publish\web.config" />
     <_ContentIncludedByDefault Remove="publish\web.config" />
     <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
@@ -62,10 +92,6 @@
     <_ContentIncludedByDefault Remove="publish\ShopTex.deps.json" />
     <_ContentIncludedByDefault Remove="publish\ShopTex.runtimeconfig.json" />
     <_ContentIncludedByDefault Remove="publish\ShopTex.staticwebassets.endpoints.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include=".github\workflows\pipe-build.yml" />
     <Content Include=".github\workflows\pipe-lint.yml" />
     <Content Include=".github\workflows\pipe-main.yml" />
     <Content Include=".github\workflows\pipe-sonar.yml" />
