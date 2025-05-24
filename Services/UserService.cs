@@ -96,7 +96,7 @@ public class UserService
             new Claim("firstName", user.FirstName),
             new Claim("lastName", user.LastName),
             new Claim("email", user.Email.Value),
-            new Claim("role", user.Role.RoleName)
+            new Claim("role", user.Role != null ? user.Role.RoleName : "none"),
         };
 
         var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Issuer"], claims,
