@@ -3,8 +3,7 @@ name: Deploy Pipeline
 on:
   push:
     branches:
-      - feat/issue-25
-
+      - main
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
