@@ -11,7 +11,7 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.HasKey(u => u.Id);
-        
+
         builder.OwnsOne(u => u.Email, email =>
         {
             email.Property(p => p.Value).HasColumnName(nameof(UserEmail)).IsRequired();
@@ -21,11 +21,6 @@ public class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
         builder.OwnsOne(u => u.Role, role =>
         {
             role.Property(r => r.RoleName).HasColumnName(nameof(UserRole)).IsRequired();
-        });
-
-        builder.OwnsOne(u => u.Nif, nif =>
-        {
-            nif.Property(n => n.Value).HasColumnName(nameof(UserNif));
         });
 
         builder.OwnsOne(u => u.Status, status =>
