@@ -38,6 +38,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"JoaoVeiga-afk_desofs2025_wed_pbs_1" /o:"joaoveiga-afk" /d:sonar.token="$env:SONAR_TOKEN" /d:sonar.host.url="https://sonarcloud.io"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"JoaoVeiga-afk_desofs2025_wed_pbs_1" /o:"joaoveiga-afk" /d:sonar.token="a7bd31584305fc3a09d47bda28e0bc1517dc3183" /d:sonar.host.url="https://sonarcloud.io"
             dotnet build
-          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="$env:SONAR_TOKEN"
+          .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="a7bd31584305fc3a09d47bda28e0bc1517dc3183"
