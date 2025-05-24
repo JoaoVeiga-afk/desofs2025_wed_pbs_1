@@ -44,4 +44,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           script: |
             pkill -f "dotnet" || true
-            nohup dotnet /home/${{ secrets.FEDORA_SSH_USER }}/dotnet-app/ShopTex.dll > app.log 2>&1 &
+            dotnet /home/${{ secrets.FEDORA_SSH_USER }}/dotnet-app/publish/ShopTex.dll &
