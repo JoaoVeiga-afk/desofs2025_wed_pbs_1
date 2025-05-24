@@ -47,9 +47,9 @@
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "HTTPS",
               "threats": []
             },
             "labels": [
@@ -96,9 +96,9 @@
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "HTTPS",
               "threats": []
             },
             "labels": [
@@ -113,7 +113,7 @@
             },
             "vertices": [
               {
-                "x": 340,
+                "x": 310,
                 "y": 130
               }
             ]
@@ -138,19 +138,19 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Flow",
-              "name": "Queries",
+              "name": "Queries (MySQL\nwire protocol)",
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "MySQL wire protocol over TLS",
               "threats": []
             },
             "labels": [
-              "Queries"
+              "Queries (MySQL\nwire protocol)"
             ],
             "id": "b4e5d5d0-f9cd-4a3e-8788-5a26f5b444c8",
             "source": {
@@ -158,7 +158,13 @@
             },
             "target": {
               "cell": "f310165b-1213-417a-9fc7-897c82689664"
-            }
+            },
+            "vertices": [
+              {
+                "x": 370,
+                "y": 420
+              }
+            ]
           },
           {
             "shape": "flow",
@@ -180,19 +186,19 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Flow",
-              "name": "Web App Query Results",
+              "name": "Web App Query Results \n(MySQL wire protocol)",
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "MySQL wire protocol over TLS",
               "threats": []
             },
             "labels": [
-              "Web App Query Results"
+              "Web App Query Results \n(MySQL wire protocol)"
             ],
             "id": "4c6858f5-996c-4581-a58d-30022a995fc5",
             "source": {
@@ -228,71 +234,19 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Flow",
-              "name": "Write Files",
+              "name": "Read Files (SFTP)",
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "SFTP",
               "threats": []
             },
             "labels": [
-              "Write Files"
-            ],
-            "id": "423710de-d027-4f8e-8bca-7a043fa56589",
-            "source": {
-              "cell": "8c14c06b-8618-4c2f-a30e-dd1fa0c09cb5"
-            },
-            "target": {
-              "cell": "98b9a69c-44df-4e56-b270-b759c948efa3"
-            },
-            "vertices": [
-              {
-                "x": 150,
-                "y": 390
-              },
-              {
-                "x": 110,
-                "y": 430
-              }
-            ]
-          },
-          {
-            "shape": "flow",
-            "attrs": {
-              "line": {
-                "stroke": "#333333",
-                "targetMarker": {
-                  "name": "block"
-                },
-                "sourceMarker": {
-                  "name": ""
-                },
-                "strokeDasharray": null
-              }
-            },
-            "width": 200,
-            "height": 100,
-            "zIndex": 10,
-            "connector": "smooth",
-            "data": {
-              "type": "tm.Flow",
-              "name": "Read Files",
-              "description": "",
-              "outOfScope": false,
-              "reasonOutOfScope": "",
-              "hasOpenThreats": false,
-              "isBidirectional": false,
-              "isEncrypted": false,
-              "isPublicNetwork": false,
-              "protocol": "",
-              "threats": []
-            },
-            "labels": [
-              "Read Files"
+              "Read Files (SFTP)"
             ],
             "id": "ffca23a9-4fb2-4065-9af5-d226e4048b68",
             "source": {
@@ -300,7 +254,13 @@
             },
             "target": {
               "cell": "8c14c06b-8618-4c2f-a30e-dd1fa0c09cb5"
-            }
+            },
+            "vertices": [
+              {
+                "x": 220,
+                "y": 440
+              }
+            ]
           },
           {
             "shape": "trust-boundary-curve",
@@ -402,19 +362,19 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Flow",
-              "name": "Web App Write Log",
+              "name": "Web App Write Log (Syslog)",
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "Syslog over TLS",
               "threats": []
             },
             "labels": [
-              "Web App Write \nLog"
+              "Web App Write Log (Syslog)"
             ],
             "id": "11371dd2-0528-46fc-99f7-f808402d052b",
             "source": {
@@ -451,19 +411,19 @@
             "connector": "smooth",
             "data": {
               "type": "tm.Flow",
-              "name": "Web App Read Log",
+              "name": "Web App Read Log (Syslog)",
               "description": "",
               "outOfScope": false,
               "reasonOutOfScope": "",
               "hasOpenThreats": false,
               "isBidirectional": false,
-              "isEncrypted": false,
+              "isEncrypted": true,
               "isPublicNetwork": false,
-              "protocol": "",
+              "protocol": "Syslog over TLS",
               "threats": []
             },
             "labels": [
-              "Web App Read Log"
+              "Web App Read Log (Syslog)"
             ],
             "id": "b2be1b07-8209-4c09-b5bc-84c30ab69e18",
             "source": {
@@ -514,6 +474,58 @@
               {
                 "x": 670,
                 "y": 280
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": null
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "data": {
+              "type": "tm.Flow",
+              "name": "Write Files (SFTP)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": false,
+              "protocol": "SFTP",
+              "threats": []
+            },
+            "labels": [
+              "Write Files (SFTP)"
+            ],
+            "id": "423710de-d027-4f8e-8bca-7a043fa56589",
+            "source": {
+              "cell": "8c14c06b-8618-4c2f-a30e-dd1fa0c09cb5"
+            },
+            "target": {
+              "cell": "98b9a69c-44df-4e56-b270-b759c948efa3"
+            },
+            "vertices": [
+              {
+                "x": 190,
+                "y": 340
+              },
+              {
+                "x": 130,
+                "y": 420
               }
             ]
           },
@@ -1879,6 +1891,7 @@
             "shape": "trust-boundary-curve",
             "width": 200,
             "height": 100,
+            "zIndex": 15,
             "connector": "smooth",
             "data": {
               "type": "tm.Boundary",
@@ -1918,8 +1931,7 @@
                 "x": 142,
                 "y": 452
               }
-            ],
-            "zIndex": 15
+            ]
           },
           {
             "position": {
@@ -1947,6 +1959,7 @@
             },
             "visible": true,
             "shape": "store",
+            "zIndex": 16,
             "ports": {
               "groups": {
                 "top": {
@@ -2180,8 +2193,7 @@
                 "informationDisclosure": 4,
                 "denialOfService": 2
               }
-            },
-            "zIndex": 16
+            }
           }
         ]
       }
