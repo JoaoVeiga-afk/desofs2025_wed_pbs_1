@@ -5,7 +5,3 @@ namespace ShopTex.Domain.Shared
         Task<int> CommitAsync();
     }
 }
-
-
-
-
