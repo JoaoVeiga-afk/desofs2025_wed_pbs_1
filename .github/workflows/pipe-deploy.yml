@@ -30,18 +30,18 @@ jobs:
       - name: Copy files via SSH
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.FEDORA_SERVER_IP }}
-          username: ${{ secrets.FEDORA_SSH_USER }}
-          key: ${{ secrets.FEDORA_SSH_KEY }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           source: "publish/"
           target: "/home/${{ secrets.FEDORA_SSH_USER }}/dotnet-app"
 
       - name: Restart application (optional)
         uses: appleboy/ssh-action@v1.0.0
         with:
-          host: ${{ secrets.FEDORA_SERVER_IP }}
-          username: ${{ secrets.FEDORA_SSH_USER }}
-          key: ${{ secrets.FEDORA_SSH_KEY }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
           script: |
             pkill -f "dotnet" || true
             nohup dotnet /home/${{ secrets.FEDORA_SSH_USER }}/dotnet-app/ShopTex.dll > app.log 2>&1 &
