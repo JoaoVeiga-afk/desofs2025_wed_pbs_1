@@ -137,14 +137,14 @@ public class UserService
         return tokenString;
     }
 
-    private static byte[] GeneratePasswordSalt()
+    public static byte[] GeneratePasswordSalt()
     {
         byte[] salt = new byte[32];
         RandomNumberGenerator.Create().GetBytes(salt);
         return salt;
     }
 
-    private static string HashString(string source, byte[] salt)
+    public static string HashString(string source, byte[] salt)
     {
         var hasher = new Argon2id(Encoding.UTF8.GetBytes(source))
         {

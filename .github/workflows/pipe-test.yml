@@ -20,5 +20,4 @@ jobs:
         run: dotnet restore
         
       -  name: Run tests
-         working-directory: ShopTex.Tests
          run: dotnet test --verbosity normal
