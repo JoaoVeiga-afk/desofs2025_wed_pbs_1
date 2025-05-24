@@ -4,3 +4,4 @@ Repository for group 1 of DESOFT
 Fase Index:
 
 - [Fase 1](Deliverables/fase1/README.md)
+- [Fase 2](Deliverables/fase2/README.md)
