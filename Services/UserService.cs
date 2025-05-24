@@ -27,7 +27,7 @@ public class UserService
         var list = await _repo.GetAllAsync();
 
         List<UserDto> listDto = list.ConvertAll(user =>
-            new UserDto(user.Id.AsGuid(), user.FirstName, user.LastName, user.Phone, user.Email, user.Role, user.Nif, user.Status));
+            new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status));
 
         return listDto;
     }
@@ -38,7 +38,7 @@ public class UserService
 
         if (user == null) return null;
 
-        return new UserDto(user.Id.AsGuid(), user.FirstName, user.LastName, user.Phone, user.Email, user.Role, user.Nif, user.Status);
+        return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
     }
 
     public async Task<UserDto> AddAsync(CreatingUserDto dto)
@@ -48,17 +48,14 @@ public class UserService
         string hashPassword = HashString(dto.Password, salt);
 
         User user;
-        
-        if (dto.Id == null)
-            user = new User(dto.FirstName, dto.LastName, dto.Phone, dto.Email, hashPassword, dto.Role, dto.Nif, dto.Status, salt);
-        else
-            user = new User(dto.Id, dto.FirstName, dto.LastName, dto.Phone, dto.Email, hashPassword, dto.Role, dto.Nif, dto.Status, salt);
-        
+
+        user = new User(dto.Name, dto.Phone, dto.Email, hashPassword, dto.RoleId, dto.Status, salt);
+
         await _repo.AddAsync(user);
 
         await _unitOfWork.CommitAsync();
 
-        return new UserDto(user.Id.AsGuid(), user.FirstName, user.LastName, user.Phone, user.Email, user.Role, user.Nif, user.Status);
+        return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
     }
     public async Task<dynamic> UserSignIn(UserSignInDto dto)
     {
@@ -71,15 +68,15 @@ public class UserService
         if (!VerifyPassword(dto.Password, user.Salt, user.Password))
         {
             return null;
-             
+
         }
         var result = new
         {
-            userDTO = new UserDto(user.Id.AsGuid(), user.FirstName, user.LastName, user.Phone, user.Email, user.Role, user.Nif, user.Status),
+            userDTO = new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status),
             token = GenerateToken(user)
         };
-        
-        
+
+
         return result;
 
     }
@@ -93,24 +90,23 @@ public class UserService
         var claims = new[]
         {
             new Claim("guid", user.Id.Value),
-            new Claim("firstName", user.FirstName),
-            new Claim("lastName", user.LastName),
+            new Claim("name", user.Name),
             new Claim("email", user.Email.Value),
-            new Claim("role", user.Role.RoleName)
+            new Claim("role", user.Role != null ? user.Role.RoleName : "none"),
         };
 
         var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Issuer"], claims,
             expires: DateTime.Now.AddDays(30), signingCredentials: cred);
-        
+
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-    
+
     private static byte[] GeneratePasswordSalt()
     {
         byte[] salt = new byte[32];
         var rng = RandomNumberGenerator.Create();
         rng.GetBytes(salt);
-        
+
         return salt;
     }
 
@@ -129,5 +125,5 @@ public class UserService
     {
         return hashedPassword.Equals(HashString(password, salt));
     }
-    
+
 }
