@@ -87,6 +87,12 @@ public class Startup
         app.UseAuthorization();
         
         app.UseEndpoints(endpoints => endpoints.MapControllers());
+        
+        using (var scope = app.ApplicationServices.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
+            dbContext.Database.Migrate(); // This applies migrations and creates tables
+        }
     }
 
     public void ConfigureMyServices(IServiceCollection services)
