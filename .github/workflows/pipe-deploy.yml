@@ -42,7 +42,6 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          script: |
-            pkill -f "dotnet" || true
-            nohup dotnet /home//dotnet-app/publish/ShopTex.dll
+          script:
+            sudo systemctl restart shoptx.service
 
