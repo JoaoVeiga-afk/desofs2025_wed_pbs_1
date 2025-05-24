@@ -22,11 +22,12 @@ This section outlines the standards all contributors must follow when working in
 We use GitHub Actions to automate our development lifecycle, ensuring each change is properly verified.
 
 This section documents:
-- Linting and formatting steps
-- Build process
-- SonarQube analysis
-- Unit test execution
-- Workflow orchestration
+- **Linting and formatting steps**
+- **Build process**
+- **SonarQube analysis**
+- **GitHub Leaks integration for secret detection**
+- **Unit test execution**
+- **Workflow orchestration**
 
 [View CI/CD pipelines](content/Pipelines_description.md)
 

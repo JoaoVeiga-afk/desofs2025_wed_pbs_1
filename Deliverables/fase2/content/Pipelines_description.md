@@ -2,13 +2,14 @@
 
 Our project uses modular GitHub Actions to enforce quality, correctness, and analysis:
 
-| Workflow      | Purpose                    | File                    |
-|---------------|----------------------------|--------------------------|
-| Linting       | Analyse the code style     | `.github/workflows/pipe-lint.yml` |
-| Build         | Restore & compile the code | `.github/workflows/pipe-build.yml` |
-| Test          | Run unit tests             | `.github/workflows/pipe-test.yml`  |
-| SonarQube     | Static code analysis       | `.github/workflows/pipe-sonar.yml` |
-| Main Pipeline | Orchestrates all jobs      | `.github/workflows/pipe-main.yml`  |
+| Workflow      | Purpose                    | File                                    |
+|---------------|----------------------------|-----------------------------------------|
+| Linting       | Analyse the code style     | `.github/workflows/pipe-lint.yml`       |
+| Build         | Restore & compile the code | `.github/workflows/pipe-build.yml`      |
+| Test          | Run unit tests             | `.github/workflows/pipe-test.yml`       |
+| SonarQube     | Static code analysis       | `.github/workflows/pipe-sonar.yml`      |
+| Scan Leaks    | Detect secret leaks        | `.github/workflows/pipe-scan-leaks.yml` |
+| Main Pipeline | Orchestrates all jobs      | `.github/workflows/pipe-main.yml`       |
 
 
 ---
@@ -23,7 +24,7 @@ The central workflow that orchestrates all other workflows in a defined order. I
 2. `pipe-build.yml` – Restore and compile the project
 3. `pipe-sonar.yml` – Run static code analysis using SonarCloud
 4. `pipe-test.yml` – Execute unit tests
-
+5. `pipe-scan-leaks.yml` – Scan for secret leaks using GitHub Leaks
 ---
 
 ---
@@ -85,3 +86,18 @@ Runs all unit tests located in `ShopTex.Tests` to ensure the application's funct
 Ubuntu, .NET 9.0
 
 ---
+
+## `pipe-scan-leaks.yml` – GitHub Leaks Workflow
+
+**Description**:  
+This workflow integrates **GitHub Leaks** to scan for secrets in the repository. It runs automatically with every commit to detect any exposed sensitive information such as API keys, credentials, or tokens.
+
+**Triggered by**:  
+`workflow_call` (called after tests)
+
+**Tools used**:
+- [`gitleaks/gitleaks-action`](https://github.com/gitleaks/gitleaks-action)
+- GitHub Leaks configuration
+
+**Outcome**:  
+If any leaks are found, the build will fail,
