@@ -16,5 +16,5 @@ public class DatabaseContext : DbContext
         modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
     }
 
-    public DbSet<User> Users { get; set; } = null!;
+    public DbSet<User> User { get; set; } = null!;
 }

@@ -24,9 +24,10 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<DatabaseContext>(opt => 
-            opt.UseSqlServer(Configs.DbConnection).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-
+        services.AddDbContext<DatabaseContext>(opt =>
+            //opt.UseSqlServer(Configs.DbConnection).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
+            opt.UseMySQL(Configs.DbConnection)
+                .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
         ConfigureMyServices(services);
         
         services.AddCors(options =>
