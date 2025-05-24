@@ -21,6 +21,8 @@ jobs:
   sonar:
     needs: build
     uses: ./.github/workflows/pipe-sonar.yml
+    secrets: inherit
+    
   test:
     needs: sonar
     uses: ./.github/workflows/pipe-test.yml
