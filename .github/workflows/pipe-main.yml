@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: ['*']
+    branches: ['**']
   pull_request:
-    branches: ['*']
+    branches: ['**']
 
 permissions:
   contents: write
