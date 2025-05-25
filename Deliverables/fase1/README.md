@@ -8,24 +8,24 @@ ShopTex is an E-Commerce platform, consisting of multiple stores. Each store con
 ## Requirements
 The functional and non-functional requirements are defined in the document linked bellow.
 
-[Requirements Document](Requirements.md)
+[Requirements Document](contents/Requirements_description.md)
 
 ## Logic Diagram
-![Logic Diagram](Logic.jpg)
+![Logic Diagram](contents/diagrams/Logic_diagram.jpg)
 
 ## Domain Model
 
-![Domain Model](domainModel.png)
+![Domain Model](contents/diagrams/DomainModel_diagram.png)
 
 ## Use Case
 This section lists the Use Cases and the Use Case Diagram for the system/application.
 
-[Link to Use Cases](useCases.md)
+[Link to Use Cases](contents/UseCases_description.md)
 
-[Link to Use Case Diagram](usecaseDiagram.puml)
+[Link to Use Case Diagram](contents/diagrams/UseCase_diagram.png)
 
 ## Security
-[Link to Security](Security.md)
+[Link to Security](contents/Security_description.md)
 
 ## Deployment Diagram
 
@@ -34,7 +34,7 @@ The MySQL database will be connected by MySQL wire protocol and the Log database
 for the connections with the backend, and it won't have open ports open to outside internet. 
 These databases will use MySQL version 8.0.
 
-![Deployment Diagram](Deployment%20Diagram.jpg)
+![Deployment Diagram](contents/diagrams/Deployment_diagram.jpg)
 
 ## Threat Model
 
@@ -42,7 +42,7 @@ The Threat Modelling for this application was made using Threat Dragon.
 The following link directs to the report generated from Threat Dragon, which includes
 the data flow diagram, threat categorization, threat analysis, threat ranking, and mitigation & countermeasure techniques.
 
-[Threat Model Report](threat_model_report.pdf)
+[Threat Model Report](contents/ThreatModel_report.pdf)
 
 ### External Dependencies
 
@@ -95,7 +95,7 @@ the data flow diagram, threat categorization, threat analysis, threat ranking, a
 
 
 For a more detailed explanation of the entry points:
-[Entry Points](entrypoints.md)
+[Entry Points](contents/Entrypoints_description.md)
 
 ### Assets
 This section presents all assets of the application, both physical and virtual (data).
@@ -131,10 +131,10 @@ When used together to evaluate an asset, the level numbers can be summed to dete
 
 ### Data Flow Diagram
 
-![Data Flow Diagram](data_flow_diagram_lvl1.png)
+![Data Flow Diagram](contents/diagrams/DataFlow_diagram.png)
 
 ### Threat Categorization Criteria
 We used STRIDE for Threat Categorization.
 
 ## Other
-In this folder you can find the ASVS (Application Security Verification Standard) checklist in the [excel file](v4-ASVS-checklist-en.xlsx).
+In this folder you can find the ASVS (Application Security Verification Standard) checklist in the [excel file](contents/ASVS_checklist.xlsx).
