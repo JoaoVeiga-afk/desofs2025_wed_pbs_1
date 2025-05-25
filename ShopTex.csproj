@@ -43,10 +43,19 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\project.assets.json" />
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\ShopTex.Tests.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\Deliverables\fase1\TM.json" />
+    <_ContentIncludedByDefault Remove="publish\global.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.staticwebassets.endpoints.json" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include=".github\workflows\pipe-build.yml" />
+    <Content Include=".github\workflows\pipe-deploy.yml" />
     <Content Include=".github\workflows\pipe-lint.yml" />
     <Content Include=".github\workflows\pipe-main.yml" />
     <Content Include=".github\workflows\pipe-scan-leaks.yml" />
