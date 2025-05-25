@@ -2,9 +2,10 @@
 using Moq;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Users;
+using ShopTex.Services;
 using Xunit;
 
-namespace ShopTex.Services;
+namespace ShopTex.Tests.Services;
 
 [TestSubject(typeof(UserService))]
 public class UserServiceTest
