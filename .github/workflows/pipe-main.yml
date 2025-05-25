@@ -20,7 +20,7 @@ jobs:
     
   leaks:
     needs: build
-    uses: ./.github/workflows/pipe-scan-leaks.yml  
+    uses: ./.github/workflows/pipe-build.yml  
     
   sonar:
     needs: leaks
