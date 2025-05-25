@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" Version="2025.1.0-eap1" />
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.0" />
@@ -25,6 +26,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.14.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="9.0.0" />
@@ -44,12 +46,8 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\project.assets.json" />
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\ShopTex.Tests.csproj.nuget.dgspec.json" />
+
     <_ContentIncludedByDefault Remove="publish\publish\web.config" />
-    <_ContentIncludedByDefault Remove="publish\web.config" />
-    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
-    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
-    <_ContentIncludedByDefault Remove="publish\Deliverables\fase1\TM.json" />
-    <_ContentIncludedByDefault Remove="publish\global.json" />
     <_ContentIncludedByDefault Remove="publish\publish\appsettings.Development.json" />
     <_ContentIncludedByDefault Remove="publish\publish\appsettings.json" />
     <_ContentIncludedByDefault Remove="publish\publish\Deliverables\fase1\TM.json" />
@@ -64,8 +62,10 @@
 
   <ItemGroup>
     <Content Include=".github\workflows\pipe-build.yml" />
+    <Content Include=".github\workflows\pipe-deploy.yml" />
     <Content Include=".github\workflows\pipe-lint.yml" />
     <Content Include=".github\workflows\pipe-main.yml" />
+    <Content Include=".github\workflows\pipe-scan-leaks.yml" />
     <Content Include=".github\workflows\pipe-sonar.yml" />
     <Content Include=".github\workflows\pipe-test.yml" />
     <Content Include=".git\COMMIT_EDITMSG" />
