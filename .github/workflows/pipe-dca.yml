@@ -27,7 +27,7 @@ jobs:
       - name: Health Check
         run: |
           echo "Performing health check..."
-          RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }})
+          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }})
           if [ "$RESPONSE" -ne 200 ]; then
             echo "Health check failed with status code $RESPONSE"
             exit 1
