@@ -1,0 +1,54 @@
+﻿name: DCA
+
+on:
+  workflow_run:
+    workflows: ["Deploy Pipeline"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  zap_scan:
+    runs-on: ubuntu-latest
+    name: Scan ${{ matrix.endpoint }}
+    strategy:
+      matrix:
+        endpoint:
+          - /api/auth/signin
+          - /api/auth/signup
+          - /api/auth/me
+
+    steps:
+      - name: Set base and ping URLs and safe endpoint name
+        run: |
+          echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
+          echo "PING_URL=https://vs-gate.dei.isep.ipp.pt:10531/api/ping" >> $GITHUB_ENV
+          safe=$(echo "${{ matrix.endpoint }}" | tr '/' '_')
+          echo "SAFE_ENDPOINT=$safe" >> $GITHUB_ENV
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Health Check
+        if: matrix.endpoint == '/api/auth/signin'
+        run: |
+          echo "Checking if application is online (/api/ping)..."
+          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null "$PING_URL")
+          echo "Status: $RESPONSE"
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "::error::Health check failed: /api/ping returned $RESPONSE"
+            exit 1
+          else
+            echo "Application is online (HTTP $RESPONSE)"
+          fi
+
+      - name: ZAP Full Scan on ${{ matrix.endpoint }}
+        uses: zaproxy/action-full-scan@v0.12.0
+        with:
+          target: ${{ env.BASE_URL }}${{ matrix.endpoint }}
+          cmd_options: '-a'
+          allow_issue_writing: false
+          artifact_name: zap_scan_${{ env.SAFE_ENDPOINT }}
