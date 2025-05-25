@@ -33,7 +33,7 @@ jobs:
           path: zap_report.html  
 
       - name: Upload ZAP Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: zap-logs
           path: zap-log.txt  
