@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore;
-using Microsoft.EntityFrameworkCore;
-using ShopTex;
-using ShopTex.Models;
+using Microsoft.Extensions.Configuration;
+using Serilog;
+using Serilog.AspNetCore;
 
 namespace ShopTex;
 
@@ -9,12 +9,35 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        CreateWebHostBuilder(args).Build().Run();
-    }
+        // Enable Serilog self-logging for diagnostics
+        Serilog.Debugging.SelfLog.Enable(msg => Console.Error.WriteLine(msg));
 
-    public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-        WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
+        var builder = WebApplication.CreateBuilder(args);
+
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(builder.Configuration)
+            .Enrich.FromLogContext()
+            .WriteTo.MySQL(
+               connectionString: builder.Configuration.GetConnectionString("MySqlLogs"),
+               tableName:"Logs")
+            .CreateLogger();
+
+        builder.Host.UseSerilog();
+
+        var startup = new ShopTex.Startup(builder.Configuration);
+        startup.ConfigureServices(builder.Services);
+
+        var app = builder.Build();
+
+        startup.Configure(app, app.Environment);
+
+        Log.Information("Application started");
+
+        app.Run();
+    }
 }
+
+
 
 /*var builder = WebApplication.CreateBuilder(args);
 

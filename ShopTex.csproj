@@ -30,6 +30,9 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.EntityFrameworkCore" Version="9.0.0" />
     <PackageReference Include="MySql.Data" Version="9.3.0" />
     <PackageReference Include="MySql.EntityFrameworkCore" Version="9.0.3" />
+    <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+    <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.MySQL" Version="5.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="xunit" Version="2.9.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="3.1.0">
@@ -41,6 +44,22 @@
   <ItemGroup>
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\project.assets.json" />
     <_ContentIncludedByDefault Remove="ShopTex.Tests\obj\ShopTex.Tests.csproj.nuget.dgspec.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\Deliverables\fase1\TM.json" />
+    <_ContentIncludedByDefault Remove="publish\global.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\Deliverables\fase1\TM.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\global.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\ShopTex.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\ShopTex.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="publish\publish\ShopTex.staticwebassets.endpoints.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.runtimeconfig.json" />
+    <_ContentIncludedByDefault Remove="publish\ShopTex.staticwebassets.endpoints.json" />
   </ItemGroup>
 
   <ItemGroup>
