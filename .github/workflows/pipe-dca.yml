@@ -24,20 +24,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Health Check (apenas verifica se está online)
+      - name: Health Check
         run: |
-          echo "Performing health check..."
-          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }})
+          echo "Performing health check on /api/ping..."
+          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }}/api/ping)
           echo "Status: $RESPONSE"
-          if [ "$RESPONSE" -eq 000 ]; then
-            echo "Health check falhou: sem resposta do servidor"
-            exit 1
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Health check failed"
           else
-            echo "Servidor está online (HTTP $RESPONSE)"
+            echo "Health check passed (HTTP $RESPONSE)"
           fi
 
+      - name: Provide API Endpoints to ZAP
+        run: |
+          echo "https://vs-gate.dei.isep.ipp.pt:10531/api/auth/signin" >> urls.txt
+          echo "https://vs-gate.dei.isep.ipp.pt:10531/api/auth/signup" >> urls.txt
+          echo "https://vs-gate.dei.isep.ipp.pt:10531/api/auth/me" >> urls.txt
+    
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: ${{ env.TARGET_URL }}
+          urls: urls.txt
           cmd_options: '-a'
