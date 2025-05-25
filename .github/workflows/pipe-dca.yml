@@ -24,10 +24,12 @@ jobs:
           - /api/auth/me
 
     steps:
-      - name: Set base and ping URLs
+      - name: Set base and ping URLs and safe endpoint name
         run: |
           echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
           echo "PING_URL=https://vs-gate.dei.isep.ipp.pt:10531/api/ping" >> $GITHUB_ENV
+          safe=$(echo "${{ matrix.endpoint }}" | tr '/' '_')
+          echo "SAFE_ENDPOINT=$safe" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,4 +52,4 @@ jobs:
           target: ${{ env.BASE_URL }}${{ matrix.endpoint }}
           cmd_options: '-a'
           allow_issue_writing: true
-          artifact_name: zap_scan_${{ matrix.endpoint }}
+          artifact_name: zap_scan_${{ env.SAFE_ENDPOINT }}
