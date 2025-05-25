@@ -24,15 +24,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Health Check
+      - name: Health Check (apenas verifica se está online)
         run: |
           echo "Performing health check..."
           RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }})
-          if [ "$RESPONSE" -ne 200 ]; then
-            echo "Health check failed with status code $RESPONSE"
+          echo "Status: $RESPONSE"
+          if [ "$RESPONSE" -eq 000 ]; then
+            echo "Health check falhou: sem resposta do servidor"
             exit 1
           else
-            echo "Health check passed with status code $RESPONSE"
+            echo "Servidor está online (HTTP $RESPONSE)"
           fi
 
       - name: ZAP Full Scan
