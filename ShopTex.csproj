@@ -7,6 +7,7 @@
     <InvariantGlobalization>false</InvariantGlobalization>
     <AssemblyName>ShopTex</AssemblyName>
     <RootNamespace>ShopTex</RootNamespace>
+    <StartupObject>ShopTex.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,6 +27,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.0" />
     <PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.14.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
@@ -58,6 +60,11 @@
     <_ContentIncludedByDefault Remove="publish\ShopTex.deps.json" />
     <_ContentIncludedByDefault Remove="publish\ShopTex.runtimeconfig.json" />
     <_ContentIncludedByDefault Remove="publish\ShopTex.staticwebassets.endpoints.json" />
+    <_ContentIncludedByDefault Remove="publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\Deliverables\fase1\TM.json" />
+    <_ContentIncludedByDefault Remove="publish\global.json" />
   </ItemGroup>
 
   <ItemGroup>

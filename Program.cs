@@ -9,7 +9,6 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        // Enable Serilog self-logging for diagnostics
         Serilog.Debugging.SelfLog.Enable(msg => Console.Error.WriteLine(msg));
 
         var builder = WebApplication.CreateBuilder(args);
