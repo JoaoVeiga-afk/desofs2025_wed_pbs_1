@@ -15,33 +15,52 @@ permissions:
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Scan each API endpoint individually
+    name: Scan ${{ matrix.endpoint }}
     strategy:
       matrix:
         endpoint:
           - /api/auth/signin
           - /api/auth/signup
           - /api/auth/me
+
     steps:
-      - name: Set target URL
-        id: set_target_url
-        run: echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
+      - name: Set base URL
+        run: |
+          echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
+          echo "PING_URL=https://vs-gate.dei.isep.ipp.pt:10531/api/ping" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Health Check (${BASE_URL}${{ matrix.endpoint }})
+      - name: Health Check (/api/ping)
+        if: matrix.endpoint == '/api/auth/signin'
         run: |
-          echo "Checking ${{ env.BASE_URL }}${{ matrix.endpoint }}"
-          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.BASE_URL }}${{ matrix.endpoint }})
-          if [ "$RESPONSE" -eq 000 ]; then
-            echo "::error::Health check failed (no response)"
+          echo "Checking if application is online (/api/ping)..."
+          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null "$PING_URL")
+          echo "Status: $RESPONSE"
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "::error::Health check failed: /api/ping returned $RESPONSE"
+            exit 1
           else
-            echo "Health check passed (HTTP $RESPONSE)"
+            echo "Application is online (HTTP $RESPONSE)"
           fi
 
-      - name: ZAP Full Scan on ${{ matrix.endpoint }}
+      - name: Run ZAP Full Scan on ${{ matrix.endpoint }}
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: ${{ env.BASE_URL }}${{ matrix.endpoint }}
           cmd_options: '-a'
+
+      - name: Rename reports
+        run: |
+          safe_endpoint=$(echo "${{ matrix.endpoint }}" | tr -d '/')
+          mv report_html.html report_${safe_endpoint}.html || true
+          mv report_json.json report_${safe_endpoint}.json || true
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: zap_report_${{ matrix.endpoint }}
+          path: |
+            report_*.html
+            report_*.json
