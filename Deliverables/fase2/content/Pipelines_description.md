@@ -10,6 +10,7 @@ Our project uses modular GitHub Actions to enforce quality, correctness, and ana
 | SonarQube     | Static code analysis       | `.github/workflows/pipe-sonar.yml`      |
 | Scan Leaks    | Detect secret leaks        | `.github/workflows/pipe-scan-leaks.yml` |
 | Main Pipeline | Orchestrates all jobs      | `.github/workflows/pipe-main.yml`       |
+|Deployment    | Deploy to production         | `.github/workflows/pipe-deploy.yml`     |
 
 
 ---
@@ -101,3 +102,21 @@ This workflow integrates **GitHub Leaks** to scan for secrets in the repository.
 
 **Outcome**:  
 If any leaks are found, the build will fail,
+
+---
+
+## 'pipe-deploy.yml` – Deployment Workflow'
+
+**Description**:
+This workflow is responsible for deploying the application to the production environment. It is triggered automatically after a commit to the main branch.
+
+**Triggered by**:
+`on push` to the `main` branch
+
+**Tools used**:
+- SCP for secure file transfer
+- SSH for remote execution
+- Service management commands to restart the application
+
+**Server Used**:
+- Fedora 38 with .NET 9.0 installed: vs531.dei.ipp.pt
