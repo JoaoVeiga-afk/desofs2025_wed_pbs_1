@@ -24,10 +24,12 @@ jobs:
           - /api/auth/me
 
     steps:
-      - name: Set base URL
+      - name: Set base URL and safe endpoint name
         run: |
           echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
           echo "PING_URL=https://vs-gate.dei.isep.ipp.pt:10531/api/ping" >> $GITHUB_ENV
+          SAFE_ENDPOINT=$(echo "${{ matrix.endpoint }}" | tr '/' '_')
+          echo "SAFE_ENDPOINT=$SAFE_ENDPOINT" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,6 +42,7 @@ jobs:
           echo "Status: $RESPONSE"
           if [ "$RESPONSE" -ne 200 ]; then
             echo "::error::Health check failed: /api/ping returned $RESPONSE"
+            exit 1
           else
             echo "Application is online (HTTP $RESPONSE)"
           fi
@@ -52,14 +55,13 @@ jobs:
 
       - name: Rename reports
         run: |
-          safe_endpoint=$(echo "${{ matrix.endpoint }}" | tr -d '/')
-          mv report_html.html report_${safe_endpoint}.html || true
-          mv report_json.json report_${safe_endpoint}.json || true
+          mv report_html.html report_${{ env.SAFE_ENDPOINT }}.html || true
+          mv report_json.json report_${{ env.SAFE_ENDPOINT }}.json || true
 
       - name: Upload ZAP Report
         uses: actions/upload-artifact@v4
         with:
-          name: zap_report_${{ matrix.endpoint }}
+          name: zap_report_${{ env.SAFE_ENDPOINT }}
           path: |
-            report_*.html
-            report_*.json
+            report_${{ env.SAFE_ENDPOINT }}.html
+            report_${{ env.SAFE_ENDPOINT }}.json
