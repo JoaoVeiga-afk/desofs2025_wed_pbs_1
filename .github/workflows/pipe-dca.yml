@@ -24,18 +24,16 @@ jobs:
           - /api/auth/me
 
     steps:
-      - name: Set base URL and safe endpoint name
+      - name: Set base and ping URLs
         run: |
           echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
           echo "PING_URL=https://vs-gate.dei.isep.ipp.pt:10531/api/ping" >> $GITHUB_ENV
-          SAFE_ENDPOINT=$(echo "${{ matrix.endpoint }}" | tr '/' '_')
-          echo "SAFE_ENDPOINT=$SAFE_ENDPOINT" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Health Check (/api/ping)
-        if: matrix.endpoint == '/api/auth/signin'
+        if: matrix.endpoint == '/api/auth/signin'  # apenas 1x
         run: |
           echo "Checking if application is online (/api/ping)..."
           RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null "$PING_URL")
@@ -46,21 +44,8 @@ jobs:
             echo "Application is online (HTTP $RESPONSE)"
           fi
 
-      - name: Run ZAP Full Scan on ${{ matrix.endpoint }}
+      - name: ZAP Full Scan on ${{ matrix.endpoint }}
         uses: zaproxy/action-full-scan@v0.12.0
         with:
           target: ${{ env.BASE_URL }}${{ matrix.endpoint }}
           cmd_options: '-a'
-
-      - name: Rename reports
-        run: |
-          mv report_html.html report_${{ env.SAFE_ENDPOINT }}.html || true
-          mv report_json.json report_${{ env.SAFE_ENDPOINT }}.json || true
-
-      - name: Upload ZAP Report
-        uses: actions/upload-artifact@v4
-        with:
-          name: zap_report_${{ env.SAFE_ENDPOINT }}
-          path: |
-            report_${{ env.SAFE_ENDPOINT }}.html
-            report_${{ env.SAFE_ENDPOINT }}.json
