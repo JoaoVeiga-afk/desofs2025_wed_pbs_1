@@ -1,0 +1,39 @@
+﻿name: DCA
+
+on:
+  push:
+    branches:
+      - feature/issue-26  
+  pull_request:
+    branches:
+      - main  
+
+jobs:
+  zap-scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up OWASP ZAP
+        uses: zaproxy/action-full-scan@v0.1.0
+        with:
+          target: 'https://vs-gate.dei.isep.ipp.pt:10531' 
+          cmd_options: '-config api.disablekey=true' 
+
+      - name: Run OWASP ZAP Scan
+        run: |
+          curl -k -X POST https://vs-gate.dei.isep.ipp.pt:10531/api/auth/signup -H "Content-Type: application/json" -d '{"email": "test@example.com", "password": "123456", "name": "Test User", "phone": "912345678", "status": "enabled"}'
+
+      - name: Upload ZAP Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: zap-report
+          path: zap_report.html  
+
+      - name: Upload ZAP Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: zap-logs
+          path: zap-log.txt  

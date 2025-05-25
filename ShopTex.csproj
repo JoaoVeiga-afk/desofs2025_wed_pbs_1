@@ -70,6 +70,7 @@
 
   <ItemGroup>
     <Content Include=".github\workflows\pipe-build.yml" />
+    <Content Include=".github\workflows\pipe-dca.yml" />
     <Content Include=".github\workflows\pipe-deploy.yml" />
     <Content Include=".github\workflows\pipe-lint.yml" />
     <Content Include=".github\workflows\pipe-main.yml" />
