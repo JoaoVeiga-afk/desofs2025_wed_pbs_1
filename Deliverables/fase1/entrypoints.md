@@ -100,10 +100,10 @@ Index of List of Endpoints:
 
 | Method | Endpoint       | Description                                   | Access Level |
 |--------|----------------|-----------------------------------------------|--------------|
-| `POST` | `/auth`  | Validate credentials and return the JWT Token | Public       |
-| `POST` | `/signin` | Creates the user account                      | Public       |
+| `POST` | `/auth/signin` | Validate credentials and return the JWT Token | Public       |
+| `POST` | `/auth/signup` | Creates the user account                      | Public       |
 
-#### 1.1 `POST /signin`
+#### 1.1 `POST auth/signup`
 
 ### Payload Parameters
 
@@ -139,7 +139,7 @@ The parameters required to create a new user:
 }
 ```
 
-#### 1.2 `POST /auth`
+#### 1.2 `POST /auth/signin`
 
 ### Payload Parameters
 
