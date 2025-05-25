@@ -1,10 +1,16 @@
-﻿namespace ShopTex;
+﻿using DotNetEnv;
+
+namespace ShopTex;
 
 public class Configs
 {
+    static Configs()
+    {
+        Env.Load();
+    }
+    
     public const string ValidEmail = "isep.ipp.pt";
 
-    public const string DbConnection =
-        //"Server=vsgate-s1.dei.isep.ipp.pt,11265;Database=userManDb;User=sa;Password=slkNaLqk+w==Xm0a5;TrustServerCertificate=true";
-        "Server=vsgate-s1.dei.isep.ipp.pt;Port=10204;Database=ShopTexDb;Uid=root;Pwd=pGF2yusmjpEv";
+    public static string DbConnection => Environment.GetEnvironmentVariable("DB_CONNECTION_SERVER") 
+                                         ?? throw new Exception("DB is not set");
 }

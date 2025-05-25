@@ -24,7 +24,7 @@ jobs:
     
   sonar:
     needs: leaks
-    uses: ./.github/workflows/pipe-sonar.yml
+    uses: ./.github/workflows/pipe-scan-leaks.yml
     secrets: inherit
     
   test:
