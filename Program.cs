@@ -1,3 +1,4 @@
+using DotNetEnv;
 using Microsoft.AspNetCore;
 using Microsoft.Extensions.Configuration;
 using Serilog;
@@ -9,6 +10,8 @@ public class Program
 {
     public static void Main(string[] args)
     {
+        Env.Load();
+        
         Serilog.Debugging.SelfLog.Enable(msg => Console.Error.WriteLine(msg));
 
         var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +20,7 @@ public class Program
             .ReadFrom.Configuration(builder.Configuration)
             .Enrich.FromLogContext()
             .WriteTo.MySQL(
-               connectionString: builder.Configuration.GetConnectionString("MySqlLogs"),
+               connectionString: Environment.GetEnvironmentVariable("LOGS_DB")?? throw new Exception("Logs DB is not set"),
                tableName:"Logs")
             .CreateLogger();
 
