@@ -20,11 +20,11 @@ jobs:
     
   leaks:
     needs: build
-    uses: ./.github/workflows/pipe-build.yml  
+    uses: ./.github/workflows/pipe-scan-leaks.yml  
     
   sonar:
     needs: leaks
-    uses: ./.github/workflows/pipe-scan-leaks.yml
+    uses: ./.github/workflows/pipe-sonar.yml
     secrets: inherit
     
   test:
