@@ -42,5 +42,11 @@ We have implemented several security-focused practices as part of our CI/CD pipe
 - **Code scanning alerts** enabled via **GitHub Advanced Security**
 - **Unit testing** to validate core application logic
 
-📄 [View detailed security testing](content/Security_testing.md)  
+[View detailed security testing](content/Security_testing.md)  
+
+
+## 🔍 Features Overview
+
+This section provides an overview of the key features implemented in the application, including user authentication, database management, and security measures.
+[View features overview](content/Features.md)
 
