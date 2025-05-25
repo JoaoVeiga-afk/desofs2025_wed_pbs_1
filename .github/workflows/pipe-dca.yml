@@ -3,23 +3,21 @@
 on:
   push:
     branches:
-      - feature/issue-26  
+      - feature/issue-26
   pull_request:
     branches:
-      - main  
-jobs:
+      - main
 
+jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Run DAST scan on the web application
+    name: Run Full ZAP Scan
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        
-      - name: ZAP Scan
-        uses: zaproxy/action-baseline@v0.6.1
+
+      - name: ZAP Full Scan
+        uses: zaproxy/action-full-scan@v0.12.0
         with:
-          docker_name: 'owasp/zap2docker-stable'
           target: 'https://vs-gate.dei.isep.ipp.pt:10531'
-          rules_file_name: '.zap/rules.tsv'
           cmd_options: '-a'
