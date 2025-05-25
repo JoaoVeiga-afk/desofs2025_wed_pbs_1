@@ -15,35 +15,33 @@ permissions:
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Scan the web application
+    name: Scan each API endpoint individually
+    strategy:
+      matrix:
+        endpoint:
+          - /api/auth/signin
+          - /api/auth/signup
+          - /api/auth/me
     steps:
       - name: Set target URL
         id: set_target_url
-        run: echo "TARGET_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
+        run: echo "BASE_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
 
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Health Check
+      - name: Health Check (${BASE_URL}${{ matrix.endpoint }})
         run: |
-          echo "Performing health check on /api/ping..."
-          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }}/api/ping)
-          echo "Status: $RESPONSE"
-          if [ "$RESPONSE" -ne 200 ]; then
-            echo "Health check failed"
+          echo "Checking ${{ env.BASE_URL }}${{ matrix.endpoint }}"
+          RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null ${{ env.BASE_URL }}${{ matrix.endpoint }})
+          if [ "$RESPONSE" -eq 000 ]; then
+            echo "::error::Health check failed (no response)"
           else
             echo "Health check passed (HTTP $RESPONSE)"
           fi
 
-      - name: Provide API Endpoints to ZAP
-        run: |
-          echo "https://vs-gate.dei.isep.ipp.pt:10531/api/auth/signin" >> urls.txt
-          echo "https://vs-gate.dei.isep.ipp.pt:10531/api/auth/signup" >> urls.txt
-          echo "https://vs-gate.dei.isep.ipp.pt:10531/api/auth/me" >> urls.txt
-    
-      - name: ZAP Full Scan
+      - name: ZAP Full Scan on ${{ matrix.endpoint }}
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: ${{ env.TARGET_URL }}
-          urls: urls.txt
+          target: ${{ env.BASE_URL }}${{ matrix.endpoint }}
           cmd_options: '-a'
