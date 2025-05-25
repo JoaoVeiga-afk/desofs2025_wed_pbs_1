@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Health Check (/api/ping)
-        if: matrix.endpoint == '/api/auth/signin'  # apenas 1x
+        if: matrix.endpoint == '/api/auth/signin'
         run: |
           echo "Checking if application is online (/api/ping)..."
           RESPONSE=$(curl -k --write-out "%{http_code}" --silent --output /dev/null "$PING_URL")
@@ -49,3 +49,5 @@ jobs:
         with:
           target: ${{ env.BASE_URL }}${{ matrix.endpoint }}
           cmd_options: '-a'
+          allow_issue_writing: true
+          artifact_name: zap_scan_${{ matrix.endpoint }}
