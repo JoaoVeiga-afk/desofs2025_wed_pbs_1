@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: ['*']
+    branches: ['**']
   pull_request:
-    branches: ['*']
+    branches: ['**']
 
 permissions:
   contents: write
@@ -20,7 +20,7 @@ jobs:
     
   leaks:
     needs: build
-    uses: ./.github/workflows/pipe-build.yml  
+    uses: ./.github/workflows/pipe-scan-leaks.yml  
     
   sonar:
     needs: leaks
@@ -28,5 +28,5 @@ jobs:
     secrets: inherit
     
   test:
-    needs: build
+    needs: leaks
     uses: ./.github/workflows/pipe-test.yml

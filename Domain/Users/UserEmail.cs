@@ -11,6 +11,9 @@ public class UserEmail
 
     public UserEmail(string address)
     {
+        if (!new EmailAddressAttribute().IsValid(address))
+            throw new ValidationException("Invalid email format");
+        
         Value = address;
     }
 }
