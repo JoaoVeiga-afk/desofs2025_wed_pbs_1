@@ -39,7 +39,7 @@ Example:
 - Reference issues and pull requests liberally after the first line
 
 ### Starting text of commit message
-### <issue-ID>-<type>: <short description>
+### \<issue-ID\>-\<type\>: \<short description\>
 
 Types:
 - **feature** – New feature development
