@@ -6,6 +6,7 @@ using Konscious.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Users;
+using Microsoft.Extensions.Logging;
 
 namespace ShopTex.Services;
 
@@ -14,42 +15,57 @@ public class UserService
     private readonly IUnitOfWork _unitOfWork;
     private readonly IUserRepository _repo;
     private readonly IConfiguration _config;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IConfiguration config)
+    public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IConfiguration config, ILogger<UserService> logger)
     {
         _unitOfWork = unitOfWork;
         _repo = repo;
         _config = config;
+        _logger = logger;
     }
 
     public async Task<List<UserDto>> GetAllAsync()
     {
+        _logger.LogInformation("Fetching all users started");
         var list = await _repo.GetAllAsync();
+        _logger.LogInformation("Fetched {Count} users from repository", list.Count);
 
-        List<UserDto> listDto = list.ConvertAll(user =>
-            new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status));
+        var dtoList = list.ConvertAll(user =>
+        {
+            _logger.LogDebug("Mapping user {UserId} to UserDto", user.Id.Value);
+            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
+        });
 
-        return listDto;
+        _logger.LogInformation("User mapping complete. Returning {Count} UserDto objects", dtoList.Count);
+        return dtoList;
     }
 
-    public async Task<UserDto> GetByIdAsync(UserId id)
+    public async Task<UserDto?> GetByIdAsync(UserId id)
     {
+        _logger.LogInformation("Fetching user with ID {UserId} started", id.Value);
         var user = await _repo.GetByIdAsync(id);
 
-        if (user == null) return null;
+        if (user == null)
+        {
+            _logger.LogWarning("User with ID {UserId} not found", id.Value);
+            return null;
+        }
 
+        _logger.LogInformation("User with ID {UserId} found. Name: {Name}, Email: {Email}", id.Value, user.Name, user.Email);
         return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
     }
 
     public async Task<UserDto> AddAsync(CreatingUserDto dto)
     {
+        _logger.LogInformation("Creating new user with Name: {Name}, Email: {Email}, RoleId: {RoleId}, Status: {Status}",
+            dto.Name, dto.Email, dto.RoleId, dto.Status);
+
         var salt = GeneratePasswordSalt();
 
-        string hashPassword = HashString(dto.Password, salt);
+        var hashPassword = HashString(dto.Password, salt);
 
-        User user;
-
-        user = new User(dto.Name, dto.Phone, dto.Email, hashPassword, dto.RoleId, dto.Status, salt);
+        var user = new User(dto.Name, dto.Phone, dto.Email, hashPassword, dto.RoleId, dto.Status, salt);
 
         await _repo.AddAsync(user);
 
@@ -57,66 +73,86 @@ public class UserService
 
         return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
     }
-    public async Task<dynamic> UserSignIn(UserSignInDto dto)
+
+    public async Task<dynamic?> UserSignIn(UserSignInDto dto)
     {
+        _logger.LogInformation("User login attempt for Email {Email}", dto.Email);
+
         var user = await _repo.FindByEmail(dto.Email);
 
-        if (user == null) return null;
+        if (user == null)
+        {
+            _logger.LogWarning("Login failed: User with Email {Email} not found", dto.Email);
+            return null;
+        }
 
-        if (!user.Status.Value) return null;
+        if (!user.Status.Value)
+        {
+            _logger.LogWarning("Login failed: User with Email {Email} is inactive", dto.Email);
+            return null;
+        }
 
         if (!VerifyPassword(dto.Password, user.Salt, user.Password))
         {
+            _logger.LogWarning("Login failed: Incorrect password for Email {Email}", dto.Email);
             return null;
-
         }
-        var result = new
+
+        _logger.LogInformation("User with Email {Email} authenticated successfully. UserId: {UserId}", dto.Email, user.Id.Value);
+
+        var token = GenerateToken(user);
+
+        return new
         {
             userDTO = new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status),
-            token = GenerateToken(user)
+            token
         };
-
-
-        return result;
-
     }
 
     private string GenerateToken(User user)
     {
-        var tokenHandler = new JwtSecurityTokenHandler();
+        _logger.LogInformation("Generating JWT token for UserId {UserId} with Role {RoleName}", user.Id.Value, user.Role?.RoleName ?? "none");
+
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
-        var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
         {
             new Claim("guid", user.Id.Value),
             new Claim("name", user.Name),
             new Claim("email", user.Email.Value),
-            new Claim("role", user.Role != null ? user.Role.RoleName : "none"),
+            new Claim("role", user.Role?.RoleName ?? "none"),
         };
 
-        var token = new JwtSecurityToken(_config["Jwt:Issuer"], _config["Jwt:Issuer"], claims,
-            expires: DateTime.Now.AddDays(30), signingCredentials: cred);
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Issuer"],
+            claims: claims,
+            expires: DateTime.Now.AddDays(30),
+            signingCredentials: credentials);
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        _logger.LogDebug("Token string length: {Length}", tokenString.Length);
+
+        return tokenString;
     }
 
     public static byte[] GeneratePasswordSalt()
     {
         byte[] salt = new byte[32];
-        var rng = RandomNumberGenerator.Create();
-        rng.GetBytes(salt);
-
+        RandomNumberGenerator.Create().GetBytes(salt);
         return salt;
     }
 
     public static string HashString(string source, byte[] salt)
     {
-        var hasher = new Argon2id(Encoding.UTF8.GetBytes(source));
-        hasher.Salt = salt;
-        hasher.Iterations = 2;
-        hasher.MemorySize = 1024;
-        hasher.DegreeOfParallelism = 1;
+        var hasher = new Argon2id(Encoding.UTF8.GetBytes(source))
+        {
+            Salt = salt,
+            Iterations = 2,
+            MemorySize = 1024,
+            DegreeOfParallelism = 1
+        };
         byte[] hashBytes = hasher.GetBytes(32);
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
@@ -125,5 +161,4 @@ public class UserService
     {
         return hashedPassword.Equals(HashString(password, salt));
     }
-
 }
