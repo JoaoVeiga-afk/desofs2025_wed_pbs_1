@@ -7,22 +7,36 @@ on:
   pull_request:
     branches:
       - main
-        
+
 permissions:
   contents: read
   issues: write
-        
 
 jobs:
   zap_scan:
     runs-on: ubuntu-latest
-    name: Run Full ZAP Scan
+    name: Scan the web application
     steps:
+      - name: Set target URL
+        id: set_target_url
+        run: echo "TARGET_URL=https://vs-gate.dei.isep.ipp.pt:10531" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Health Check
+        run: |
+          echo "Performing health check..."
+          RESPONSE=$(curl --write-out "%{http_code}" --silent --output /dev/null ${{ env.TARGET_URL }})
+          if [ "$RESPONSE" -ne 200 ]; then
+            echo "Health check failed with status code $RESPONSE"
+            exit 1
+          else
+            echo "Health check passed with status code $RESPONSE"
+          fi
 
       - name: ZAP Full Scan
         uses: zaproxy/action-full-scan@v0.12.0
         with:
-          target: 'https://vs-gate.dei.isep.ipp.pt:10531'
+          target: ${{ env.TARGET_URL }}
           cmd_options: '-a'
