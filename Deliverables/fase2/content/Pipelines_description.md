@@ -10,7 +10,8 @@ Our project uses modular GitHub Actions to enforce quality, correctness, and ana
 | SonarQube     | Static code analysis       | `.github/workflows/pipe-sonar.yml`      |
 | Scan Leaks    | Detect secret leaks        | `.github/workflows/pipe-scan-leaks.yml` |
 | Main Pipeline | Orchestrates all jobs      | `.github/workflows/pipe-main.yml`       |
-|Deployment    | Deploy to production         | `.github/workflows/pipe-deploy.yml`     |
+| Deployment    | Deploy to production       | `.github/workflows/pipe-deploy.yml`     |
+| DCA           | Dynamic Code Analysis      | `.github/workflows/pipe-dca.yml`        |
 
 
 ---
@@ -120,3 +121,16 @@ This workflow is responsible for deploying the application to the production env
 
 **Server Used**:
 - Fedora 38 with .NET 9.0 installed: vs531.dei.ipp.pt
+
+---
+
+## 'pipe-dca.yml` – Dynamic Code Analysis Workflow'
+
+**Description**:
+This workflow is responsible for performing a dynamic security analysis on the application after the completion of a deploy workflow. It checks specific vulnerabilities on the application's endpoints to ensure the security of the production environment. Additionally, it includes a health check to ensure the application is online before performing the security scan.
+
+**Triggered by**:
+This workflow is automatically triggered once the "Deploy Pipeline" workflow completes successfully.
+
+**Tools used**:
+- OWASP ZAP (- [`zaproxy/action-full-scan@v0.12.0`](https://github.com/zaproxy/action-full-scan)): For performing dynamic security analysis of the application’s endpoints, detecting vulnerabilities such as SQL injection, authentication failures, and other security issues.
