@@ -1,12 +1,10 @@
 ﻿name: DCA
 
 on:
-  push:
-    branches:
-      - feature/issue-26
-  pull_request:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["Deploy Pipeline"]
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -22,7 +20,6 @@ jobs:
           - /api/auth/signin
           - /api/auth/signup
           - /api/auth/me
-
 
     steps:
       - name: Set base and ping URLs and safe endpoint name
