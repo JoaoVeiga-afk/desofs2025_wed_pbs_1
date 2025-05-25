@@ -98,12 +98,12 @@ Index of List of Endpoints:
 ---
 ### 1. Authentication
 
-| Method | Endpoint         | Description                                   | Access Level |
-|--------|------------------|-----------------------------------------------|--------------|
-| `POST` | `/auth/login`    | Validate credentials and return the JWT Token | Public       |
-| `POST` | `/auth/register` | Creates the user account                      | Public       |
+| Method | Endpoint       | Description                                   | Access Level |
+|--------|----------------|-----------------------------------------------|--------------|
+| `POST` | `/auth`  | Validate credentials and return the JWT Token | Public       |
+| `POST` | `/signin` | Creates the user account                      | Public       |
 
-#### 1.1 `POST /auth/register`
+#### 1.1 `POST /signin`
 
 ### Payload Parameters
 
@@ -139,17 +139,15 @@ The parameters required to create a new user:
 }
 ```
 
-#### 1.2 `POST /auth/login`
+#### 1.2 `POST /auth`
 
 ### Payload Parameters
 
 The request body must include the following parameters:
 
-- **`auth_code`** *(string)* – Token sent with the request, if applicable (when using additional authentication).
 - **`user`** *(object)*
-  - **`username`** *(string)* – Username used for login.
-  - **`name`** *(string)* – User’s full name.
-  - **`phone`** *(string)* – User’s full mobile phone number.
+  - **`email`** *(string)* – Email used for login.
+  - **`phone`** *(string)* – (Optional) User’s full mobile phone number.
   - **`password`** *(string)* – User’s password.
 
 *Example Payload:**
@@ -163,6 +161,7 @@ The request body must include the following parameters:
   }
 }
 ```
+
 **Response Payload:**
 
 ```json
