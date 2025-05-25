@@ -16,7 +16,6 @@ public class UserService
     private readonly IUserRepository _repo;
     private readonly IConfiguration _config;
     private readonly ILogger<UserService> _logger;
-    // fake-api-key=12345
 
     public UserService(IUnitOfWork unitOfWork, IUserRepository repo, IConfiguration config, ILogger<UserService> logger)
     {
