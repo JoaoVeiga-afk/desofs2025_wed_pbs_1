@@ -19,8 +19,6 @@ jobs:
     strategy:
       matrix:
         endpoint:
-          - /api/auth/signin
-          - /api/auth/signup
           - /api/auth/me
 
     steps:
