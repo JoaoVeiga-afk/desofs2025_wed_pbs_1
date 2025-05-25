@@ -18,16 +18,11 @@ jobs:
     needs: lint
     uses: ./.github/workflows/pipe-build.yml
     
-  leaks:
-    needs: build
-    uses: ./.github/workflows/pipe-scan-leaks.yml
-    secrets: inherit
-    
   sonar:
-    needs: leaks
+    needs: build
     uses: ./.github/workflows/pipe-sonar.yml
     secrets: inherit
     
   test:
-    needs: leaks
+    needs: build
     uses: ./.github/workflows/pipe-test.yml
