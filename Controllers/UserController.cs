@@ -41,10 +41,33 @@ namespace ShopTex.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("me")]
         public async Task<ActionResult<dynamic>> GetMe()
         {
-            return User.ToJson();
+            // Get user from token
+            var userID = User.Claims.FirstOrDefault(c => c.Type == "guid")?.Value;
+            if (userID == null)
+            {
+                return Unauthorized("User not found in token");
+            }
+            
+            var user = await _service.GetByIdAsync(new UserId(userID));
+            
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+            
+            return new
+            {
+                user.Id,
+                user.Name,
+                user.Phone,
+                user.Email,
+                user.Role,
+                user.Status
+            };
         }
 
         // POST: api/auth/signup

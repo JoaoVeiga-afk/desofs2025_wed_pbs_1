@@ -67,9 +67,16 @@ public class UserService
 
         var user = new User(dto.Name, dto.Phone, dto.Email, hashPassword, dto.RoleId, dto.Status, salt);
 
-        await _repo.AddAsync(user);
+        try
+        {
+            await _repo.AddAsync(user);
 
-        await _unitOfWork.CommitAsync();
+            await _unitOfWork.CommitAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new BusinessRuleValidationException("User already exists with this email");
+        }
 
         return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
     }
