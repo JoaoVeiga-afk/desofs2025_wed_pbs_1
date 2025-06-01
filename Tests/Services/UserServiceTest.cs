@@ -3,6 +3,7 @@ using Moq;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Users;
 using ShopTex.Services;
+using ShopTex;
 using Xunit;
 
 namespace ShopTex.Tests.Services;
@@ -16,7 +17,7 @@ public class UserServiceTest
     private readonly Mock<ILogger<UserService>> _logger = new Mock<ILogger<UserService>>();
 
     private static readonly byte[] Salt = UserService.GeneratePasswordSalt();
-    private readonly User _testUser = new User("Testuser", "912345678", "testuser@example.com", UserService.HashString("passwd", Salt), UserRole.UserNRole.RoleName, "enabled", Salt);
+    private readonly User _testUser = new User("Testuser", "912345678", "testuser@example.com", Configurations.HashString("passwd", Salt), UserRole.UserNRole.RoleName, Salt);
 
     [Fact]
     public async Task UserSigninTest_Pass()

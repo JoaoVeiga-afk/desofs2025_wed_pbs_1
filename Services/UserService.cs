@@ -34,7 +34,7 @@ public class UserService
         var dtoList = list.ConvertAll(user =>
         {
             _logger.LogDebug("Mapping user {UserId} to UserDto", user.Id.Value);
-            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
+            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email ,user.Role, user.Status);
         });
 
         _logger.LogInformation("User mapping complete. Returning {Count} UserDto objects", dtoList.Count);
@@ -58,14 +58,14 @@ public class UserService
 
     public async Task<UserDto> AddAsync(CreatingUserDto dto)
     {
-        _logger.LogInformation("Creating new user with Name: {Name}, Email: {Email}, RoleId: {RoleId}, Status: {Status}",
-            dto.Name, dto.Email, dto.RoleId, dto.Status);
+        _logger.LogInformation("Creating new user with Name: {Name}, Email: {Email}, Role: {RoleId}",
+            dto.Name, dto.Email, dto.RoleId);
 
         var salt = GeneratePasswordSalt();
 
-        var hashPassword = HashString(dto.Password, salt);
+        var hashPassword = Configurations.HashString(dto.Password, salt);
 
-        var user = new User(dto.Name, dto.Phone, dto.Email, hashPassword, dto.RoleId, dto.Status, salt);
+        var user = new User(dto.Name, dto.Phone, dto.Email, hashPassword, dto.RoleId, salt);
 
         try
         {
@@ -99,7 +99,7 @@ public class UserService
             return null;
         }
 
-        if (!VerifyPassword(dto.Password, user.Salt, user.Password))
+        if (!user.VerifyPassword(dto.Password))
         {
             _logger.LogWarning("Login failed: Incorrect password for Email {Email}", dto.Email);
             return null;
@@ -150,22 +150,5 @@ public class UserService
         RandomNumberGenerator.Create().GetBytes(salt);
         return salt;
     }
-
-    public static string HashString(string source, byte[] salt)
-    {
-        var hasher = new Argon2id(Encoding.UTF8.GetBytes(source))
-        {
-            Salt = salt,
-            Iterations = 2,
-            MemorySize = 1024,
-            DegreeOfParallelism = 1
-        };
-        byte[] hashBytes = hasher.GetBytes(32);
-        return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
-    }
-
-    private static bool VerifyPassword(string password, byte[] salt, string hashedPassword)
-    {
-        return hashedPassword.Equals(HashString(password, salt));
-    }
+    
 }
