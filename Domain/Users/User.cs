@@ -66,4 +66,24 @@ public class User : Entity<UserId>, IAggregateRoot
         
         return this.Password.Equals(Configurations.HashString(password, this.Salt));
     }
+    
+    public bool EnableUser()
+    {
+        if (Status.ToString().Equals("disabled", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            Status = new UserStatus("enabled");
+            return true;
+        }
+        return false;
+    }
+    
+    public bool DisableUser()
+    {
+        if (Status.ToString().Equals("enabled", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            Status = new UserStatus("disabled");
+            return true;
+        }
+        return false;
+    }
 }

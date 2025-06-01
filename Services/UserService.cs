@@ -150,5 +150,51 @@ public class UserService
         RandomNumberGenerator.Create().GetBytes(salt);
         return salt;
     }
+
+    public async Task<UserDto> EnableUser(UserId id)
+    {
+        _logger.LogInformation("Enabling user with ID {UserId}", id.Value);
+        var user = await _repo.GetByIdAsync(id);
+        if (user == null)
+        {
+            _logger.LogWarning("User with ID {UserId} not found", id.Value);
+            throw new BusinessRuleValidationException("User not found");
+        }
+
+        if (user.EnableUser())
+        {
+            _logger.LogInformation("User with ID {UserId} enabled successfully", id.Value);
+            await _unitOfWork.CommitAsync();
+            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
+        }
+        else
+        {
+            _logger.LogWarning("User with ID {UserId} is already enabled", id.Value);
+            throw new BusinessRuleValidationException("User is already enabled");
+        }
+    }
+    
+    public async Task<UserDto> DisableUser(UserId id)
+    {
+        _logger.LogInformation("Disabling user with ID {UserId}", id.Value);
+        var user = await _repo.GetByIdAsync(id);
+        if (user == null)
+        {
+            _logger.LogWarning("User with ID {UserId} not found", id.Value);
+            throw new BusinessRuleValidationException("User not found");
+        }
+
+        if (user.DisableUser())
+        {
+            _logger.LogInformation("User with ID {UserId} disabled successfully", id.Value);
+            await _unitOfWork.CommitAsync();
+            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
+        }
+        else
+        {
+            _logger.LogWarning("User with ID {UserId} is already disabled", id.Value);
+            throw new BusinessRuleValidationException("User is already disabled");
+        }
+    }
     
 }
