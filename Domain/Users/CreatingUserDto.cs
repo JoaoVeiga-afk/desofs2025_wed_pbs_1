@@ -19,8 +19,5 @@ public class CreatingUserDto
     public string Password { get; set; }
 
     public string? RoleId { get; set; }
-
-    [Required]
-    [RegularExpression("^(enabled)$|^(disabled)$", ErrorMessage = "Status must be either 'enabled' or 'disabled'.")]
-    public string Status { get; set; }
+    
 }
