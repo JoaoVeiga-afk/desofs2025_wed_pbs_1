@@ -182,4 +182,96 @@ public class UserTests
         // Assert
         user.Status.ToString().Should().Be("enabled");
     }
+    
+    [Fact]
+    public void EnableUser_WhenStatusIsDisabled_ShouldSetStatusToEnabled_AndReturnTrue()
+    {
+        // Arrange
+        string id = Guid.NewGuid().ToString();
+        string name = "John Doe";
+        string phone = "123456789";
+        string email = "john@example.com";
+        string password = "SecurePass!";
+        string role = Configurations.STORE_COLAB_ROLE_NAME;
+        string status = "disabled";
+        byte[] salt = new byte[] { 1, 2, 3 };
+
+        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role,status, salt);
+
+        // Act
+        var result = user.EnableUser();
+
+        // Assert
+        result.Should().BeTrue();
+        user.Status.ToString().Should().Be("enabled");
+    }
+
+    [Fact]
+    public void EnableUser_WhenStatusIsEnabled_ShouldReturnFalse_AndStatusUnchanged()
+    {
+        // Arrange
+        string id = Guid.NewGuid().ToString();
+        string name = "John Doe";
+        string phone = "123456789";
+        string email = "john@example.com";
+        string password = "SecurePass!";
+        string role = Configurations.STORE_COLAB_ROLE_NAME;
+        string status = "enabled";
+        byte[] salt = new byte[] { 1, 2, 3 };
+
+        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role,status, salt);
+
+        // Act
+        var result = user.EnableUser();
+
+        // Assert
+        result.Should().BeFalse();
+        user.Status.ToString().Should().Be("enabled");
+    }
+
+    [Fact]
+    public void DisableUser_WhenStatusIsEnabled_ShouldSetStatusToDisabled_AndReturnTrue()
+    {
+        // Arrange
+        string id = Guid.NewGuid().ToString();
+        string name = "John Doe";
+        string phone = "123456789";
+        string email = "john@example.com";
+        string password = "SecurePass!";
+        string role = Configurations.STORE_COLAB_ROLE_NAME;
+        string status = "enabled";
+        byte[] salt = new byte[] { 1, 2, 3 };
+
+        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role,status, salt);
+
+        // Act
+        var result = user.DisableUser();
+
+        // Assert
+        result.Should().BeTrue();
+        user.Status.ToString().Should().Be("disabled");
+    }
+
+    [Fact]
+    public void DisableUser_WhenStatusIsDisabled_ShouldReturnFalse_AndStatusUnchanged()
+    {
+        // Arrange
+        string id = Guid.NewGuid().ToString();
+        string name = "John Doe";
+        string phone = "123456789";
+        string email = "john@example.com";
+        string password = "SecurePass!";
+        string role = Configurations.STORE_COLAB_ROLE_NAME;
+        string status = "disabled";
+        byte[] salt = new byte[] { 1, 2, 3 };
+
+        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role, status, salt);
+
+        // Act
+        var result = user.DisableUser();
+
+        // Assert
+        result.Should().BeFalse();
+        user.Status.ToString().Should().Be("disabled");
+    }
 }
