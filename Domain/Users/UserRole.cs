@@ -19,10 +19,10 @@ public class UserRole
     }
 
 
-    public static readonly UserRole SystemRole = new UserRole(Configs.SYS_ADMIN_ROLE_NAME, "Has full access to the system, including user management and configuration settings.");
-    public static readonly UserRole UserNRole = new UserRole(Configs.USER_ROLE_NAME, "A regular");
-    public static readonly UserRole StoreAdminRole = new UserRole(Configs.STORE_ADMIN_ROLE_NAME, "Has access to manage store-specific settings and operations.");
-    public static readonly UserRole StoreColabRole = new UserRole(Configs.STORE_COLAB_ROLE_NAME, "Can manage store operations but has limited access to user management.");
+    public static readonly UserRole SystemRole = new UserRole(Configurations.SYS_ADMIN_ROLE_NAME, "Has full access to the system, including user management and configuration settings.");
+    public static readonly UserRole UserNRole = new UserRole(Configurations.USER_ROLE_NAME, "A regular");
+    public static readonly UserRole StoreAdminRole = new UserRole(Configurations.STORE_ADMIN_ROLE_NAME, "Has access to manage store-specific settings and operations.");
+    public static readonly UserRole StoreColabRole = new UserRole(Configurations.STORE_COLAB_ROLE_NAME, "Can manage store operations but has limited access to user management.");
 
 
     public static UserRole SelectRoleFromString(string? val)
