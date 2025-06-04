@@ -15,6 +15,7 @@ public class AuthenticationServiceTest
     
     private static readonly byte[] Salt = UserService.GeneratePasswordSalt();
     private readonly User _testUser = new User("Testuser", "912345678", "testuser@example.com", Configurations.HashString("passwd", Salt), UserRole.UserNRole.RoleName, Salt);
+    
 
 
     [Fact]
