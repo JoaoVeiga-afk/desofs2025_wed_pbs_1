@@ -100,5 +100,41 @@ namespace ShopTex.Controllers
             return  user;
         }
         
+        // Enable user
+        [HttpPost]
+        [Route("enable/{id}")]
+        [Authorize(Roles = Configurations.SYS_ADMIN_ROLE_NAME)]
+        public async Task<ActionResult<UserDto>> EnableUser(Guid id)
+        {
+            var userId = new UserId(id);
+            try
+            {
+                var user = await _service.EnableUser(userId);
+                return Ok(user);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        
+        // Disable user
+        [HttpPost]
+        [Route("disable/{id}")]
+        [Authorize(Roles = Configurations.SYS_ADMIN_ROLE_NAME)]
+        public async Task<ActionResult<UserDto>> DisableUser(Guid id)
+        {
+            var userId = new UserId(id);
+            try
+            {
+                var user = await _service.DisableUser(userId);
+                return Ok(user);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        
     }
 }

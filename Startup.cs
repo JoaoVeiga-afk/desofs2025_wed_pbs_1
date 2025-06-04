@@ -26,7 +26,7 @@ public class Startup
     {
         services.AddDbContext<DatabaseContext>(opt =>
             //opt.UseSqlServer(Configs.DbConnection).ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
-            opt.UseMySQL(Configs.DbConnection)
+            opt.UseMySQL(Configurations.DbConnection)
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
         ConfigureMyServices(services);
         

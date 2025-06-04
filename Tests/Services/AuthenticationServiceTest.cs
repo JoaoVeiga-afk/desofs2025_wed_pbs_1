@@ -14,7 +14,8 @@ public class AuthenticationServiceTest
     private readonly Mock<ILogger<UserService>> _logger = new Mock<ILogger<UserService>>();
     
     private static readonly byte[] Salt = UserService.GeneratePasswordSalt();
-    private readonly User _testUser = new User("Testuser", "912345678", "testuser@example.com", UserService.HashString("passwd", Salt), UserRole.UserNRole.RoleName, "enabled", Salt);
+    private readonly User _testUser = new User("Testuser", "912345678", "testuser@example.com", Configurations.HashString("passwd", Salt), UserRole.UserNRole.RoleName, Salt);
+    
 
 
     [Fact]
@@ -63,7 +64,7 @@ public class AuthenticationServiceTest
     public async Task HasPermissionTest_UserHasNoRole()
     {
         var testUser2 = new User("Testuser", "912345678", "testuser@example.com",
-            UserService.HashString("passwd", Salt), null, "enabled", Salt);
+            Configurations.HashString("passwd", Salt), null, Salt);
 
         _userRepository.Setup(repository => repository.FindByEmail(It.IsAny<string>())).ReturnsAsync(testUser2);
 
