@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
   checks: write
-        
+
 jobs:
   iast:
     runs-on: windows-latest
@@ -26,6 +26,7 @@ jobs:
           dotnet build --configuration Release
 
       - name: Run App with AppScan IAST Agent
+        shell: pwsh
         env:
           APPSCAN_SERVER: ${{ secrets.APPSCAN_SERVER }}
           APPSCAN_API_KEY: ${{ secrets.APPSCAN_API_KEY }}
@@ -33,16 +34,17 @@ jobs:
           APPSCAN_USER: ${{ secrets.APPSCAN_USER }}
           APPSCAN_PASSWORD: ${{ secrets.APPSCAN_PASSWORD }}
         run: |
-          "C:\Program Files\AppScan\Profiler\AppScanProfiler.exe" `
+          & "C:\Program Files\AppScan\Profiler\AppScanProfiler.exe" `
             -i "dotnet run --project ./src/TeuProjeto.csproj" `
             -s $Env:APPSCAN_SERVER `
             -k $Env:APPSCAN_API_KEY `
             -a $Env:APPSCAN_APP_ID `
             -u $Env:APPSCAN_USER `
-            -p $Env:APPSCAN_PASSWORD &
+            -p $Env:APPSCAN_PASSWORD
           Start-Sleep -Seconds 10
 
       - name: Simular interações
+        shell: pwsh
         run: |
           curl http://localhost:5000/
-          curl http://localhost:5000/api/auth/signin        
+          curl http://localhost:5000/api/auth/signin
