@@ -1,0 +1,48 @@
+﻿name: IAST
+
+on:
+  workflow_call:
+
+permissions:
+  contents: write
+  checks: write
+        
+jobs:
+  iast:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '9.0.x'
+
+      - name: Restore + Build
+        run: |
+          dotnet restore
+          dotnet build --configuration Release
+
+      - name: Run App with AppScan IAST Agent
+        env:
+          APPSCAN_SERVER: ${{ secrets.APPSCAN_SERVER }}
+          APPSCAN_API_KEY: ${{ secrets.APPSCAN_API_KEY }}
+          APPSCAN_APP_ID: ${{ secrets.APPSCAN_APP_ID }}
+          APPSCAN_USER: ${{ secrets.APPSCAN_USER }}
+          APPSCAN_PASSWORD: ${{ secrets.APPSCAN_PASSWORD }}
+        run: |
+          "C:\Program Files\AppScan\Profiler\AppScanProfiler.exe" `
+            -i "dotnet run --project ./src/TeuProjeto.csproj" `
+            -s $Env:APPSCAN_SERVER `
+            -k $Env:APPSCAN_API_KEY `
+            -a $Env:APPSCAN_APP_ID `
+            -u $Env:APPSCAN_USER `
+            -p $Env:APPSCAN_PASSWORD &
+          Start-Sleep -Seconds 10
+
+      - name: Simular interações
+        run: |
+          curl http://localhost:5000/
+          curl http://localhost:5000/api/auth/signin        

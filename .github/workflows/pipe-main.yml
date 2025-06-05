@@ -11,6 +11,9 @@ permissions:
   checks: write
 
 jobs:
+  iast:
+    uses: ./.github/workflows/pipe-iast.yml
+  
   lint:
     uses: ./.github/workflows/pipe-lint.yml
 
