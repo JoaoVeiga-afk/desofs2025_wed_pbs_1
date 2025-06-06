@@ -77,5 +77,79 @@ public class AuthenticationServiceTest
         Assert.False(result);
     }
     
-    
+    [Fact]
+    public async Task ManagesStore_UserNotFound_ShouldReturnFalse()
+    {
+        _userRepository.Setup(r => r.FindByEmail("notfound@example.com"))
+            .ReturnsAsync((User)null);
+
+        var service = new AuthenticationService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
+
+        var result = await service.managesStore("notfound@example.com", Guid.NewGuid().ToString());
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task ManagesStore_UserWithoutRole_ShouldReturnFalse()
+    {
+        var user = new User("NoRole", "912345678", "nobody@example.com", Configurations.HashString("pass", Salt), null, Salt);
+
+        _userRepository.Setup(r => r.FindByEmail("nobody@example.com")).ReturnsAsync(user);
+
+        var service = new AuthenticationService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
+
+        var result = await service.managesStore("nobody@example.com", Guid.NewGuid().ToString());
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task ManagesStore_UserWithWrongRole_ShouldReturnFalse()
+    {
+        var user = new User("WrongRole", "912345678", "user@example.com", Configurations.HashString("pass", Salt), "client", Salt);
+        var storeId = Guid.NewGuid().ToString();
+        user.SetStore(storeId);
+
+        _userRepository.Setup(r => r.FindByEmail("user@example.com")).ReturnsAsync(user);
+
+        var service = new AuthenticationService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
+
+        var result = await service.managesStore("user@example.com", storeId);
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task ManagesStore_UserWithRightRoleButDifferentStore_ShouldReturnFalse()
+    {
+        var user = new User("StoreAdmin", "912345678", "admin@example.com", Configurations.HashString("pass", Salt), Configurations.STORE_ADMIN_ROLE_NAME, Salt);
+        user.SetStore(Guid.NewGuid().ToString());
+
+        _userRepository.Setup(r => r.FindByEmail("admin@example.com")).ReturnsAsync(user);
+
+        var service = new AuthenticationService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
+
+        var result = await service.managesStore("admin@example.com", Guid.NewGuid().ToString()); // Different storeId
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task ManagesStore_UserWithRightRoleAndStore_ShouldReturnTrue()
+    {
+        var userEmail = "admin@example.com";
+        var user = new User("StoreAdmin", "912345678", userEmail, Configurations.HashString("pass", Salt), Configurations.STORE_ADMIN_ROLE_NAME, Salt);
+
+        var storeId = Guid.NewGuid().ToString();
+        user.SetStore(storeId);
+
+        _userRepository.Setup(r => r.FindByEmail(userEmail)).ReturnsAsync(user);
+
+        var service = new AuthenticationService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
+
+        var result = await service.managesStore(userEmail, storeId);
+
+        Assert.True(result);
+    }
 }
