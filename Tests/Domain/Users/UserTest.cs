@@ -5,7 +5,7 @@ using Xunit;
 using FluentAssertions;
 
 namespace ShopTex.Tests.Domain.Users;
-    
+
 public class UserTests
 {
     [Fact]
@@ -20,7 +20,7 @@ public class UserTests
         byte[] salt = new byte[] { 1, 2, 3 };
 
         // Act
-        var user = new User(name, phone, email, Configurations.HashString(password,salt), role, salt);
+        var user = new User(name, phone, email, Configurations.HashString(password, salt), role, salt);
 
         // Assert
         user.Id.Should().NotBeNull();
@@ -43,7 +43,7 @@ public class UserTests
         byte[] salt = new byte[] { 9, 8, 7 };
 
         // Act
-        var user = new User(name, phone, email, Configurations.HashString(password,salt), role, salt);
+        var user = new User(name, phone, email, Configurations.HashString(password, salt), role, salt);
 
         // Assert
         user.Role.Should().BeNull();
@@ -63,7 +63,7 @@ public class UserTests
         byte[] salt = new byte[] { 0, 0, 0 };
 
         // Act
-        var user = new User(id, name, phone, email, Configurations.HashString(password,salt), role, status, salt);
+        var user = new User(id, name, phone, email, Configurations.HashString(password, salt), role, status, salt);
 
         // Assert
         user.Id.Value.ToString().Should().Be(id);
@@ -102,7 +102,7 @@ public class UserTests
 
         // Act
         bool result = user.VerifyPassword(password);
-        
+
         // Assert
         result.Should().BeTrue();
     }
@@ -124,7 +124,7 @@ public class UserTests
 
         // Act
         bool result = user.VerifyPassword("not-the-password");
-        
+
         // Assert
         result.Should().BeFalse();
     }
@@ -139,7 +139,7 @@ public class UserTests
         string password = "SecurePass!";
         string role = Configurations.SYS_ADMIN_ROLE_NAME;
         byte[] salt = new byte[] { 1, 2, 3 };
-        
+
         // Act
         var user = new User(name, phone, email, Configurations.HashString(password, salt), role, salt);
 
@@ -157,10 +157,10 @@ public class UserTests
         string password = "SecurePass!";
         string role = Configurations.STORE_ADMIN_ROLE_NAME;
         byte[] salt = new byte[] { 1, 2, 3 };
-        
+
         // Act
         var user = new User(name, phone, email, Configurations.HashString(password, salt), role, salt);
-        
+
         // Assert
         user.Status.ToString().Should().Be("disabled");
     }
@@ -175,14 +175,14 @@ public class UserTests
         string password = "SecurePass!";
         string role = Configurations.STORE_COLAB_ROLE_NAME;
         byte[] salt = new byte[] { 1, 2, 3 };
-        
+
         // Act
         var user = new User(name, phone, email, Configurations.HashString(password, salt), role, salt);
-        
+
         // Assert
         user.Status.ToString().Should().Be("enabled");
     }
-    
+
     [Fact]
     public void EnableUser_WhenStatusIsDisabled_ShouldSetStatusToEnabled_AndReturnTrue()
     {
@@ -196,7 +196,7 @@ public class UserTests
         string status = "disabled";
         byte[] salt = new byte[] { 1, 2, 3 };
 
-        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role,status, salt);
+        var user = new User(id, name, phone, email, Configurations.HashString(password, salt), role, status, salt);
 
         // Act
         var result = user.EnableUser();
@@ -219,7 +219,7 @@ public class UserTests
         string status = "enabled";
         byte[] salt = new byte[] { 1, 2, 3 };
 
-        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role,status, salt);
+        var user = new User(id, name, phone, email, Configurations.HashString(password, salt), role, status, salt);
 
         // Act
         var result = user.EnableUser();
@@ -242,7 +242,7 @@ public class UserTests
         string status = "enabled";
         byte[] salt = new byte[] { 1, 2, 3 };
 
-        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role,status, salt);
+        var user = new User(id, name, phone, email, Configurations.HashString(password, salt), role, status, salt);
 
         // Act
         var result = user.DisableUser();
@@ -265,7 +265,7 @@ public class UserTests
         string status = "disabled";
         byte[] salt = new byte[] { 1, 2, 3 };
 
-        var user = new User(id,name, phone, email, Configurations.HashString(password, salt), role, status, salt);
+        var user = new User(id, name, phone, email, Configurations.HashString(password, salt), role, status, salt);
 
         // Act
         var result = user.DisableUser();
@@ -274,4 +274,74 @@ public class UserTests
         result.Should().BeFalse();
         user.Status.ToString().Should().Be("disabled");
     }
+    
+    [Fact]
+    public void SetStore_WithValidRole_ShouldSetStoreAndReturnTrue()
+    {
+        // Arrange
+        var user = new User("John Doe", "123456789", "john@store.com", "pass", Configurations.STORE_ADMIN_ROLE_NAME, new byte[] { 1, 2, 3 });
+        string storeId = Guid.NewGuid().ToString();
+
+        // Act
+        var result = user.SetStore(storeId);
+
+        // Assert
+        result.Should().BeTrue();
+        user.Store.Value.ToString().Should().Be(storeId);
+    }
+
+    [Fact]
+    public void SetStore_WithInvalidRole_ShouldReturnFalseAndNotSetStore()
+    {
+        // Arrange
+        var user = new User("John Doe", "123456789", "john@client.com", "pass", "client", new byte[] { 1, 2, 3 });
+        string storeId = Guid.NewGuid().ToString();
+
+        // Act
+        var result = user.SetStore(storeId);
+
+        // Assert
+        result.Should().BeFalse();
+        user.Store.Should().BeNull();
+    }
+
+    [Fact]
+    public void ChangeRole_ToClientRole_ShouldRemoveStore()
+    {
+        // Arrange
+        var user = new User("John Doe", "123456789", "john@store.com", "pass", "store administrator", new byte[] { 1, 2, 3 });
+        user.Role.RoleName.Should().Be(Configurations.STORE_ADMIN_ROLE_NAME);
+
+        var storeId = Guid.NewGuid().ToString();
+        user.SetStore(storeId);
+        user.Store.Should().NotBeNull();
+
+        // Act
+        user.ChangeRole(UserRole.UserNRole);
+
+        // Assert
+        user.Role.RoleName.Should().Be(Configurations.USER_ROLE_NAME);
+        user.Store.Should().BeNull();
+    }
+
+    [Fact]
+    public void ChangeRole_ToStoreAdminRole_ShouldKeepStore()
+    {
+        // Arrange
+        var user = new User("John Doe", "123456789", "john@store.com", "pass", Configurations.STORE_ADMIN_ROLE_NAME, new byte[] { 1, 2, 3 });
+        user.Role.RoleName.Should().Be(Configurations.STORE_ADMIN_ROLE_NAME);
+
+        var storeId = Guid.NewGuid().ToString();
+        user.SetStore(storeId);
+        user.Store.Should().NotBeNull();
+
+        // Act
+        user.ChangeRole(UserRole.StoreAdminRole);
+
+        // Assert
+        user.Role.RoleName.Should().Be(Configurations.STORE_ADMIN_ROLE_NAME);
+        user.Store.Should().NotBeNull();
+        user.Store.Value.ToString().Should().Be(storeId);
+    }
+
 }

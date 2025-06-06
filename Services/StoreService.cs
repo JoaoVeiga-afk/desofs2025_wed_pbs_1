@@ -6,6 +6,7 @@ using Konscious.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
+using ShopTex.Domain.Users;
 using Microsoft.Extensions.Logging;
 
 namespace ShopTex.Services;
@@ -14,13 +15,15 @@ public class StoreService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IStoreRepository _repo;
+    private readonly IUserRepository _userRepo;
     private readonly IConfiguration _config;
     private readonly ILogger<StoreService> _logger;
 
-    public StoreService(IUnitOfWork unitOfWork, IStoreRepository repo, IConfiguration config, ILogger<StoreService> logger)
+    public StoreService(IUnitOfWork unitOfWork, IStoreRepository repo, IUserRepository userRepo, IConfiguration config, ILogger<StoreService> logger)
     {
         _unitOfWork = unitOfWork;
         _repo = repo;
+        _userRepo = userRepo;
         _config = config;
         _logger = logger;
     }
@@ -60,7 +63,7 @@ public class StoreService
     {
         _logger.LogInformation("Creating new store with Name: {Name}, Address: {Address}, Status: {Status}",
             dto.Name, dto.Address, dto.Status);
-        
+
         var store = new Store(dto.Name, dto.Address, dto.Status);
 
         try
@@ -75,5 +78,38 @@ public class StoreService
         }
 
         return new StoreDto(store.Id.AsGuid(), store.Name, store.Address, store.Status);
+    }
+
+    public async Task<(bool Success, string Message)> AddStoreColaborator(string storeId, string userEmail)
+    {
+        _logger.LogInformation("Adding new collaborator with email {Email} to store with id {StoreId}", userEmail, storeId);
+
+        // Find provided user
+        var user = await _userRepo.FindByEmail(userEmail);
+        if (user == null)
+        {
+            _logger.LogWarning("User with email {Email} not found", userEmail);
+            return (false, "User not found.");
+        }
+
+        var storeExists = (await _repo.FindById(storeId)) != null;
+        if (!storeExists)
+        {
+            _logger.LogWarning("Store with ID {StoreId} not found", storeId);
+            return (false, "Store not found.");
+        }
+
+        var success = user.SetStore(storeId); // true or false
+
+        if (!success)
+        {
+            _logger.LogWarning("User {Email} does not have a role that allows store assignment", userEmail);
+            return (false, "User does not have the correct role for store assignment.");
+        }
+
+        _userRepo.Update(user); // Save changes
+        _logger.LogInformation("User {Email} successfully assigned to store {StoreId}", userEmail, storeId);
+
+        return (true, "Collaborator added to store successfully.");
     }
 }
