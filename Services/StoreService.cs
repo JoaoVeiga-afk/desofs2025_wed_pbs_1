@@ -1,13 +1,6 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
-using Konscious.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
 using ShopTex.Domain.Users;
-using Microsoft.Extensions.Logging;
 
 namespace ShopTex.Services;
 
@@ -72,7 +65,7 @@ public class StoreService
 
             await _unitOfWork.CommitAsync();
         }
-        catch (Exception ex)
+        catch
         {
             throw new BusinessRuleValidationException("Store already exists");
         }
