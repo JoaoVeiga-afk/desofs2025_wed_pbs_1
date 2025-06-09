@@ -51,6 +51,7 @@ public class AuthenticationService(IUnitOfWork unitOfWork, IUserRepository repo,
             return false;
         }
 
+
         if (user.Store?.AsString() != storeId)
         {
             logger.LogWarning("User with email {Email} doesn't manage store with id {StoreId}", email, storeId);
@@ -84,6 +85,7 @@ public class AuthenticationService(IUnitOfWork unitOfWork, IUserRepository repo,
         if (user.Store?.AsString() != storeId)
         {
             logger.LogWarning("User with email {Email} doesn't work on store with id {StoreId}", email, storeId);
+
             return false;
         }
 

@@ -1,6 +1,8 @@
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
 using ShopTex.Domain.Users;
+using Microsoft.Extensions.Logging;
+
 
 namespace ShopTex.Services;
 
