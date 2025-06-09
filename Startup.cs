@@ -4,8 +4,12 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
+using ShopTex.Domain.Orders;
+using ShopTex.Domain.OrdersProduct;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Users;
+using ShopTex.Infrastructure.Orders;
+using ShopTex.Infrastructure.OrdersProduct;
 using ShopTex.Infrastructure.Shared;
 using ShopTex.Infrastructure.Users;
 using ShopTex.Models;
@@ -100,5 +104,10 @@ public class Startup
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<UserService>();
+        
+        services.AddTransient<IOrderRepository, OrderRepository>();
+        services.AddTransient<IOrderProductRepository, OrderProductRepository>();
+        services.AddTransient<OrderService>();
+
     }
 }
