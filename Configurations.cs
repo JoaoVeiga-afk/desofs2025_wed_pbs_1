@@ -20,6 +20,7 @@ public class Configurations
     public const string USER_ROLE_NAME = "Client";
     public const string STORE_ADMIN_ROLE_NAME = "Store Administrator";
     public const string STORE_COLAB_ROLE_NAME = "Store Collaborator";
+    public const string IMAGE_STORAGE_PATH = "ProductImages";
     
     public static string HashString(string source, byte[] salt)
     {

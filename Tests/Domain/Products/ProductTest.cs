@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Text;
 using FluentAssertions;
 using ShopTex.Domain.Products;
 using ShopTex.Domain.Shared;
@@ -111,5 +112,30 @@ public class ProductTest
 
         // Assert
         act.Should().Throw<NullReferenceException>();
+    }
+
+    [Fact]
+    public void UploadImage_ShouldCreateProductImageAndEncrypt()
+    {
+        // Arrange
+        var product = new Product("Test", "Test", 10.0, "Test", "enabled", Guid.NewGuid().ToString());
+        var dummyImage = Encoding.UTF8.GetBytes("fakeimage");
+        var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+        Directory.CreateDirectory(tempDir);
+
+        try
+        {
+            // Act
+            var result = product.UploadImage(dummyImage, tempDir);
+
+            // Assert
+            result.Should().BeTrue();
+            product.Image.Should().NotBeNull();
+            File.Exists(product.Image.ImagePath).Should().BeTrue();
+        }
+        finally
+        {
+            Directory.Delete(tempDir, true);
+        }
     }
 }

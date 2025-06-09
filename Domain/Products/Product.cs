@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Org.BouncyCastle.Utilities;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
 
@@ -24,6 +25,8 @@ public class Product : Entity<ProductId>, IAggregateRoot
     [Required]
     public StoreId StoreId { get; set; }
 
+    public ProductImage? Image { get; set; }
+
     public Product(string name, string? description, double price, string? category, string status, string storeId)
     {
         Id = new ProductId(Guid.NewGuid());
@@ -48,6 +51,16 @@ public class Product : Entity<ProductId>, IAggregateRoot
         Status = new ProductStatus(status);
 
         Validate();
+    }
+
+    public bool UploadImage(byte[] image, string image_storage_path)
+    {
+        if (Image == null)
+        {
+            Image = new ProductImage(Id.AsString(), image_storage_path);
+        }
+
+        return Image.EncryptImage(image);
     }
 
     private void Validate()

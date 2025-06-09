@@ -1,6 +1,9 @@
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Products;
 using ShopTex.Domain.Stores;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using FluentAssertions;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ShopTex.Services;
 
@@ -11,14 +14,16 @@ public class ProductService
     private readonly IStoreRepository _storeRepo;
     private readonly IConfiguration _config;
     private readonly ILogger<ProductService> _logger;
+    private readonly string _imageStoragePath;
 
-    public ProductService(IUnitOfWork unitOfWork, IProductRepository repo, IStoreRepository storeRepo, IConfiguration config, ILogger<ProductService> logger)
+    public ProductService(IUnitOfWork unitOfWork, IProductRepository repo, IStoreRepository storeRepo, IConfiguration config, ILogger<ProductService> logger, string imageStoragePath = Configurations.IMAGE_STORAGE_PATH)
     {
         _unitOfWork = unitOfWork;
         _repo = repo;
         _storeRepo = storeRepo;
         _config = config;
         _logger = logger;
+        _imageStoragePath = imageStoragePath;
     }
 
     public async Task<List<ProductDto>> GetAllAsync()
@@ -76,5 +81,20 @@ public class ProductService
         }
 
         return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+    }
+
+    public async Task<bool> UploadImage(string productId, byte[] image)
+    {
+        var product = await _repo.FindById(productId);
+
+        if (product == null)
+            throw new BusinessRuleValidationException("Product not found");
+
+        var success = product.UploadImage(image, _imageStoragePath);
+        if (!success)
+            return false;
+
+        await _unitOfWork.CommitAsync(); // Make sure changes are saved
+        return true;
     }
 }

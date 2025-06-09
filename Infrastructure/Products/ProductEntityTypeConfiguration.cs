@@ -1,5 +1,3 @@
-using System.Formats.Asn1;
-using Microsoft.Build.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ShopTex.Domain.Products;
@@ -15,12 +13,32 @@ public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
 
         builder.OwnsOne(s => s.Status, status =>
         {
-            status.Property(s => s.Value).HasColumnName(nameof(ProductStatus)).IsRequired();
+            status.Property(s => s.Value)
+                .HasColumnName(nameof(ProductStatus))
+                .IsRequired();
         });
 
         builder.OwnsOne(s => s.StoreId, store =>
         {
-            store.Property(s => s.Value).HasColumnName(nameof(StoreId)).IsRequired();
+            store.Property(s => s.Value)
+                .HasColumnName(nameof(StoreId))
+                .IsRequired();
+        });
+
+        builder.OwnsOne(s => s.Image, image =>
+        {
+            image.Property(i => i.ImagePath)
+                .HasColumnName(nameof(ProductImage.ImagePath))
+                .HasMaxLength(260)
+                .IsRequired();
+
+            image.Property(i => i.EncryptionKey)
+                .HasColumnName(nameof(ProductImage.EncryptionKey))
+                .IsRequired();
+
+            image.Property(i => i.InitializationVector)
+                .HasColumnName(nameof(ProductImage.InitializationVector))
+                .IsRequired();
         });
     }
 }

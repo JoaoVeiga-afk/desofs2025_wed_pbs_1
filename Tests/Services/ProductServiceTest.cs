@@ -14,10 +14,11 @@ public class ProductServiceTest
     private readonly Mock<IStoreRepository> _storeRepository = new();
     private readonly Mock<IConfiguration> _configuration = new();
     private readonly Mock<ILogger<ProductService>> _logger = new();
+    private const string TestImageStoragePath = "TestProductImages";
 
     private ProductService CreateService()
     {
-        return new ProductService(_unitOfWork.Object, _productRepository.Object, _storeRepository.Object, _configuration.Object, _logger.Object);
+        return new ProductService(_unitOfWork.Object, _productRepository.Object, _storeRepository.Object, _configuration.Object, _logger.Object, TestImageStoragePath);
     }
 
     private static Product CreateTestProduct(string storeId)
@@ -129,5 +130,18 @@ public class ProductServiceTest
 
         // Act & Assert
         await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
+    }
+
+    [Fact]
+    public async Task UploadImage_ProductNotFound_ThrowsBusinessRuleValidationException()
+    {
+        // Arrange
+        var productId = Guid.NewGuid().ToString();
+        _productRepository.Setup(r => r.FindById(productId)).ReturnsAsync((Product?)null);
+
+        var service = CreateService();
+
+        // Act & Assert
+        await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.UploadImage(productId, new byte[] { 1, 2, 3 }));
     }
 }
