@@ -1,5 +1,6 @@
 ﻿// CreatingOrderDto.cs
 using System.ComponentModel.DataAnnotations;
+using ShopTex.Domain.Shared.Validation;
 using ShopTex.Domain.Users;
 
 namespace ShopTex.Domain.Orders;
@@ -7,6 +8,7 @@ namespace ShopTex.Domain.Orders;
 public class CreatingOrderDto
 {
     [Required]
+    [NotEmptyGuid]
     public Guid UserId { get; set; }
     
     [Required]
