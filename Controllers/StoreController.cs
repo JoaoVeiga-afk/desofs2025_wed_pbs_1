@@ -38,7 +38,7 @@ namespace ShopTex.Controllers
         // POST: api/store/create
         [HttpPost]
         [Route("create")]
-        [Authorize]
+        [Authorize(Roles = Configurations.SYS_ADMIN_ROLE_NAME)]
         public async Task<ActionResult<StoreDto>> CreateStore(CreatingStoreDto dto)
         {
             try
