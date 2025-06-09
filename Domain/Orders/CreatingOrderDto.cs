@@ -9,7 +9,7 @@ public class CreatingOrderDto
 {
     [Required]
     [NotEmptyGuid]
-    public Guid UserId { get; set; }
+    public Guid? UserId { get; set; }
     
     [Required]
     public string Status { get; set; }

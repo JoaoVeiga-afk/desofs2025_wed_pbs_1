@@ -88,7 +88,7 @@ public class OrderService
     {
         _logger.LogInformation("Creating order for user {UserId}", dto.UserId);
 
-        var userId = new UserId(dto.UserId);
+        var userId = new UserId(dto.UserId.Value);
         var order = new Order(userId, dto.Status);
         foreach (var productDto in dto.Products)
         {
