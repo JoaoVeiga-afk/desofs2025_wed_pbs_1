@@ -28,3 +28,6 @@ obj/
 .idea/
 
 .env
+
+# Encrypted image files
+*.enc

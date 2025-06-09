@@ -8,13 +8,13 @@ public class Store : Entity<StoreId>, IAggregateRoot
 {
     [Required]
     [StringLength(100)]
-    public string Name { get; set; }
+    public string Name { get; private set; }
 
     [Required]
-    public StoreAddress Address { get; set; }
+    public StoreAddress Address { get; private set; }
 
     [Required]
-    public StoreStatus Status { get; set; }
+    public StoreStatus Status { get; private set; }
 
     private Store()
     {
