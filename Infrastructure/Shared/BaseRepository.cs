@@ -41,6 +41,11 @@ namespace ShopTex.Infrastructure.Shared
             return ret.Entity;
         }
 
+        public void Update(TEntity obj)
+        {
+            this._objs.Update(obj);
+        }
+
         public void Remove(TEntity obj)
         {
             this._objs.Remove(obj);

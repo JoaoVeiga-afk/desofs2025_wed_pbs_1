@@ -4,5 +4,5 @@ namespace ShopTex.Domain.Stores;
 
 public interface IStoreRepository : IRepository<Store, StoreId>
 {
-    public Task<Store> FindByName(string name);
+    public Task<Store?> FindById(string storeId);
 }

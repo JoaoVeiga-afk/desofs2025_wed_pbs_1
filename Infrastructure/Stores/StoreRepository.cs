@@ -5,15 +5,15 @@ using ShopTex.Models;
 
 namespace ShopTex.Infrastructure.Stores;
 
-public class StoreRepository : BaseRepository<Store,StoreId>,IStoreRepository
+public class StoreRepository : BaseRepository<Store, StoreId>, IStoreRepository
 {
     public StoreRepository(DatabaseContext context) : base(context.Store)
     {
-        
-    }
 
-    public async Task<Store> FindByName(string name)
+    }
+    
+    public async Task<Store?> FindById(string storeId)
     {
-        return await _objs.Where(s => name.Equals(s.Name)).FirstOrDefaultAsync();
+        return await _objs.FirstOrDefaultAsync(s => s.Id.AsString() == storeId);
     }
 }

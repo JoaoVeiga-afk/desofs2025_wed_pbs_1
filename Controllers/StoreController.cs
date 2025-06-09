@@ -65,5 +65,49 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        // POST: api/store/colab/add
+        [HttpPost]
+        [Route("colab/add")]
+        [Authorize]
+        public async Task<ActionResult> AddColaborator(string storeId, string userEmail)
+        {
+            try
+            {
+                // Check if current user is System Administrator or Store Administrator of the given store
+                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+
+                if (string.IsNullOrWhiteSpace(currentUserEmail))
+                {
+                    return Unauthorized("User email not found in token");
+                }
+
+                var authorized_sysadmin = await _authenticationService.hasPermission(currentUserEmail, new List<UserRole> { UserRole.SystemRole });
+                var authorized_storeadmin = await _authenticationService.managesStore(currentUserEmail, storeId);
+                if (!authorized_sysadmin && !authorized_storeadmin)
+                {
+                    return Unauthorized("You don't have permission to create a store");
+                }
+
+                var userIsColaborator = await _authenticationService.hasPermission(userEmail, new List<UserRole> { UserRole.StoreColabRole });
+                if (!userIsColaborator)
+                {
+                    return BadRequest("Provided user is not a store colaborator");
+                }
+
+                // Add collaborator
+                var (success, message) = await _service.AddStoreColaborator(storeId, userEmail);
+                if (!success)
+                {
+                    return BadRequest(message);
+                }
+
+                return Ok(message);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
