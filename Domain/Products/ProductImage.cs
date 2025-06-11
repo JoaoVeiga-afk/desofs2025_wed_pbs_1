@@ -16,6 +16,8 @@ public class ProductImage
     [Required]
     public string InitializationVector { get; private set; }
 
+    private ProductImage() { }
+
     public ProductImage(string productId, string imageStoragePath)
     {
         // Generate deterministic filename from product ID

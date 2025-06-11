@@ -113,14 +113,14 @@ public class User : Entity<UserId>, IAggregateRoot
         }
 
         switch (Role.RoleName)
-            {
-                case Configurations.SYS_ADMIN_ROLE_NAME:
-                case Configurations.STORE_ADMIN_ROLE_NAME:
-                    DisableUser();
-                    break;
-                default:
-                    EnableUser();
-                    break;
-            }
+        {
+            case Configurations.SYS_ADMIN_ROLE_NAME:
+            case Configurations.STORE_ADMIN_ROLE_NAME:
+                DisableUser();
+                break;
+            default:
+                EnableUser();
+                break;
+        }
     }
 }

@@ -274,7 +274,7 @@ public class UserTests
         result.Should().BeFalse();
         user.Status.ToString().Should().Be("disabled");
     }
-    
+
     [Fact]
     public void SetStore_WithValidRole_ShouldSetStoreAndReturnTrue()
     {

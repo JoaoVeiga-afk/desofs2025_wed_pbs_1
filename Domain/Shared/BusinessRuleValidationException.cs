@@ -6,7 +6,7 @@ namespace ShopTex.Domain.Shared
 
         public BusinessRuleValidationException(string message) : base(message)
         {
-            
+
         }
 
         public BusinessRuleValidationException(string message, string details) : base(message)

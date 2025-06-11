@@ -11,9 +11,9 @@ public class CustomPhoneAttribute : ValidationAttribute
         {
             return true;
         }
-        
+
         string phoneNumber = value.ToString();
-        
+
         // remove all empty spaces
         phoneNumber = Regex.Replace(phoneNumber, @"\s", "");
 

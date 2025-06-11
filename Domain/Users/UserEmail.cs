@@ -7,13 +7,13 @@ public class UserEmail
     [EmailAddress]
     public string Value { get; set; }
 
-    private UserEmail() {}
+    private UserEmail() { }
 
     public UserEmail(string address)
     {
         if (!new EmailAddressAttribute().IsValid(address))
             throw new ValidationException("Invalid email format");
-        
+
         Value = address;
     }
 }

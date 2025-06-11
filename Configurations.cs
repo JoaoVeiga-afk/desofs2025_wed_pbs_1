@@ -10,18 +10,18 @@ public class Configurations
     {
         Env.Load();
     }
-    
+
     public const string ValidEmail = "isep.ipp.pt";
 
-    public static string DbConnection => Environment.GetEnvironmentVariable("DB_CONNECTION_SERVER") 
+    public static string DbConnection => Environment.GetEnvironmentVariable("DB_CONNECTION_SERVER")
                                          ?? throw new Exception("DB is not set");
-    
-    public const string SYS_ADMIN_ROLE_NAME ="System Administrator";
+
+    public const string SYS_ADMIN_ROLE_NAME = "System Administrator";
     public const string USER_ROLE_NAME = "Client";
     public const string STORE_ADMIN_ROLE_NAME = "Store Administrator";
     public const string STORE_COLAB_ROLE_NAME = "Store Collaborator";
     public const string IMAGE_STORAGE_PATH = "ProductImages";
-    
+
     public static string HashString(string source, byte[] salt)
     {
         var hasher = new Argon2id(Encoding.UTF8.GetBytes(source))
@@ -34,5 +34,5 @@ public class Configurations
         byte[] hashBytes = hasher.GetBytes(32);
         return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
     }
-    
+
 }

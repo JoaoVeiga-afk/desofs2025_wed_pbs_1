@@ -26,10 +26,10 @@ public class UserServiceTest
         _userRepository.Setup(repository => repository.FindByEmail(It.IsAny<string>())).ReturnsAsync(_testUser);
         _configuration.Setup(configuration => configuration["Jwt:Key"]).Returns("testuserandineed128bitsforthiskeyoritdoesnotwork");
 
-        var service = new UserService(_unitOfWork.Object, _userRepository.Object, _configuration.Object,_logger.Object);
+        var service = new UserService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
 
         var result = await service.UserSignIn(new UserSignInDto()
-            { Email = "testuser@example.com", Password = "passwd" });
+        { Email = "testuser@example.com", Password = "passwd" });
 
         Assert.NotNull(result);
     }
@@ -40,7 +40,7 @@ public class UserServiceTest
         _userRepository.Setup(repository => repository.FindByEmail(It.IsAny<string>())).ReturnsAsync(_testUser);
         _configuration.Setup(configuration => configuration["Jwt:Key"]).Returns("testuserandineed128bitsforthiskeyoritdoesnotwork");
 
-        var service = new UserService(_unitOfWork.Object, _userRepository.Object, _configuration.Object,_logger.Object);
+        var service = new UserService(_unitOfWork.Object, _userRepository.Object, _configuration.Object, _logger.Object);
 
         var result = await service.UserSignIn(new UserSignInDto() { Email = "testuser@example.com", Password = "passwdwrong" });
 
@@ -54,7 +54,7 @@ public class UserServiceTest
         var id = new UserId(Guid.NewGuid());
         var disabledUser = new User(Guid.NewGuid().ToString(), "Testuser", "912345678", "testuser@example.com", "hash",
             UserRole.UserNRole.RoleName, "disabled", Salt);
-        
+
 
         _userRepository.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(disabledUser);
 
@@ -75,8 +75,8 @@ public class UserServiceTest
     {
         // Arrange
         var id = new UserId(Guid.NewGuid());
-        var enabledUser = new User(Guid.NewGuid().ToString(),"Testuser", "912345678", "testuser@example.com", "hash", UserRole.UserNRole.RoleName,
-            "enabled",Salt);
+        var enabledUser = new User(Guid.NewGuid().ToString(), "Testuser", "912345678", "testuser@example.com", "hash", UserRole.UserNRole.RoleName,
+            "enabled", Salt);
 
         _userRepository.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(enabledUser);
 
@@ -119,8 +119,8 @@ public class UserServiceTest
     {
         // Arrange
         var id = new UserId(Guid.NewGuid());
-        var enabledUser = new User(Guid.NewGuid().ToString(),"Testuser", "912345678", "testuser@example.com", "hash", UserRole.UserNRole.RoleName,
-            "enabled",Salt);
+        var enabledUser = new User(Guid.NewGuid().ToString(), "Testuser", "912345678", "testuser@example.com", "hash", UserRole.UserNRole.RoleName,
+            "enabled", Salt);
 
         _userRepository.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(enabledUser);
 
@@ -141,8 +141,8 @@ public class UserServiceTest
     {
         // Arrange
         var id = new UserId(Guid.NewGuid());
-        var disabledUser = new User(Guid.NewGuid().ToString(),"Testuser", "912345678", "testuser@example.com", "hash",
-            UserRole.UserNRole.RoleName,"disabled", Salt);
+        var disabledUser = new User(Guid.NewGuid().ToString(), "Testuser", "912345678", "testuser@example.com", "hash",
+            UserRole.UserNRole.RoleName, "disabled", Salt);
 
         _userRepository.Setup(r => r.GetByIdAsync(id)).ReturnsAsync(disabledUser);
 

@@ -3,16 +3,18 @@ namespace ShopTex.Domain.Shared
     /// <summary>
     /// Base class for entities.
     /// </summary>
-    public abstract class EntityId: IEquatable<EntityId>, IComparable<EntityId>
+    public abstract class EntityId : IEquatable<EntityId>, IComparable<EntityId>
     {
-        protected Object ObjValue {get;}
+        protected Object ObjValue { get; }
 
-        public String Value { 
-            get { 
-                    if (this.ObjValue.GetType() == typeof(String))
-                        return (String) this.ObjValue;
-                    return AsString();
-                } 
+        public String Value
+        {
+            get
+            {
+                if (this.ObjValue.GetType() == typeof(String))
+                    return (String)this.ObjValue;
+                return AsString();
+            }
         }
 
         protected EntityId(Object value)
@@ -23,9 +25,9 @@ namespace ShopTex.Domain.Shared
                 this.ObjValue = value;
         }
 
-       
+
         protected abstract Object createFromString(String text);
-        
+
         public abstract String AsString();
 
 
@@ -49,7 +51,8 @@ namespace ShopTex.Domain.Shared
             return this.Value == other.Value;
         }
 
-        public int CompareTo(EntityId other){
+        public int CompareTo(EntityId other)
+        {
             if (other == null)
                 return -1;
             return this.Value.CompareTo(other.Value);
@@ -67,10 +70,10 @@ namespace ShopTex.Domain.Shared
             }
             return obj1.Equals(obj2);
         }
-        public static bool operator !=(EntityId x, EntityId y) 
+        public static bool operator !=(EntityId x, EntityId y)
         {
             return !(x == y);
         }
     }
-   
+
 }

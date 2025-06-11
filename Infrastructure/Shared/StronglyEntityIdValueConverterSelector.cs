@@ -12,7 +12,7 @@ namespace ShopTex.Infrastructure.Shared
         private readonly ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo> _converters
             = new ConcurrentDictionary<(Type ModelClrType, Type ProviderClrType), ValueConverterInfo>();
 
-        public StronglyEntityIdValueConverterSelector(ValueConverterSelectorDependencies dependencies) 
+        public StronglyEntityIdValueConverterSelector(ValueConverterSelectorDependencies dependencies)
             : base(dependencies)
         {
         }
