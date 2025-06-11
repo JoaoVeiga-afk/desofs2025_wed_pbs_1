@@ -120,7 +120,7 @@ namespace ShopTex.Controllers
                 return BadRequest("No file uploaded.");
 
             if (file.Length > MaxFileSize)
-                return BadRequest("File size exceeds 2MB limit.");
+                return BadRequest("File size exceeds 10MB limit.");
 
             var contentType = file.ContentType.ToLower();
             var extension = Path.GetExtension(file.FileName).ToLower();
