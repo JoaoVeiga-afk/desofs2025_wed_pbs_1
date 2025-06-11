@@ -213,3 +213,47 @@ Description: Adds a user as a collaborator to a specific store. Requires the cal
 
 **400 Bad Request** – If the collaborator does not have the correct role or other business rule fails.
 
+### Database Management
+
+Created users for the application and the application logs.
+Each user has the minimum required permissions to do their job.
+
+#### ShopTex Database
+It was created a user the username `shoptex` with the password stored in the .env file. It has the following permissions:
+- **`SELECT`** – Read data from the ShopTex database.
+- **`INSERT`** – Add new records to the ShopTex database.
+- **`UPDATE`** – Modify existing records in the ShopTex database.
+- **`DELETE`** – Remove records from the ShopTex database.
+
+#### Application Logs Database
+It was created a user the username `shoptex_logs` with the password stored in the .env file. It has the following permissions:
+- **`INSERT`** – Add new records to the application logs database.
+
+### Security Features
+
+#### JWT Authentication
+The application uses JWT (JSON Web Tokens) for secure user authentication. The token is generated upon successful login and must be included in the `Authorization` header of subsequent requests.
+This token is signed with a secret key to ensure its integrity and authenticity. The token contains user information and expiration time, allowing the server to verify the user's identity without needing to access the database for every request.
+
+
+#### Password Hashing
+All user passwords are securely hashed using the `bcrypt` algorithm before being stored in the database. This ensures that even if the database is compromised, user passwords remain protected.
+It also uses salt to enhance security against rainbow table attacks.
+
+#### Environment Variables
+The application uses environment variables to store sensitive information such as database credentials and JWT secret keys. This prevents hardcoding sensitive data in the source code, reducing the risk of exposure.
+
+### HTTPS
+The application is configured to run over HTTPS, ensuring that all data transmitted between the client and server is encrypted. This protects against eavesdropping
+
+### Configuration Management
+
+The application uses a `.env` file to manage configuration settings, including database connection strings, JWT secret keys, and other sensitive information. This file is not included in the version control system to prevent accidental exposure of sensitive data.
+This repository has action secret management enabled, which allows us to securely store and manage sensitive information such as API keys, database credentials, and other secrets required for the application to function properly.
+The appsettings.json file is used to store application port and other configuration settings. It is not used to store sensitive information, as this should be managed through environment variables or the `.env` file.
+
+### Logging and Monitoring
+
+The application implements logging to capture important events and errors. Logs are stored in a separate database (`shoptex_logs`) to ensure that application performance is not affected by logging operations.
+It was implemented transactional logging, which ensures that all database operations are logged consistently. This allows for better tracking of changes and easier debugging of issues.
+
