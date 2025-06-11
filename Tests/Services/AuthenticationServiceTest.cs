@@ -12,10 +12,10 @@ public class AuthenticationServiceTest
     private readonly Mock<IConfiguration> _configuration = new Mock<IConfiguration>();
     private readonly Mock<IUserRepository> _userRepository = new Mock<IUserRepository>();
     private readonly Mock<ILogger<UserService>> _logger = new Mock<ILogger<UserService>>();
-    
+
     private static readonly byte[] Salt = UserService.GeneratePasswordSalt();
     private readonly User _testUser = new User("Testuser", "912345678", "testuser@example.com", Configurations.HashString("passwd", Salt), UserRole.UserNRole.RoleName, Salt);
-    
+
 
 
     [Fact]
@@ -76,7 +76,7 @@ public class AuthenticationServiceTest
 
         Assert.False(result);
     }
-    
+
     [Fact]
     public async Task ManagesStore_UserNotFound_ShouldReturnFalse()
     {

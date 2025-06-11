@@ -19,5 +19,5 @@ public class CreatingUserDto
     public string Password { get; set; }
 
     public string? RoleId { get; set; }
-    
+
 }

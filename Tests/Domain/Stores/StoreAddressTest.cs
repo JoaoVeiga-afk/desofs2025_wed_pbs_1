@@ -35,7 +35,7 @@ public class StoreAddressTest
     [InlineData("Street", "City", null, "1234", "Country", "state")]
     [InlineData("Street", "City", "State", null, "Country", "zipCode")]
     [InlineData("Street", "City", "State", "1234", null, "country")]
-    public void Constructor_WithNullArguments_ShouldThrowArgumentNullException(string street, string city, string state, string zip, string country, string paramName)
+    public void Constructor_WithNullArguments_ShouldThrowArgumentNullException(string? street, string? city, string? state, string? zip, string? country, string paramName)
     {
         // Act
         Action act = () => new StoreAddress(street, city, state, zip, country);
