@@ -70,7 +70,6 @@ public class OrderService
             return null;
         }
 
-        // Busca sempre os produtos associados ao pedido
         var products = await _orderProductRepo.GetByOrderIdAsync(id);
 
         return new OrderDto
@@ -392,6 +391,20 @@ public class OrderService
         {
             _logger.LogWarning("User with ID {UserId} does not exist", candidate);
             throw new BusinessRuleValidationException("User not found.");
+        }
+        
+        var (caller, callerStoreGuid) = await GetValidatedUserWithStoreAsync(userCtx);
+
+        var targetEmail = existing.Email; 
+        var isOnStore = await _authenticationService.clientOnStore(
+            targetEmail,
+            callerStoreGuid.ToString()
+        );
+
+        if (caller.Role != UserRole.SystemRole && !isOnStore)
+        {
+            throw new UnauthorizedAccessException(
+                $"User {candidate.AsGuid()} does not have access the store.");
         }
         return candidate;
     }
