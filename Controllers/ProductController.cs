@@ -112,7 +112,7 @@ namespace ShopTex.Controllers
         [Authorize]
         public async Task<IActionResult> UploadImage(string id, IFormFile file)
         {
-            const long MaxFileSize = 2 * 1024 * 1024; // 2MB
+            const long MaxFileSize = Configurations.MAX_FILE_SIZE;
             var permittedMimeTypes = new[] { "image/jpeg", "image/png", "image/gif" };
             var permittedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
 
