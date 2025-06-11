@@ -112,9 +112,21 @@ namespace ShopTex.Controllers
         [Authorize]
         public async Task<IActionResult> UploadImage(string id, IFormFile file)
         {
+            const long MaxFileSize = 2 * 1024 * 1024; // 2MB
+            var permittedMimeTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            var permittedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
+            if (file.Length > MaxFileSize)
+                return BadRequest("File size exceeds 2MB limit.");
+
+            var contentType = file.ContentType.ToLower();
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            if (!permittedMimeTypes.Contains(contentType) || !permittedExtensions.Contains(extension))
+                return BadRequest("Invalid file type. Only JPG, PNG, and GIF are allowed.");
             var product = await _service.GetByIdAsync(new ProductId(id));
             if (product == null)
                 return NotFound("Product not found.");
