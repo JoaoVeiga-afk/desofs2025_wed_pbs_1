@@ -179,4 +179,39 @@ public class UserServiceTest
 
         _unitOfWork.Verify(u => u.CommitAsync(), Times.Never);
     }
+    
+    [Fact]
+    public async Task GetUserByEmailAsync_ShouldReturnUser_WhenExists()
+    {
+        _userRepository.Setup(r => r.FindByEmail("exists@example.com"))
+            .ReturnsAsync(_testUser);
+        var service = new UserService(
+            _unitOfWork.Object,
+            _userRepository.Object,
+            _configuration.Object,
+            _logger.Object
+        );
+
+        var result = await service.GetUserByEmailAsync("exists@example.com");
+
+        result.Should().NotBeNull();
+        result.Should().Be(_testUser);
+    }
+
+    [Fact]
+    public async Task GetUserByEmailAsync_ShouldReturnNull_WhenNotExists()
+    {
+        _userRepository.Setup(r => r.FindByEmail("nouser@example.com"))
+            .ReturnsAsync((User)null!);
+        var service = new UserService(
+            _unitOfWork.Object,
+            _userRepository.Object,
+            _configuration.Object,
+            _logger.Object
+        );
+
+        var result = await service.GetUserByEmailAsync("nouser@example.com");
+
+        result.Should().BeNull();
+    }
 }

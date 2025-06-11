@@ -91,4 +91,35 @@ public class AuthenticationService(IUnitOfWork unitOfWork, IUserRepository repo,
 
         return true;
     }
+    
+    public async Task<bool> clientOnStore(string email, string storeId)
+    {
+        var user = await repo.FindByEmail(email);
+        if (user == null)
+        {
+            logger.LogWarning("User with email {Email} not found", email);
+            return false;
+        }
+
+        if (user.Role == null)
+        {
+            logger.LogWarning("User with email {Email} has no role assigned", email);
+            return false;
+        }
+
+        if (user.Role.RoleName != Configurations.USER_ROLE_NAME)
+        {
+            logger.LogWarning("User with email {Email} doesn't have {Role} role", email, Configurations.STORE_COLAB_ROLE_NAME);
+            return false;
+        }
+
+        if (user.Store?.AsString() != storeId)
+        {
+            logger.LogWarning("User with email {Email} doesn't has account on store with id {StoreId}", email, storeId);
+
+            return false;
+        }
+
+        return true;
+    }
 }
