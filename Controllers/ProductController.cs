@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
@@ -23,16 +24,68 @@ namespace ShopTex.Controllers
 
         // GET: api/product/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ProductDto>> GetProduct(Guid id)
         {
-            var product = await _service.GetByIdAsync(new ProductId(id));
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
 
-            if (product == null)
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+            
+            try
             {
-                return NotFound();
-            }
+                var product = await _service.GetProductByIdAsync(new ProductId(id), userAuth);
 
-            return product;
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                return Ok(product);
+                
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        
+        // GET: api/product/
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<List<ProductDto>>> GetAllProducts()
+        {
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+
+            try
+            {
+                var products = await _service.GetAllProductsAsync(userAuth);
+
+                if (products == null || products.Count == 0)
+                    return NotFound(new { Message = "No products available." });
+
+                return Ok(products);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         // POST: api/product/create
@@ -43,8 +96,8 @@ namespace ShopTex.Controllers
         {
             try
             {
-                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+                var currentUserEmail =
+                    User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");
