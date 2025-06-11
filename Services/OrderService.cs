@@ -19,7 +19,6 @@ public class OrderService
     private readonly UserService _userService;
     private readonly AuthenticationService _authenticationService;
 
-
     public OrderService(
         IUnitOfWork unitOfWork,
         IOrderRepository repo,
@@ -27,7 +26,7 @@ public class OrderService
         IProductRepository produtRepo,
         ILogger<OrderService> logger,
         UserService userService,
-        AuthenticationService authenticationService) 
+        AuthenticationService authenticationService)
     {
         _unitOfWork = unitOfWork;
         _repo = repo;
@@ -72,24 +71,23 @@ public class OrderService
         _logger.LogInformation("Fetching orders offset {Offset} limit {Limit}", offset, limit);
 
         var orders = await _repo.GetPagedAsync(offset, limit);
-
         var results = new List<OrderDto>();
+
         foreach (var order in orders)
         {
             var products = await _orderProductRepo.GetByOrderIdAsync(order.Id);
-
             results.Add(new OrderDto
             {
-                Id        = order.Id.AsGuid(),
+                Id = order.Id.AsGuid(),
                 UserId = order.UserId.AsGuid(),
-                Status    = order.Status.ToString(),
+                Status = order.Status.ToString(),
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                Products  = products.Select(p => new OrderProductDto
+                Products = products.Select(p => new OrderProductDto
                 {
                     ProductId = p.ProductId,
-                    Amount    = p.Amount,
-                    Price     = p.Price
+                    Amount = p.Amount,
+                    Price = p.Price
                 }).ToList()
             });
         }
@@ -97,40 +95,45 @@ public class OrderService
         return results;
     }
 
-    
     public async Task<OrderDto> AddAsync(CreatingOrderDto dto, AuthenticatedUserDto userAuth)
     {
         await ValidateUserAccessAsync(userAuth);
-
         var userId = await ResolveAndValidateUserIdAsync(dto.UserId, userAuth);
 
-        var order = new Order(userId, dto.Status);
         foreach (var p in dto.Products)
         {
             if (!p.ProductId.HasValue)
                 throw new BusinessRuleValidationException("ProductId is required.");
 
             var productId = new ProductId(p.ProductId.Value);
-
             var existingProduct = await _produtRepo.GetByIdAsync(productId);
             if (existingProduct == null)
                 throw new BusinessRuleValidationException($"Product {p.ProductId} does not exist.");
-
-            order.AddProduct(productId, p.Amount, p.Price);
         }
 
-        try
+        var grouped = dto.Products
+            .GroupBy(p => p.ProductId!.Value)
+            .Select(g => new
+            {
+                ProductId = g.Key,
+                Amount    = g.Sum(x => x.Amount),
+                Price     = g.Average(x => x.Price)
+            })
+            .ToList();
+
+        var order = new Order(userId, dto.Status);
+        await _repo.AddAsync(order);
+        await _unitOfWork.CommitAsync();
+
+        foreach (var item in grouped)
         {
-            await _repo.AddAsync(order);
-            await _unitOfWork.CommitAsync();
+            var productId = new ProductId(item.ProductId);
+            var op = new OrderProduct(order.Id, productId, item.Amount, item.Price);
+            await _orderProductRepo.AddAsync(op);
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Failed to create order");
-            throw new BusinessRuleValidationException("Failed to create order.");
-        }
+        await _unitOfWork.CommitAsync();
 
-        _logger.LogInformation("Order {OrderId} created successfully", order.Id);
+        var persisted = await _orderProductRepo.GetByOrderIdAsync(order.Id);
 
         return new OrderDto
         {
@@ -139,21 +142,20 @@ public class OrderService
             Status    = order.Status.ToString(),
             CreatedAt = order.CreatedAt,
             UpdatedAt = order.UpdatedAt,
-            Products  = order.Products.Select(o => new OrderProductDto
+            Products  = persisted.Select(op => new OrderProductDto
             {
-                ProductId = o.ProductId,
-                Amount    = o.Amount,
-                Price     = o.Price
+                ProductId = op.ProductId,
+                Amount    = op.Amount,
+                Price     = op.Price
             }).ToList()
         };
     }
-    
+
     public async Task<OrderDto> PatchAsync(OrderId id, PartialOrderUpdateDto dto, AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Patching order {OrderId}", id);
-        
         await ValidateUserAccessAsync(userAuth);
-        
+
         var order = await _repo.FindById(id);
         if (order == null)
             throw new BusinessRuleValidationException($"Order {id} not found");
@@ -165,23 +167,30 @@ public class OrderService
         {
             await _orderProductRepo.DeleteByOrderIdAsync(id);
 
-            foreach (var p in dto.Products)
+            var grouped = dto.Products
+                .GroupBy(p => p.ProductId!.Value)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Amount    = g.Sum(x => x.Amount),
+                    Price     = g.Average(x => x.Price)
+                })
+                .ToList();
+
+            foreach (var item in grouped)
             {
-                if (!p.ProductId.HasValue)
-                    throw new BusinessRuleValidationException("ProductId is required.");
-
-                var productId = new ProductId(p.ProductId.Value);
-
+                var productId = new ProductId(item.ProductId);
                 var existingProduct = await _produtRepo.GetByIdAsync(productId);
                 if (existingProduct == null)
-                    throw new BusinessRuleValidationException($"Product {p.ProductId} does not exist.");
+                    throw new BusinessRuleValidationException($"Product {item.ProductId} does not exist.");
 
-                order.AddProduct(productId, p.Amount, p.Price);
+                var op = new OrderProduct(id, productId, item.Amount, item.Price);
+                await _orderProductRepo.AddAsync(op);
             }
         }
 
-        await _unitOfWork.CommitAsync();
 
+        await _unitOfWork.CommitAsync();
         var products = await _orderProductRepo.GetByOrderIdAsync(id);
 
         return new OrderDto
@@ -191,21 +200,18 @@ public class OrderService
             Status = order.Status.ToString(),
             CreatedAt = order.CreatedAt,
             UpdatedAt = order.UpdatedAt,
-            Products = products
-                .Select(p => new OrderProductDto
-                {
-                    ProductId = p.ProductId,
-                    Amount = p.Amount,
-                    Price = p.Price
-                })
-                .ToList()
+            Products = products.Select(p => new OrderProductDto
+            {
+                ProductId = p.ProductId,
+                Amount = p.Amount,
+                Price = p.Price
+            }).ToList()
         };
     }
-    
+
     public async Task<bool> DeleteAsync(OrderId id, AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Deleting order {OrderId}", id);
-        
         await ValidateUserAccessAsync(userAuth);
 
         var order = await _repo.FindById(id);
@@ -216,9 +222,7 @@ public class OrderService
         }
 
         await _repo.DeleteAsync(order);
-
         await _unitOfWork.CommitAsync();
-
         _logger.LogInformation("Order {OrderId} deleted", id);
         return true;
     }

@@ -1,5 +1,4 @@
-﻿// Tests/Services/OrderServiceTest.cs
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
 using ShopTex.Domain.Orders;
 using ShopTex.Domain.OrdersProduct;
@@ -67,10 +66,6 @@ namespace ShopTex.Tests.Services
                 _userLogger.Object
             );
 
-            _productRepo
-                .Setup(p => p.FindById(It.IsAny<string>()))
-                .ReturnsAsync(new Product(Guid.NewGuid().ToString(), "Test", "Desc", 10, "Cat", "enabled", Guid.NewGuid().ToString()));
-
             _service = new OrderService(
                 _unitOfWork.Object,
                 _orderRepo.Object,
@@ -85,20 +80,47 @@ namespace ShopTex.Tests.Services
         [Fact]
         public async Task AddAsync_Should_CreateOrder_WithProducts()
         {
-            var userGuid = Guid.NewGuid();
-            var productGuid = Guid.NewGuid();
+            // Arrange
+            var userGuid         = Guid.NewGuid();
+            var fixedProductGuid = Guid.Parse("a886caee-f30d-4c5d-8245-86ec297ba9b0");
+
+            var product = new Product(
+                id:          fixedProductGuid.ToString(),
+                name:        "Produto Teste",
+                description: "Descrição",
+                price:       15,
+                category:    "Categoria",
+                status:      "enabled",
+                storeId:     Guid.NewGuid().ToString()
+            );
+
+            _productRepo
+                .Setup(p => p.GetByIdAsync(
+                    It.Is<ProductId>(pid => pid.AsGuid() == fixedProductGuid)
+                ))
+                .ReturnsAsync(product);
+
+            _orderProductRepo
+                .Setup(r => r.GetByOrderIdAsync(It.IsAny<OrderId>()))
+                .ReturnsAsync((OrderId oid) => new List<OrderProduct> {
+                    new(oid, new ProductId(fixedProductGuid), amount: 2, price: 15.5)
+                });
+
             var dto = new CreatingOrderDto
             {
                 UserId   = userGuid,
                 Status   = "pending",
-                Products = new List<CreatingOrderProductDto> {
-                    new() { ProductId = productGuid, Amount = 2, Price = 15.5 }
+                Products = new List<CreatingOrderProductDto>
+                {
+                    new() { ProductId = fixedProductGuid, Amount = 2, Price = 15.5 }
                 }
             };
             var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
+            // Act
             var result = await _service.AddAsync(dto, userAuth);
 
+            // Assert
             result.Should().NotBeNull();
             result.UserId.Should().Be(userGuid);
             result.Status.Should().Be("pending");
@@ -111,17 +133,26 @@ namespace ShopTex.Tests.Services
         [Fact]
         public async Task GetByIdAsync_Should_ReturnOrder_WithProducts()
         {
-            var id    = new OrderId(Guid.NewGuid());
+            // Arrange
+            var id        = new OrderId(Guid.NewGuid());
             var productId = new ProductId(Guid.NewGuid());
-            var order = new Order(new UserId(Guid.NewGuid()), "processing");
+            var order     = new Order(new UserId(Guid.NewGuid()), "processing");
 
-            _orderRepo.Setup(r => r.FindById(id)).ReturnsAsync(order);
+            _orderRepo
+                .Setup(r => r.FindById(id))
+                .ReturnsAsync(order);
+
             _orderProductRepo
                 .Setup(r => r.GetByOrderIdAsync(id))
-                .ReturnsAsync(new List<OrderProduct> { new(id, productId, 1, 10.0) });
+                .ReturnsAsync(new List<OrderProduct>
+                {
+                    new(id, productId, amount: 1, price: 10.0)
+                });
 
+            // Act
             var result = await _service.GetByIdAsync(id);
 
+            // Assert
             result.Should().NotBeNull();
             result.Status.Should().Be("processing");
             result.Products.Should().ContainSingle();
@@ -130,27 +161,53 @@ namespace ShopTex.Tests.Services
         [Fact]
         public async Task PatchAsync_Should_UpdateStatus_And_ReplaceProducts()
         {
-            var id    = new OrderId(Guid.NewGuid());
-            var productId = Guid.NewGuid();
-            var order = new Order(new UserId(Guid.NewGuid()), "pending");
+            // Arrange
+            var id          = new OrderId(Guid.NewGuid());
+            var productGuid = Guid.NewGuid();
+            var order       = new Order(new UserId(Guid.NewGuid()), "pending");
 
-            _orderRepo.Setup(r => r.FindById(id)).ReturnsAsync(order);
+            _orderRepo
+                .Setup(r => r.FindById(id))
+                .ReturnsAsync(order);
+
             _orderProductRepo
                 .Setup(r => r.GetByOrderIdAsync(id))
-                .ReturnsAsync(new List<OrderProduct> { new(id, new ProductId(productId), 1, 9.99) });
+                .ReturnsAsync(new List<OrderProduct>
+                {
+                    new(id, new ProductId(productGuid), amount: 1, price: 9.99)
+                });
+
+            _productRepo
+                .Setup(p => p.GetByIdAsync(
+                    It.Is<ProductId>(pid => pid.AsGuid() == productGuid)
+                ))
+                .ReturnsAsync(new Product(
+                    id:          productGuid.ToString(),
+                    name:        "Produto Patch",
+                    description: "Descrição",
+                    price:       9,
+                    category:    "Categoria",
+                    status:      "enabled",
+                    storeId:     Guid.NewGuid().ToString()
+                ));
 
             var dto = new PartialOrderUpdateDto
             {
                 Status   = "delivered",
-                Products = new List<CreatingOrderProductDto> {
-                    new() { ProductId = productId, Amount = 1, Price = 9.99 }
+                Products = new List<CreatingOrderProductDto>
+                {
+                    new() { ProductId = productGuid, Amount = 1, Price = 9.99 }
                 }
             };
             var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
+            // Act
             var result = await _service.PatchAsync(id, dto, userAuth);
 
+            // Assert
+            result.Should().NotBeNull();
             result.Status.Should().Be("delivered");
+            result.Products.Should().HaveCount(1);
             _orderProductRepo.Verify(r => r.DeleteByOrderIdAsync(id), Times.Once);
             _orderProductRepo.Verify(r => r.AddAsync(It.IsAny<OrderProduct>()), Times.Once);
             _unitOfWork.Verify(u => u.CommitAsync(), Times.Once);
@@ -159,14 +216,20 @@ namespace ShopTex.Tests.Services
         [Fact]
         public async Task DeleteAsync_Should_RemoveOrder()
         {
+            // Arrange
             var id    = new OrderId(Guid.NewGuid());
             var order = new Order(new UserId(Guid.NewGuid()), "cancelled");
 
-            _orderRepo.Setup(r => r.FindById(id)).ReturnsAsync(order);
+            _orderRepo
+                .Setup(r => r.FindById(id))
+                .ReturnsAsync(order);
+
             var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
+            // Act
             var result = await _service.DeleteAsync(id, userAuth);
 
+            // Assert
             result.Should().BeTrue();
             _orderRepo.Verify(r => r.DeleteAsync(order), Times.Once);
             _unitOfWork.Verify(u => u.CommitAsync(), Times.Once);
