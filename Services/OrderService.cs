@@ -97,7 +97,7 @@ public class OrderService
         await ValidateUserAccessAsync(userAuth);
 
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
-                   ?? throw new BusinessRuleValidationException("Usuário não encontrado");
+                   ?? throw new BusinessRuleValidationException("User not found");
 
         var isSysAdmin    = await _authenticationService.hasPermission(userAuth.Email, new List<UserRole>{ UserRole.SystemRole });
         var isStoreAdmin  = await _authenticationService.managesStore(userAuth.Email,   user.Store!.AsGuid().ToString());
@@ -256,7 +256,6 @@ public class OrderService
     public async Task<bool> DeleteAsync(OrderId id, AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Deleting order {OrderId}", id);
-        await ValidateUserAccessAsync(userAuth);
 
         var order = await _repo.FindById(id);
         if (order == null)
@@ -265,11 +264,44 @@ public class OrderService
             return false;
         }
 
+        
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email)
+                   ?? throw new BusinessRuleValidationException("Authenticated user not found.");
+
+        if (order.UserId.AsGuid() == user.Id.AsGuid())
+        {
+            await _repo.DeleteAsync(order);
+            await _unitOfWork.CommitAsync();
+            _logger.LogInformation("Order {OrderId} deleted by owner {UserId}", id, user.Id);
+            return true;
+        }
+
+        var isSysAdmin   = await _authenticationService.hasPermission(
+                               userAuth.Email,
+                               new List<UserRole>{ UserRole.SystemRole }
+                           );
+        var storeId      = user.Store!.AsGuid().ToString();
+        var managesStore = await _authenticationService.managesStore(
+                               userAuth.Email,
+                               storeId
+                           );
+        var worksOnStore = await _authenticationService.worksOnStore(
+                               userAuth.Email,
+                               storeId
+                           );
+
+        if (!isSysAdmin && !managesStore && !worksOnStore)
+        {
+            _logger.LogWarning("User {Email} is not allowed to delete order {OrderId}", userAuth.Email, id);
+            throw new UnauthorizedAccessException("You don't have permission to delete this order.");
+        }
+
         await _repo.DeleteAsync(order);
         await _unitOfWork.CommitAsync();
-        _logger.LogInformation("Order {OrderId} deleted", id);
+        _logger.LogInformation("Order {OrderId} deleted by user {Email}", id, userAuth.Email);
         return true;
     }
+
     
     private async Task ValidateUserAccessAsync(AuthenticatedUserDto userAuth)
     {
