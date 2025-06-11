@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
@@ -44,7 +45,7 @@ namespace ShopTex.Controllers
                 return BadRequest("Product ID does not match");
             }
             
-            var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+            var currentUserEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
 
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
@@ -56,7 +57,7 @@ namespace ShopTex.Controllers
             var authorizedStoreColab = await _authenticationService.worksOnStore(currentUserEmail, dto.StoreId);
             if (!(authorizedSysadmin || authorizedStoreAdmin || authorizedStoreColab))
             {
-                return Unauthorized("You don't have permission to create a product");
+                return Unauthorized("You don't have permission to update this product");
             }
 
             try
