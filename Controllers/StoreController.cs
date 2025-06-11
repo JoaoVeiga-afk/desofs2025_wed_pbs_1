@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NuGet.Protocol;
@@ -43,8 +44,10 @@ namespace ShopTex.Controllers
         {
             try
             {
-                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+                var currentUserEmail =
+                    User.FindFirst(ClaimTypes.Email)?.Value ??
+                    User.FindFirst("email")?.Value;
+                
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");
@@ -75,8 +78,10 @@ namespace ShopTex.Controllers
             try
             {
                 // Check if current user is System Administrator or Store Administrator of the given store
-                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+                var currentUserEmail =
+                    User.FindFirst(ClaimTypes.Email)?.Value ??
+                    User.FindFirst("email")?.Value;
+                
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");

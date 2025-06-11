@@ -81,8 +81,9 @@ namespace ShopTex.Controllers
         {
             try
             {
-                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+                var currentUserEmail =
+                    User.FindFirst(ClaimTypes.Email)?.Value ??
+                    User.FindFirst("email")?.Value;
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");
@@ -119,8 +120,10 @@ namespace ShopTex.Controllers
                 return NotFound("Product not found.");
 
             // Validate user permissions here
-            var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
+            
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
                 return Unauthorized("User email not found in token");
