@@ -13,7 +13,7 @@ public class Configurations
     
     public const string ValidEmail = "isep.ipp.pt";
 
-    public static string DbConnection => Environment.GetEnvironmentVariable("DB_CONNECTION_SERVER") 
+    public static string DbConnection => Environment.GetEnvironmentVariable("LOCAL_DB_CONNECTION_SERVER") 
                                          ?? throw new Exception("DB is not set");
     
     public const string SYS_ADMIN_ROLE_NAME ="System Administrator";

@@ -14,7 +14,7 @@ public class CreatingOrderProductDtoTest
     {
         var dto = new CreatingOrderProductDto
         {
-            ProductId = 1,
+            ProductId = Guid.NewGuid(),
             Amount = 2,
             Price = 10.5
         };
@@ -32,7 +32,7 @@ public class CreatingOrderProductDtoTest
     {
         var dto = new CreatingOrderProductDto
         {
-            ProductId = 1,
+            ProductId = Guid.NewGuid(),
             Amount = 0,
             Price = 10.5
         };
@@ -50,7 +50,7 @@ public class CreatingOrderProductDtoTest
     {
         var dto = new CreatingOrderProductDto
         {
-            ProductId = 1,
+            ProductId = Guid.NewGuid(),
             Amount = 2,
             Price = 0
         };

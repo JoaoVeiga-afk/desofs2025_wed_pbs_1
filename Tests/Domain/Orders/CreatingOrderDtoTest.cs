@@ -18,7 +18,7 @@ public class CreatingOrderDtoTest
             Status = "pending",
             Products = new List<CreatingOrderProductDto>
             {
-                new() { ProductId = 1, Amount = 1, Price = 9.99 }
+                new() { ProductId = Guid.NewGuid(), Amount = 1, Price = 9.99 }
             }
         };
 
@@ -28,26 +28,6 @@ public class CreatingOrderDtoTest
 
         isValid.Should().BeTrue();
         results.Should().BeEmpty();
-    }
-
-    [Fact]
-    public void MissingUserId_ShouldFailValidation()
-    {
-        var dto = new CreatingOrderDto
-        {
-            Status = "pending",
-            Products = new List<CreatingOrderProductDto>
-            {
-                new() { ProductId = 1, Amount = 1, Price = 9.99 }
-            }
-        };
-
-        var results = new List<ValidationResult>();
-        var context = new ValidationContext(dto);
-        var isValid = Validator.TryValidateObject(dto, context, results, true);
-
-        isValid.Should().BeFalse();
-        results.Should().Contain(r => r.MemberNames.Contains(nameof(CreatingOrderDto.UserId)));
     }
 
     [Fact]
@@ -76,7 +56,7 @@ public class CreatingOrderDtoTest
             UserId = Guid.NewGuid(),
             Products = new List<CreatingOrderProductDto>
             {
-                new() { ProductId = 1, Amount = 1, Price = 9.99 }
+                new() { ProductId = Guid.NewGuid(), Amount = 1, Price = 9.99 }
             }
         };
 

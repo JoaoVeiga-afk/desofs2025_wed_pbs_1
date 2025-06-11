@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using NuGet.Protocol;
 using ShopTex.Domain.Orders;
@@ -13,7 +14,7 @@ namespace ShopTex.Controllers
     public class OrderController : ControllerBase
     {
         private readonly OrderService _orderService;
-        
+
         public OrderController(OrderService orderService)
         {
             _orderService = orderService;
@@ -21,7 +22,7 @@ namespace ShopTex.Controllers
         
         // GET: api/order/4c656ea7-8e30-414d-8680-10229a796467
         [HttpGet("{id}")]
-        [Authorize(Roles = $"{Configurations.STORE_ADMIN_ROLE_NAME},{Configurations.STORE_COLAB_ROLE_NAME}")]
+        [Authorize]
         public async Task<ActionResult<OrderDto>> GetOrder(Guid id)
         {
             var order = await _orderService.GetByIdAsync(new OrderId(id));
@@ -36,7 +37,7 @@ namespace ShopTex.Controllers
         
         // GET: api/order?limit=20&offset=0
         [HttpGet]
-        [Authorize(Roles = $"{Configurations.STORE_ADMIN_ROLE_NAME},{Configurations.STORE_COLAB_ROLE_NAME}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
             [FromQuery] int limit = 10,
             [FromQuery] int offset = 0)
@@ -50,14 +51,26 @@ namespace ShopTex.Controllers
         
         // POST: api/order
         [HttpPost]
-        [Authorize(Roles = $"{Configurations.USER_ROLE_NAME},{Configurations.STORE_COLAB_ROLE_NAME},{Configurations.STORE_ADMIN_ROLE_NAME}")]
-        public async Task<ActionResult<OrderDto>> PostOrder(CreatingOrderDto orderInfo)
+        [Authorize]        
+        public async Task<ActionResult<OrderDto>> PostOrder([FromBody] CreatingOrderDto orderInfo)
         {
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+
             try
             {
-                var order = await _orderService.AddAsync(orderInfo);
-
+                var order = await _orderService.AddAsync(orderInfo, userAuth);
                 return CreatedAtAction(nameof(GetOrder), new { id = order.Id }, order);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -67,19 +80,28 @@ namespace ShopTex.Controllers
         
         // PATCH: api/order/4c656ea7-8e30-414d-8680-10229a796467
         [HttpPatch("{id}")]
-        [Authorize(Roles = $"{Configurations.STORE_COLAB_ROLE_NAME},{Configurations.STORE_ADMIN_ROLE_NAME}")]
+        [Authorize]
         public async Task<IActionResult> PatchOrder(Guid id, [FromBody] PartialOrderUpdateDto dto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
 
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
             try
             {
-                var updated = await _orderService.PatchAsync(new OrderId(id), dto);
+                var updated = await _orderService.PatchAsync(new OrderId(id), dto, userAuth);
                 if (updated == null)
                     return NotFound(new { Message = $"Order {id} not found." });
 
                 return Ok(updated);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -89,20 +111,37 @@ namespace ShopTex.Controllers
         
         // DELETE: api/order/4c656ea7-8e30-414d-8680-10229a796467
         [HttpDelete("{id}")]
-        [Authorize(Roles = Configurations.STORE_ADMIN_ROLE_NAME)]
+        [Authorize]
         public async Task<IActionResult> DeleteOrder(Guid id)
         {
-            var deleted = await _orderService.DeleteAsync(new OrderId(id));
-            if (!deleted)
-                return NotFound(new { message = $"Order {id} not found" });
-            
-            return Ok(new
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+
+            try
             {
-                success = true,
-                message = $"Order {id} deleted successfully"
-            });
+                var deleted = await _orderService.DeleteAsync(new OrderId(id), userAuth);
+                if (!deleted)
+                    return NotFound(new { message = $"Order {id} not found" });
+
+                return Ok(new
+                {
+                    success = true,
+                    message = $"Order {id} deleted successfully"
+                });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
-
-
     }
 }

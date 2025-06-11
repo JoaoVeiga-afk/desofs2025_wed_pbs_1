@@ -197,4 +197,22 @@ public class UserService
         }
     }
     
+    public async Task<User?> GetUserByEmailAsync(string email)
+    {
+        _logger.LogInformation("Fetching user with email {Email}", email);
+
+        var user = await _repo.FindByEmail(email);
+
+        if (user == null)
+        {
+            _logger.LogWarning("User with email {Email} not found", email);
+        }
+        else
+        {
+            _logger.LogInformation("User with email {Email} found", email);
+        }
+
+        return user;
+    }
+    
 }

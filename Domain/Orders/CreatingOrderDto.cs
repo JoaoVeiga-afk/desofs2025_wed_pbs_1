@@ -7,8 +7,6 @@ namespace ShopTex.Domain.Orders;
 
 public class CreatingOrderDto
 {
-    [Required]
-    [NotEmptyGuid]
     public Guid? UserId { get; set; }
     
     [Required]

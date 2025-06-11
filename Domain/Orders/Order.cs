@@ -1,4 +1,5 @@
 ﻿using ShopTex.Domain.OrdersProduct;
+using ShopTex.Domain.Products;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Users;
 
@@ -25,7 +26,7 @@ public class Order : Entity<OrderId>, IAggregateRoot
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void AddProduct(int productId, int amount, double price)
+    public void AddProduct(ProductId  productId, int amount, double price)
     {
         var orderProduct = new OrderProduct(this.Id, productId, amount, price);
         _products.Add(orderProduct);

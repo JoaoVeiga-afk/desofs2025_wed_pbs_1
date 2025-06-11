@@ -2,29 +2,41 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using ShopTex.Domain.Orders;
 using ShopTex.Domain.OrdersProduct;
+using ShopTex.Domain.Products;
 
-namespace ShopTex.Infrastructure.OrdersProduct;
-
-public class OrderProductEntityTypeConfiguration 
-    : IEntityTypeConfiguration<OrderProduct>
+namespace ShopTex.Infrastructure.OrdersProduct
 {
-    public void Configure(EntityTypeBuilder<OrderProduct> builder)
+    public class OrderProductEntityTypeConfiguration : IEntityTypeConfiguration<OrderProduct>
     {
-        builder.HasKey(op => new { op.OrderId, op.ProductId });
+        public void Configure(EntityTypeBuilder<OrderProduct> builder)
+        {
+            builder.HasKey(op => new { op.OrderId, op.ProductId });
 
-        builder.Property(op => op.OrderId)
-            .HasConversion(id => id.AsGuid(), guid => new OrderId(guid))
-            .ValueGeneratedNever()
-            .IsRequired();
+            builder.Property(op => op.ProductId)
+                .HasConversion(
+                    id  => id.AsString(),       // VO → string (36 chars)
+                    str => new ProductId(str))  // string → VO
+                .IsRequired();
 
-        builder.Property(op => op.ProductId).IsRequired();
-        builder.Property(op => op.Amount).IsRequired();
-        builder.Property(op => op.Price).IsRequired();
+            builder.Property(op => op.OrderId)
+                .HasConversion(
+                    id  => id.AsString(),
+                    str => new OrderId(str))
+                .IsRequired();
 
-        builder.HasOne(op => op.Order)
-            .WithMany(o => o.Products)
-            .HasForeignKey(op => op.OrderId)
-            .HasPrincipalKey(o => o.Id)
-            .OnDelete(DeleteBehavior.Cascade);
+            builder.Property(op => op.Amount).IsRequired();
+            builder.Property(op => op.Price).IsRequired();
+
+            builder.HasOne(op => op.Order)
+                .WithMany(o => o.Products)
+                .HasForeignKey(op => op.OrderId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.HasOne(op => op.Product)
+                .WithMany()
+                .HasForeignKey(op => op.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+        }
     }
+
 }

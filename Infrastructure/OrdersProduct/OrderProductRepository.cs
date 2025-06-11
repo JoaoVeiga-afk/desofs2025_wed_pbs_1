@@ -19,7 +19,6 @@ public class OrderProductRepository : IOrderProductRepository
 
     public async Task<List<OrderProduct>> GetByOrderIdAsync(OrderId orderId)
     {
-        // Aqui comparamos VO ↔ VO, sem tocar em Guid  
         return await _context.OrderProduct
             .Where(op => op.OrderId == orderId)
             .ToListAsync();

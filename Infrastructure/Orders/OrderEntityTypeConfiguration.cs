@@ -10,17 +10,25 @@ public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         builder.HasKey(o => o.Id);
+
         builder.Property(o => o.Id)
-            .HasConversion(id => id.AsGuid(), guid => new OrderId(guid))
+            .HasConversion(
+                id  => id.AsString(),   
+                str => new OrderId(str) 
+            )
             .ValueGeneratedNever();
 
-        builder.Property(o => o.UserId).IsRequired();
+        builder.Property(o => o.UserId)
+            .HasConversion(
+                id  => id.AsString(),
+                str => new UserId(str)
+            )
+            .IsRequired();
 
-        // Foreign Key para User
         builder.HasOne<User>()
-            .WithMany() // ou .WithMany(u => u.Orders)
+            .WithMany()
             .HasForeignKey(o => o.UserId)
-            .OnDelete(DeleteBehavior.Cascade); // ou Restrict
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Property(o => o.CreatedAt).IsRequired();
         builder.Property(o => o.UpdatedAt).IsRequired();
