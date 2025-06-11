@@ -20,6 +20,14 @@ jobs:
           - /api/auth/signin
           - /api/auth/signup
           - /api/auth/me
+          - /api/auth/enable
+          - /api/auth/disabled
+          - /api/ping
+          - /api/product
+          - /api/product/create
+          - /api/store
+          - /api/store/create
+          - /api/store/colab/add
 
     steps:
       - name: Set base and ping URLs and safe endpoint name
