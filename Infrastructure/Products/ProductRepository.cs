@@ -16,4 +16,11 @@ public class ProductRepository : BaseRepository<Product, ProductId>, IProductRep
     {
         return await _objs.FirstOrDefaultAsync(s => s.Id.AsString() == productId);
     }
+
+    public Product Update(Product product)
+    {
+
+        return _objs.Update(product).Entity;
+
+    }
 }
