@@ -123,7 +123,6 @@ public class OrderService
 
         var order = new Order(userId, dto.Status);
         await _repo.AddAsync(order);
-        await _unitOfWork.CommitAsync();
 
         foreach (var item in grouped)
         {
