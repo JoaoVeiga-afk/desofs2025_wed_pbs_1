@@ -27,6 +27,8 @@ public class Product : Entity<ProductId>, IAggregateRoot
 
     public ProductImage? Image { get; set; }
 
+    private Product() { }
+    
     public Product(string name, string? description, double price, string? category, string status, string storeId)
     {
         Id = new ProductId(Guid.NewGuid());

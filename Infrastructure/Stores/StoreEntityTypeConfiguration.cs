@@ -14,7 +14,11 @@ public class StoreEntityTypeConfiguration : IEntityTypeConfiguration<Store>
 
         builder.OwnsOne(s => s.Address, address =>
         {
-            address.Property(p => p.ToString()).HasColumnName(nameof(StoreAddress)).IsRequired();
+            address.Property(p => p.Street).HasColumnName("Street").IsRequired();
+            address.Property(p => p.City).HasColumnName("City").IsRequired();
+            address.Property(p => p.State).HasColumnName("State").IsRequired();
+            address.Property(p => p.ZipCode).HasColumnName("ZipCode").IsRequired();
+            address.Property(p => p.Country).HasColumnName("Country").IsRequired();
         });
 
         builder.OwnsOne(s => s.Status, status =>
@@ -22,4 +26,5 @@ public class StoreEntityTypeConfiguration : IEntityTypeConfiguration<Store>
             status.Property(s => s.Value).HasColumnName(nameof(StoreStatus)).IsRequired();
         });
     }
+
 }
