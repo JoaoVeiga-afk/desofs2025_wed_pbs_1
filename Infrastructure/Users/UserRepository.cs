@@ -5,11 +5,11 @@ using ShopTex.Models;
 
 namespace ShopTex.Infrastructure.Users;
 
-public class UserRepository : BaseRepository<User,UserId>,IUserRepository
+public class UserRepository : BaseRepository<User, UserId>, IUserRepository
 {
     public UserRepository(DatabaseContext context) : base(context.User)
     {
-        
+
     }
 
     public async Task<User> FindByEmail(string email)

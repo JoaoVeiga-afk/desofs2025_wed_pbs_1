@@ -51,14 +51,14 @@ namespace ShopTex.Controllers
             {
                 return Unauthorized("User not found in token");
             }
-            
+
             var user = await _service.GetByIdAsync(new UserId(userID));
-            
+
             if (user == null)
             {
                 return NotFound("User not found");
             }
-            
+
             return new
             {
                 user.Id,
@@ -87,7 +87,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // api/auth/signin
         [HttpPost]
         [Route("signin")]
@@ -97,9 +97,9 @@ namespace ShopTex.Controllers
 
             if (user == null) return BadRequest("Email or Password incorrect");
 
-            return  user;
+            return user;
         }
-        
+
         // Enable user
         [HttpPost]
         [Route("enable/{id}")]
@@ -117,7 +117,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // Disable user
         [HttpPost]
         [Route("disable/{id}")]
@@ -135,6 +135,6 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
     }
 }

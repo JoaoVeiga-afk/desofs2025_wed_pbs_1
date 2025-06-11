@@ -64,7 +64,7 @@ public class ProductTest
     [InlineData("ENABLED")]
     [InlineData("")]
     [InlineData(null)]
-    public void Constructor_ShouldThrowBusinessRuleValidationException_WhenStatusIsInvalid(string invalidStatus)
+    public void Constructor_ShouldThrowBusinessRuleValidationException_WhenStatusIsInvalid(string? invalidStatus)
     {
         // Arrange
         var storeId = Guid.NewGuid().ToString();

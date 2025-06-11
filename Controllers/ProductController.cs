@@ -104,7 +104,7 @@ namespace ShopTex.Controllers
 
             if (!success)
                 return StatusCode(500, "Failed to encrypt and save image.");
-                
+
             return Ok("Image uploaded successfully.");
         }
     }

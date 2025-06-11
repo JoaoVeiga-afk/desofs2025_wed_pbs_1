@@ -34,7 +34,7 @@ public class UserService
         var dtoList = list.ConvertAll(user =>
         {
             _logger.LogDebug("Mapping user {UserId} to UserDto", user.Id.Value);
-            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email ,user.Role, user.Status);
+            return new UserDto(user.Id.AsGuid(), user.Name, user.Phone, user.Email, user.Role, user.Status);
         });
 
         _logger.LogInformation("User mapping complete. Returning {Count} UserDto objects", dtoList.Count);
@@ -173,7 +173,7 @@ public class UserService
             throw new BusinessRuleValidationException("User is already enabled");
         }
     }
-    
+
     public async Task<UserDto> DisableUser(UserId id)
     {
         _logger.LogInformation("Disabling user with ID {UserId}", id.Value);
@@ -196,5 +196,5 @@ public class UserService
             throw new BusinessRuleValidationException("User is already disabled");
         }
     }
-    
+
 }

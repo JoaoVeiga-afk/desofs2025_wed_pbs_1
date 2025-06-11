@@ -32,9 +32,9 @@ public class UserEmailTests
         Assert.NotNull(exception);
         Assert.IsType<ValidationException>(exception);
         Assert.Equal("Invalid email format", exception.Message);
-        
+
     }
-    
+
     [Fact]
     public void Constructor_WithEmptyEmail_ShouldThrowException()
     {
