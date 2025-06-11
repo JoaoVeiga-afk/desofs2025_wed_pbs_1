@@ -1,14 +1,14 @@
 ﻿name: DCA
 
 on:
-  workflow_run:
-    workflows: ["Deploy Pipeline"]
-    types:
-      - completed
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
 
 permissions:
-  contents: read
-  issues: write
+  contents: write
+  checks: write
 
 jobs:
   zap_scan:
