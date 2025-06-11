@@ -35,6 +35,43 @@ namespace ShopTex.Controllers
             return product;
         }
 
+        [HttpPatch("{id}")]
+        [Authorize]
+        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, ProductDto dto)
+        {
+            if (dto.Id != id.ToString())
+            {
+                return BadRequest("Product ID does not match");
+            }
+            
+            var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+            {
+                return Unauthorized("User email not found in token");
+            }
+            
+            var authorizedSysadmin = await _authenticationService.hasPermission(currentUserEmail, new List<UserRole> { UserRole.SystemRole });
+            var authorizedStoreAdmin = await _authenticationService.managesStore(currentUserEmail, dto.StoreId);
+            var authorizedStoreColab = await _authenticationService.worksOnStore(currentUserEmail, dto.StoreId);
+            if (!(authorizedSysadmin || authorizedStoreAdmin || authorizedStoreColab))
+            {
+                return Unauthorized("You don't have permission to create a product");
+            }
+
+            try
+            {
+                var product = await _service.UpdateAsync(dto);
+
+                return Ok(product);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
         // POST: api/product/create
         [HttpPost]
         [Route("create")]
