@@ -20,7 +20,7 @@ public class UserDto
         Name = name;
         Phone = phone;
         Email = email.Value;
-        Role =  role != null ? role.RoleName : null;
+        Role = role != null ? role.RoleName : null;
         Status = status.ToString();
     }
 }

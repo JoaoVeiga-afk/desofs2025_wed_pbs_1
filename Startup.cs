@@ -16,7 +16,7 @@ namespace ShopTex;
 public class Startup
 {
     public IConfiguration Configuration { get; }
-    
+
     public Startup(IConfiguration configuration)
     {
         Configuration = configuration;
@@ -29,12 +29,12 @@ public class Startup
             opt.UseMySQL(Configurations.DbConnection)
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
         ConfigureMyServices(services);
-        
+
         services.AddCors(options =>
         {
             options.AddPolicy("AllowFrontend", builder =>
             {
-                builder.WithOrigins("http://localhost:4200","http://localhost:4000","http://uvm003.dei.isep.ipp.pt")
+                builder.WithOrigins("http://localhost:4200", "http://localhost:4000", "http://uvm003.dei.isep.ipp.pt")
                     .AllowAnyHeader()
                     .AllowAnyMethod()
                     .AllowCredentials();
@@ -82,12 +82,12 @@ public class Startup
         app.UseCors("AllowFrontend");
 
         app.UseRouting();
-        
+
         app.UseAuthentication();
         app.UseAuthorization();
-        
+
         app.UseEndpoints(endpoints => endpoints.MapControllers());
-        
+
         using (var scope = app.ApplicationServices.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<DatabaseContext>();
