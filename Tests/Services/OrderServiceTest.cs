@@ -100,9 +100,14 @@ namespace ShopTex.Tests.Services
                 ))
                 .ReturnsAsync(product);
 
+            _orderRepo
+                .Setup(r => r.AddAsync(It.IsAny<Order>()))
+                .ReturnsAsync((Order o) => o);
+
             _orderProductRepo
                 .Setup(r => r.GetByOrderIdAsync(It.IsAny<OrderId>()))
-                .ReturnsAsync((OrderId oid) => new List<OrderProduct> {
+                .ReturnsAsync((OrderId oid) => new List<OrderProduct>
+                {
                     new(oid, new ProductId(fixedProductGuid), amount: 2, price: 15.5)
                 });
 
@@ -137,7 +142,27 @@ namespace ShopTex.Tests.Services
             var id        = new OrderId(Guid.NewGuid());
             var productId = new ProductId(Guid.NewGuid());
             var order     = new Order(new UserId(Guid.NewGuid()), "processing");
+            // populate navigation Products for sysAdmin path
+            var prod = new OrderProduct(order.Id, productId, amount: 1, price: 10.0);
+            // Use reflection or domain method if available
+            typeof(Order)
+                .GetProperty("Products", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!
+                .GetValue(order, null)
+                .GetType()
+                .GetMethod("Add")
+                ?.Invoke(
+                    typeof(Order)
+                        .GetProperty("Products", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!
+                        .GetValue(order, null),
+                    new object[] { prod }
+                );
 
+            // Given our fakeUser is System Administrator, service calls FindByIdWithProductsAsync
+            _orderRepo
+                .Setup(r => r.FindByIdWithProductsAsync(id))
+                .ReturnsAsync(order);
+
+            // also fallback for FindById
             _orderRepo
                 .Setup(r => r.FindById(id))
                 .ReturnsAsync(order);
@@ -149,8 +174,10 @@ namespace ShopTex.Tests.Services
                     new(id, productId, amount: 1, price: 10.0)
                 });
 
+            var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
+
             // Act
-            var result = await _service.GetByIdAsync(id);
+            var result = await _service.GetByIdAsync(id, userAuth);
 
             // Assert
             result.Should().NotBeNull();

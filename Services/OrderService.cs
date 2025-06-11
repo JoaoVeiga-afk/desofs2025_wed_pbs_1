@@ -37,57 +37,102 @@ public class OrderService
         _authenticationService = authenticationService;
     }
 
-    public async Task<OrderDto?> GetByIdAsync(OrderId id)
+    public async Task<OrderDto?> GetByIdAsync(OrderId id, AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Fetching order with ID {OrderId}", id);
+        await ValidateUserAccessAsync(userAuth);
 
-        var order = await _repo.FindById(id);
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email);
+
+        var isSysAdmin   = await _authenticationService.hasPermission(userAuth.Email,   new List<UserRole>{ UserRole.SystemRole });
+        var isStoreAdmin = await _authenticationService.managesStore(userAuth.Email,   user.Store!.AsGuid().ToString());
+        var isStoreColab = await _authenticationService.worksOnStore(userAuth.Email,    user.Store!.AsGuid().ToString());
+
+        Order? order;
+        if (isSysAdmin)
+        {
+            order = await _repo.FindByIdWithProductsAsync(id);
+        }
+        else if (isStoreAdmin || isStoreColab)
+        {
+            var storeVo = new StoreId(user.Store!.AsGuid().ToString());
+            order = await _repo.FindByIdByStoreAsync(storeVo, id);
+        }
+        else
+        {
+            var userVo = new UserId(user.Id.AsGuid());
+            order = await _repo.FindByIdByUserAsync(userVo, id);
+        }
+
         if (order == null)
         {
-            _logger.LogWarning("Order with ID {OrderId} not found", id);
+            _logger.LogWarning("Order with ID {OrderId} not found or access denied", id);
             return null;
         }
 
+        // Busca sempre os produtos associados ao pedido
         var products = await _orderProductRepo.GetByOrderIdAsync(id);
 
         return new OrderDto
         {
-            Id = order.Id.AsGuid(),
-            UserId = order.UserId.AsGuid(),
-            Status = order.Status.ToString(),
+            Id        = order.Id.AsGuid(),
+            UserId    = order.UserId.AsGuid(),
+            Status    = order.Status.ToString(),
             CreatedAt = order.CreatedAt,
             UpdatedAt = order.UpdatedAt,
-            Products = products.Select(p => new OrderProductDto
-            {
-                ProductId = p.ProductId,
-                Amount = p.Amount,
-                Price = p.Price
-            }).ToList()
+            Products  = products
+                .Select(p => new OrderProductDto {
+                    ProductId = p.ProductId,
+                    Amount    = p.Amount,
+                    Price     = p.Price
+                })
+                .ToList()
         };
     }
 
-    public async Task<List<OrderDto>> GetAllAsync(int offset, int limit)
+
+    public async Task<List<OrderDto>> GetAllAsync(int offset, int limit, AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Fetching orders offset {Offset} limit {Limit}", offset, limit);
+        await ValidateUserAccessAsync(userAuth);
 
-        var orders = await _repo.GetPagedAsync(offset, limit);
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email)
+                   ?? throw new BusinessRuleValidationException("Usuário não encontrado");
+
+        var isSysAdmin    = await _authenticationService.hasPermission(userAuth.Email, new List<UserRole>{ UserRole.SystemRole });
+        var isStoreAdmin  = await _authenticationService.managesStore(userAuth.Email,   user.Store!.AsGuid().ToString());
+        var isStoreColab  = await _authenticationService.worksOnStore(userAuth.Email,    user.Store!.AsGuid().ToString());
+
+        List<Order> orders;
+        if (isSysAdmin)
+        {
+            orders = await _repo.GetPagedAsync(offset, limit);
+        }
+        else if (isStoreAdmin || isStoreColab)
+        {
+            var storeGuid = user.Store!.AsGuid();
+            orders = await _repo.GetPagedByStoreAsync(storeGuid, offset, limit);
+        }
+        else
+        {
+            var userGuid = user.Id.AsGuid();
+            orders = await _repo.GetPagedByUserAsync(userGuid, offset, limit);
+        }
+
         var results = new List<OrderDto>();
-
         foreach (var order in orders)
         {
             var products = await _orderProductRepo.GetByOrderIdAsync(order.Id);
-            results.Add(new OrderDto
-            {
-                Id = order.Id.AsGuid(),
-                UserId = order.UserId.AsGuid(),
-                Status = order.Status.ToString(),
+            results.Add(new OrderDto {
+                Id        = order.Id.AsGuid(),
+                UserId    = order.UserId.AsGuid(),
+                Status    = order.Status.ToString(),
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                Products = products.Select(p => new OrderProductDto
-                {
+                Products  = products.Select(p => new OrderProductDto {
                     ProductId = p.ProductId,
-                    Amount = p.Amount,
-                    Price = p.Price
+                    Amount    = p.Amount,
+                    Price     = p.Price
                 }).ToList()
             });
         }
@@ -253,8 +298,9 @@ public class OrderService
         var sysAdmin = await _authenticationService.hasPermission(email, new List<UserRole> { UserRole.SystemRole });
         var storeAdmin = await _authenticationService.managesStore(email, storeId);
         var storeColab = await _authenticationService.worksOnStore(email, storeId);
+        var clientStore = await _authenticationService.clientOnStore(email, storeId);
 
-        return sysAdmin || storeAdmin || storeColab;
+        return sysAdmin || storeAdmin || storeColab || clientStore;
     }
 
     private async Task<UserId> ResolveAndValidateUserIdAsync(Guid? dtoUserId, AuthenticatedUserDto userCtx)

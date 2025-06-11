@@ -25,28 +25,64 @@ namespace ShopTex.Controllers
         [Authorize]
         public async Task<ActionResult<OrderDto>> GetOrder(Guid id)
         {
-            var order = await _orderService.GetByIdAsync(new OrderId(id));
-            
-            if (order == null)
-            {
-                return NotFound();
-            }
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
 
-            return order;
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+
+            try
+            {
+                var order = await _orderService.GetByIdAsync(new OrderId(id), userAuth);
+
+                if (order == null)
+                    return NotFound();
+
+                return Ok(order);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
         
         // GET: api/order?limit=20&offset=0
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders(
-            [FromQuery] int limit = 10,
-            [FromQuery] int offset = 0)
+        public async Task<ActionResult<IEnumerable<OrderDto>>> GetOrders([FromQuery] int limit = 10, [FromQuery] int offset = 0)
         {
             if (limit <= 0 || offset < 0)
                 return BadRequest("limit must be > 0 and offset >= 0");
 
-            var dtos = await _orderService.GetAllAsync(offset, limit);
-            return Ok(dtos);
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+
+            try
+            {
+                var dtos = await _orderService.GetAllAsync(offset, limit, userAuth);
+                return Ok(dtos);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
         
         // POST: api/order

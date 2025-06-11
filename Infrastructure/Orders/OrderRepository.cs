@@ -5,6 +5,8 @@ using ShopTex.Infrastructure.Shared;
 using ShopTex.Models;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using ShopTex.Domain.Stores;
+using ShopTex.Domain.Users;
 
 namespace ShopTex.Infrastructure.Orders
 {
@@ -27,11 +29,9 @@ namespace ShopTex.Infrastructure.Orders
         
         public async Task<Order?> FindByIdWithProductsAsync(OrderId id)
         {
-            // 1) FindAsync com o VO
             var order = await _objs.FindAsync(id);
             if (order == null) return null;
 
-            // 2) depois carrega a coleção de produtos
             await _context.Entry(order)
                 .Collection(o => o.Products)
                 .LoadAsync();
@@ -39,9 +39,58 @@ namespace ShopTex.Infrastructure.Orders
             return order;
         }
 
+        public async Task<Order?> FindByIdByUserAsync(UserId userId, OrderId orderId)
+        {
+            var order = await _objs
+                .Where(o => o.UserId == userId && o.Id == orderId)
+                .FirstOrDefaultAsync();
+            if (order != null)
+                await _context.Entry(order).Collection(o => o.Products).LoadAsync();
+            return order;
+        }
+
+        public async Task<Order?> FindByIdByStoreAsync(StoreId storeVo, OrderId orderId)
+        {
+            var order = await _context.Order
+                .Where(o => o.Id == orderId)
+                .Where(o => _context.User
+                    .Any(u => u.Id == o.UserId && u.Store == storeVo))
+                .FirstOrDefaultAsync();
+            if (order != null)
+                await _context.Entry(order).Collection(o => o.Products).LoadAsync();
+            return order;
+        }
+
         public async Task<List<Order>> GetPagedAsync(int offset, int limit)
         {
             return await _objs
+                .OrderBy(o => o.CreatedAt)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+        }
+        
+        public async Task<List<Order>> GetPagedByStoreAsync(Guid storeId, int offset, int limit)
+        { 
+            var storeVo = new StoreId(storeId.ToString());
+
+            return await _context.Order
+                .Where(o => _context.User
+                    .Any(u =>
+                            u.Id     == o.UserId &&
+                            u.Store  == storeVo     
+                    )
+                )
+                .OrderBy(o => o.CreatedAt)
+                .Skip(offset)
+                .Take(limit)
+                .ToListAsync();
+        }
+        
+        public async Task<List<Order>> GetPagedByUserAsync(Guid userId, int offset, int limit)
+        {
+            return await _objs
+                .Where(o => o.UserId.AsGuid() == userId)  
                 .OrderBy(o => o.CreatedAt)
                 .Skip(offset)
                 .Take(limit)
