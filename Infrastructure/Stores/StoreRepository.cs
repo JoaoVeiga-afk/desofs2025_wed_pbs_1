@@ -14,6 +14,7 @@ public class StoreRepository : BaseRepository<Store, StoreId>, IStoreRepository
 
     public async Task<Store?> FindById(string storeId)
     {
-        return await _objs.FirstOrDefaultAsync(s => s.Id.AsString() == storeId);
+        var id = new StoreId(storeId); // string -> StoreId
+        return await _objs.FindAsync(id);
     }
 }

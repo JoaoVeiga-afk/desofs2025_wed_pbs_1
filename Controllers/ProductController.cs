@@ -81,8 +81,9 @@ namespace ShopTex.Controllers
         {
             try
             {
-                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+                var currentUserEmail =
+                    User.FindFirst(ClaimTypes.Email)?.Value ??
+                    User.FindFirst("email")?.Value;
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");
@@ -111,16 +112,30 @@ namespace ShopTex.Controllers
         [Authorize]
         public async Task<IActionResult> UploadImage(string id, IFormFile file)
         {
+            const long MaxFileSize = Configurations.MAX_FILE_SIZE;
+            var permittedMimeTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            var permittedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
+            if (file.Length > MaxFileSize)
+                return BadRequest("File size exceeds 10MB limit.");
+
+            var contentType = file.ContentType.ToLower();
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            if (!permittedMimeTypes.Contains(contentType) || !permittedExtensions.Contains(extension))
+                return BadRequest("Invalid file type. Only JPG, PNG, and GIF are allowed.");
             var product = await _service.GetByIdAsync(new ProductId(id));
             if (product == null)
                 return NotFound("Product not found.");
 
             // Validate user permissions here
-            var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
+            
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
                 return Unauthorized("User email not found in token");
