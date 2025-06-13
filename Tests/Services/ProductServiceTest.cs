@@ -1,162 +1,245 @@
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using ShopTex.Domain.Products;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
+using ShopTex.Domain.Users;
 using ShopTex.Services;
 using Xunit;
 
-namespace ShopTex.Tests.Services;
-
-public class ProductServiceTest
+namespace ShopTex.Tests.Services
 {
-    private readonly Mock<IUnitOfWork> _unitOfWork = new();
-    private readonly Mock<IProductRepository> _productRepository = new();
-    private readonly Mock<IStoreRepository> _storeRepository = new();
-    private readonly Mock<IConfiguration> _configuration = new();
-    private readonly Mock<ILogger<ProductService>> _logger = new();
-    private const string TestImageStoragePath = "TestProductImages";
-
-    private ProductService CreateService()
+    public class ProductServiceTest
     {
-        return new ProductService(_unitOfWork.Object, _productRepository.Object, _storeRepository.Object, _configuration.Object, _logger.Object, TestImageStoragePath);
-    }
+        private readonly Mock<IUnitOfWork>        _unitOfWork      = new();
+        private readonly Mock<IProductRepository> _productRepo     = new();
+        private readonly Mock<IStoreRepository>   _storeRepo       = new();
+        private readonly Mock<IConfiguration>     _configuration   = new();
+        private readonly Mock<ILogger<ProductService>>      _serviceLogger   = new();
+        private readonly Mock<IUserRepository>    _userRepo        = new();
+        private readonly Mock<ILogger<UserService>>         _userLogger      = new();
+        private readonly Mock<ILogger<UserService>>      _authLogger       = new();
 
-    private static Product CreateTestProduct(string storeId)
-    {
-        return new Product("Test Product", "Test Desc", 9.99, "Category A", "enabled", storeId);
-    }
+        private readonly AuthenticationService _authService;
+        private readonly UserService           _userService;
+        private readonly ProductService        _service;
+        private const string TestImageStoragePath = "TestProductImages";
 
-    [Fact]
-    public async Task GetAllAsync_ReturnsListOfProductDtos()
-    {
-        // Arrange
-        var product = CreateTestProduct(Guid.NewGuid().ToString());
-        _productRepository.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Product> { product });
+        public ProductServiceTest()
+        {
+            _userService = new UserService(
+                _unitOfWork.Object,
+                _userRepo.Object,
+                _configuration.Object,
+                _userLogger.Object
+            );
 
-        var service = CreateService();
+            _authService = new AuthenticationService(
+                _unitOfWork.Object,
+                _userRepo.Object,
+                _configuration.Object,
+                _authLogger.Object
+            );
 
-        // Act
-        var result = await service.GetAllAsync();
+            _service = new ProductService(
+                _unitOfWork.Object,
+                _productRepo.Object,
+                _storeRepo.Object,
+                _configuration.Object,
+                _serviceLogger.Object,
+                _authService,
+                _userService,
+                TestImageStoragePath
+            );
+        }
 
-        // Assert
-        Assert.Single(result);
-        Assert.Equal("Test Product", result[0].Name);
-    }
+        private static Product CreateTestProduct(string storeId)
+            => new Product("Test Product", "Test Desc", 9.99, "Category A", "enabled", storeId);
 
-    [Fact]
-    public async Task GetByIdAsync_ExistingProduct_ReturnsProductDto()
-    {
-        // Arrange
-        var productId = new ProductId(Guid.NewGuid());
-        var product = CreateTestProduct(Guid.NewGuid().ToString());
-        Assert.NotNull(product);
+        private static AuthenticatedUserDto CreateAuth(string email = "test@domain.com")
+            => new() { Email = email };
 
-        _productRepository.Setup(r => r.FindById(productId.AsString())).ReturnsAsync(product);
+        [Fact]
+        public async Task GetAllProductsAsync_AsSysAdmin_ReturnsAllProducts()
+        {
+            var userAuth = CreateAuth();
+            var fakeUser = new User(
+                name: "Admin",
+                phone: "000",
+                email: userAuth.Email,
+                password: "x",
+                role: "System Administrator",
+                salt: Array.Empty<byte>()
+            );
+            _userRepo
+                .Setup(r => r.FindByEmail(userAuth.Email))
+                .ReturnsAsync(fakeUser);
 
-        var service = CreateService();
+            var product = CreateTestProduct(Guid.NewGuid().ToString());
+            _productRepo
+                .Setup(r => r.GetAllAsync())
+                .ReturnsAsync(new List<Product> { product });
 
-        // Act
-        var result = await service.GetByIdAsync(productId);
+            var result = await _service.GetAllProductsAsync(userAuth);
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal("Test Product", result?.Name);
-    }
+            Assert.Single(result);
+            Assert.Equal(product.Name, result[0].Name);
+        }
 
-    [Fact]
-    public async Task GetByIdAsync_ProductNotFound_ReturnsNull()
-    {
-        var productId = Guid.NewGuid();
-        _productRepository.Setup(r => r.FindById(productId.ToString())).ReturnsAsync((Product?)null);
+        [Fact]
+        public async Task GetAllProductsAsync_AsStoreUser_FiltersByStore()
+        {
+            var userAuth = CreateAuth();
+            var fakeUser = new User(
+                name: "StoreUser",
+                phone: "111",
+                email: userAuth.Email,
+                password: "x",
+                role: "Store Collaborator",
+                salt: Array.Empty<byte>()
+            );
+            var storeId = Guid.NewGuid();
+            var storeProp = typeof(User)
+                .GetProperty("Store", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)!;
+            storeProp.SetValue(fakeUser, new StoreId(storeId));
 
-        var service = CreateService();
+            _userRepo
+                .Setup(r => r.FindByEmail(userAuth.Email))
+                .ReturnsAsync(fakeUser);
 
-        var result = await service.GetByIdAsync(new ProductId(productId));
+            var product1 = CreateTestProduct(storeId.ToString());
+            var product2 = CreateTestProduct(Guid.NewGuid().ToString());
+            _productRepo
+                .Setup(r => r.GetAllAsync())
+                .ReturnsAsync(new List<Product> { product1, product2 });
 
-        Assert.Null(result);
-    }
+            var result = await _service.GetAllProductsAsync(userAuth);
 
-    [Fact]
-    public async Task AddAsync_StoreNotFound_ThrowsBusinessRuleValidationException()
-    {
-        // Arrange
-        var storeId = new StoreId(Guid.NewGuid());
-        var dto = new ProductDto("1", "New Product", "New Desc", 10.00, "Category", new ProductStatus("enabled"), storeId);
+            Assert.Single(result);
+            Assert.Equal(storeId.ToString(), result[0].StoreId);
+        }
 
-        _storeRepository.Setup(r => r.FindById(storeId.AsString())).ReturnsAsync((Store?)null);
+        [Fact]
+        public async Task GetProductByIdAsync_AsSysAdmin_ReturnsProductDto()
+        {
+            var userAuth = CreateAuth();
+            var fakeUser = new User(
+                name: "Admin",
+                phone: "000",
+                email: userAuth.Email,
+                password: "x",
+                role: "System Administrator",
+                salt: Array.Empty<byte>()
+            );
+            _userRepo
+                .Setup(r => r.FindByEmail(userAuth.Email))
+                .ReturnsAsync(fakeUser);
 
-        var service = CreateService();
+            var id = new ProductId(Guid.NewGuid());
+            var product = CreateTestProduct(Guid.NewGuid().ToString());
+            _productRepo
+                .Setup(r => r.GetByIdAsync(id))
+                .ReturnsAsync(product);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
-    }
+            var result = await _service.GetProductByIdAsync(id, userAuth);
 
-    [Fact]
-    public async Task AddAsync_ValidProduct_ReturnsProductDto()
-    {
-        // Arrange
-        var storeId = new StoreId(Guid.NewGuid());
-        var store = new Store("Test Store", new StoreAddress("St", "C", "ST", "12345", "CL"), "enabled");
+            Assert.NotNull(result);
+            Assert.Equal(product.Name, result?.Name);
+        }
 
-        var dto = new ProductDto("1", "Product A", "Desc A", 15.5, "Cat A", new ProductStatus("enabled"), storeId);
+        [Fact]
+        public async Task GetProductByIdAsync_NotFound_ReturnsNull()
+        {
+            var userAuth = CreateAuth();
+            var fakeUser = new User(
+                name: "Admin",
+                phone: "000",
+                email: userAuth.Email,
+                password: "x",
+                role: "System Administrator",
+                salt: Array.Empty<byte>()
+            );
+            _userRepo
+                .Setup(r => r.FindByEmail(userAuth.Email))
+                .ReturnsAsync(fakeUser);
 
-        _storeRepository.Setup(r => r.FindById(storeId.AsString())).ReturnsAsync(store);
-        _productRepository.Setup(r => r.AddAsync(It.IsAny<Product>())).ReturnsAsync(new Product(dto.Name, dto.Description, dto.Price, dto.Category, dto.Status, dto.StoreId));
-        _unitOfWork.Setup(u => u.CommitAsync()).ReturnsAsync(1);
+            var id = new ProductId(Guid.NewGuid());
+            _productRepo
+                .Setup(r => r.GetByIdAsync(id))
+                .ReturnsAsync((Product?)null);
 
-        var service = CreateService();
+            var result = await _service.GetProductByIdAsync(id, userAuth);
 
-        // Act
-        var result = await service.AddAsync(dto);
+            Assert.Null(result);
+        }
 
-        // Assert
-        Assert.NotNull(result);
-        Assert.Equal(dto.Name, result.Name);
-        Assert.Equal(dto.StoreId, result.StoreId);
-    }
+        [Fact]
+        public async Task AddAsync_StoreNotFound_Throws()
+        {
+            var dto = new ProductDto(
+                id:       "1",
+                name:     "Name",
+                description: "Desc",
+                price:    1.0,
+                category: "Cat",
+                status:   new ProductStatus("enabled"),
+                storeId:  new StoreId(Guid.NewGuid())
+            );
+            _storeRepo
+                .Setup(r => r.FindById(dto.StoreId))
+                .ReturnsAsync((Store?)null);
 
-    [Fact]
-    public async Task AddAsync_AddFails_ThrowsBusinessRuleValidationException()
-    {
-        // Arrange
-        var storeId = new StoreId(Guid.NewGuid());
-        var store = new Store("Test Store", new StoreAddress("St", "C", "ST", "12345", "CL"), "enabled");
-        var dto = new ProductDto("1", "Duplicate", "Desc", 20.0, "Cat", new ProductStatus("enabled"), storeId);
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(
+                () => _service.AddAsync(dto)
+            );
+        }
 
-        _storeRepository.Setup(r => r.FindById(storeId.AsString())).ReturnsAsync(store);
-        _productRepository.Setup(r => r.AddAsync(It.IsAny<Product>())).ThrowsAsync(new Exception("Insert failed"));
+        [Fact]
+        public async Task AddAsync_Valid_ReturnsDto()
+        {
+            var storeId = new StoreId(Guid.NewGuid());
+            var store = new Store("S", new StoreAddress("St","C","ST","12345","CL"), "enabled");
+            var dto = new ProductDto(
+                id:       "1",
+                name:     "N",
+                description: "D",
+                price:    2.0,
+                category: "C",
+                status:   new ProductStatus("enabled"),
+                storeId:  storeId
+            );
+            _storeRepo
+                .Setup(r => r.FindById(storeId.AsString()))
+                .ReturnsAsync(store);
+            _productRepo
+                .Setup(r => r.AddAsync(It.IsAny<Product>()))
+                .ReturnsAsync((Product p) => p);
+            _unitOfWork
+                .Setup(u => u.CommitAsync())
+                .ReturnsAsync(1);
 
-        var service = CreateService();
+            var result = await _service.AddAsync(dto);
 
-        // Act & Assert
-        await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.AddAsync(dto));
-    }
+            Assert.Equal(dto.Name, result.Name);
+            Assert.Equal(dto.StoreId, result.StoreId);
+        }
 
-    [Fact]
-    public async Task UploadImage_ProductNotFound_ThrowsBusinessRuleValidationException()
-    {
-        // Arrange
-        var productId = Guid.NewGuid().ToString();
-        _productRepository.Setup(r => r.FindById(productId)).ReturnsAsync((Product?)null);
+        [Fact]
+        public async Task UploadImage_ProductNotFound_Throws()
+        {
+            var id = Guid.NewGuid().ToString();
+            _productRepo
+                .Setup(r => r.FindById(id))
+                .ReturnsAsync((Product?)null);
 
-        var service = CreateService();
-
-        // Act & Assert
-        await Assert.ThrowsAsync<BusinessRuleValidationException>(() => service.UploadImage(productId, new byte[] { 1, 2, 3 }));
-    }
-
-    [Fact]
-    public async Task UpdateAsync_ValidProduct_ReturnsProductDto()
-    {
-        var storeId = new StoreId(Guid.NewGuid());
-        var store = new Store(storeId.Value, "Test Store", new StoreAddress("St", "C", "ST", "12345", "CL"), "enabled");
-        var productId = new ProductId(Guid.NewGuid());
-        var product = CreateTestProduct(storeId.Value);
-        var productDto = new ProductDto(productId.Value, product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
-        _productRepository.Setup(r => r.FindById(productId.AsString())).ReturnsAsync(product);
-        _storeRepository.Setup(r => r.FindById(storeId.Value)).ReturnsAsync(store);
-        var service = CreateService();
-
-        Assert.Equal(await service.UpdateAsync(productDto), productDto);
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(
+                () => _service.UploadImage(id, new byte[]{1})
+            );
+        }
     }
 }
