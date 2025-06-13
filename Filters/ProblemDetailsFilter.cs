@@ -5,10 +5,10 @@ using System.Text.Json;
 
 namespace ShopTex.Config;
 
-public sealed class ProblemDetailsResultFilter : IResultFilter
+public sealed class ProblemDetailsFilter : IResultFilter
 {
     private readonly ProblemDetailsFactory _factory;
-    public ProblemDetailsResultFilter(ProblemDetailsFactory factory) => _factory = factory;
+    public ProblemDetailsFilter(ProblemDetailsFactory factory) => _factory = factory;
 
     public void OnResultExecuting(ResultExecutingContext ctx)
     {

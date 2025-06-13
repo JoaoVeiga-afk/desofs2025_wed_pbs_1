@@ -51,8 +51,8 @@ public class Startup
         });
         services.AddControllers(opts =>
             {
-                opts.Filters.Add<ProblemDetailsResultFilter>(); // 4xx/5xx explícitos
-                opts.Filters.Add<GlobalExceptionFilter>();      // exceções → ProblemDetails
+                opts.Filters.Add<ProblemDetailsFilter>(); 
+                opts.Filters.Add<GlobalExceptionFilter>();     
             })
             .AddNewtonsoftJson(); 
         services.AddSwaggerGen();
