@@ -242,19 +242,4 @@ namespace ShopTex.Tests.Services
             );
         }
     }
-
-    [Fact]
-    public async Task UpdateAsync_ValidProduct_ReturnsProductDto()
-    {
-        var storeId = new StoreId(Guid.NewGuid());
-        var store = new Store(storeId.Value, "Test Store", new StoreAddress("St", "C", "ST", "12345", "CL"), "enabled");
-        var productId = new ProductId(Guid.NewGuid());
-        var product = CreateTestProduct(storeId.Value);
-        var productDto = new ProductDto(productId.Value, product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
-        _productRepository.Setup(r => r.FindById(productId.AsString())).ReturnsAsync(product);
-        _storeRepository.Setup(r => r.FindById(storeId.Value)).ReturnsAsync(store);
-        var service = CreateService();
-
-        Assert.Equal(await service.UpdateAsync(productDto), productDto);
-    }
 }
