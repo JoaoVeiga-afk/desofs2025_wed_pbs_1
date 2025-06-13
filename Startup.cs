@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
+using ShopTex.Config;
 using ShopTex.Domain.Orders;
 using ShopTex.Domain.OrdersProduct;
 using ShopTex.Domain.Products;
@@ -48,7 +49,12 @@ public class Startup
                     .AllowCredentials();
             });
         });
-        services.AddControllers().AddNewtonsoftJson();
+        services.AddControllers(opts =>
+            {
+                opts.Filters.Add<ProblemDetailsFilter>(); 
+                opts.Filters.Add<GlobalExceptionFilter>();     
+            })
+            .AddNewtonsoftJson(); 
         services.AddSwaggerGen();
 
         var jwtIssuer = Configuration.GetSection("Jwt:Issuer").Get<string>();

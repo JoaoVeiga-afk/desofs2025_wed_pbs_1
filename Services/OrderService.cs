@@ -289,7 +289,7 @@ public class OrderService
 
         
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
-                   ?? throw new BusinessRuleValidationException("Authenticated user not found.");
+                   ?? throw new UnauthorizedAccessException("Authenticated user not found.");
 
         if (order.UserId.AsGuid() == user.Id.AsGuid())
         {
@@ -342,7 +342,7 @@ public class OrderService
     private async Task ValidateUserAccessAsync(AuthenticatedUserDto userAuth)
     {
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
-                   ?? throw new BusinessRuleValidationException("Authenticated user not found.");
+                   ?? throw new UnauthorizedAccessException("Authenticated user not found.");
 
         string? storeId = user.Store?.AsGuid().ToString();
 
