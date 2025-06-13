@@ -70,7 +70,6 @@ public class OrderService
             return null;
         }
 
-        // Busca sempre os produtos associados ao pedido
         var products = await _orderProductRepo.GetByOrderIdAsync(id);
 
         return new OrderDto
@@ -142,9 +141,10 @@ public class OrderService
 
     public async Task<OrderDto> AddAsync(CreatingOrderDto dto, AuthenticatedUserDto userAuth)
     {
-        await ValidateUserAccessAsync(userAuth);
-        var userId = await ResolveAndValidateUserIdAsync(dto.UserId, userAuth);
+        var (user, userStoreGuid) = await GetValidatedUserWithStoreAsync(userAuth);
 
+        var userId = await ResolveAndValidateUserIdAsync(dto.UserId, userAuth);
+        
         foreach (var p in dto.Products)
         {
             if (!p.ProductId.HasValue)
@@ -154,6 +154,12 @@ public class OrderService
             var existingProduct = await _produtRepo.GetByIdAsync(productId);
             if (existingProduct == null)
                 throw new BusinessRuleValidationException($"Product {p.ProductId} does not exist.");
+
+            if (user.Role != UserRole.SystemRole && existingProduct.StoreId.AsGuid() != userStoreGuid)
+            {
+                throw new UnauthorizedAccessException(
+                    $"Product {p.ProductId} does not belong to your store.");
+            }
         }
 
         var grouped = dto.Products
@@ -198,7 +204,7 @@ public class OrderService
     public async Task<OrderDto> PatchAsync(OrderId id, PartialOrderUpdateDto dto, AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Patching order {OrderId}", id);
-        await ValidateUserAccessAsync(userAuth);
+        var (user, userStoreGuid) = await GetValidatedUserWithStoreAsync(userAuth);
 
         var order = await _repo.FindById(id);
         if (order == null)
@@ -209,6 +215,23 @@ public class OrderService
 
         if (dto.Products != null)
         {
+            foreach (var p in dto.Products)
+            {
+                if (!p.ProductId.HasValue)
+                    throw new BusinessRuleValidationException("ProductId is required.");
+
+                var productId = new ProductId(p.ProductId.Value);
+                var existingProduct = await _produtRepo.GetByIdAsync(productId);
+                if (existingProduct == null)
+                    throw new BusinessRuleValidationException($"Product {p.ProductId} does not exist.");
+
+                if (user.Role != UserRole.SystemRole && existingProduct.StoreId.AsGuid() != userStoreGuid)
+                {
+                    throw new UnauthorizedAccessException(
+                        $"Product {p.ProductId} does not belong to your store.");
+                }
+            }
+            
             await _orderProductRepo.DeleteByOrderIdAsync(id);
 
             var grouped = dto.Products
@@ -301,6 +324,19 @@ public class OrderService
         _logger.LogInformation("Order {OrderId} deleted by user {Email}", id, userAuth.Email);
         return true;
     }
+    
+    private async Task<(User user, Guid storeGuid)> GetValidatedUserWithStoreAsync(AuthenticatedUserDto userAuth)
+    {
+        await ValidateUserAccessAsync(userAuth);
+
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email)
+                   ?? throw new BusinessRuleValidationException("Authenticated user not found.");
+
+        var storeGuid = user.Store?.AsGuid()
+                        ?? throw new BusinessRuleValidationException("User has no store.");
+
+        return (user, storeGuid);
+    }
 
     
     private async Task ValidateUserAccessAsync(AuthenticatedUserDto userAuth)
@@ -316,8 +352,6 @@ public class OrderService
         }
 
         var hasPermission = await UserCanAccessOrderAsync(userAuth.Email, storeId);
-        Console.WriteLine($"User Email: {userAuth.Email}");
-        Console.WriteLine($"hasPermission: {hasPermission}");
 
         if (!hasPermission)
         {
@@ -357,6 +391,20 @@ public class OrderService
         {
             _logger.LogWarning("User with ID {UserId} does not exist", candidate);
             throw new BusinessRuleValidationException("User not found.");
+        }
+        
+        var (caller, callerStoreGuid) = await GetValidatedUserWithStoreAsync(userCtx);
+
+        var targetEmail = existing.Email; 
+        var isOnStore = await _authenticationService.clientOnStore(
+            targetEmail,
+            callerStoreGuid.ToString()
+        );
+
+        if (caller.Role != UserRole.SystemRole && !isOnStore)
+        {
+            throw new UnauthorizedAccessException(
+                $"User {candidate.AsGuid()} does not have access the store.");
         }
         return candidate;
     }
