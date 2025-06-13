@@ -14,6 +14,14 @@ public class ProductRepository : BaseRepository<Product, ProductId>, IProductRep
 
     public async Task<Product?> FindById(string productId)
     {
-        return await _objs.FirstOrDefaultAsync(s => s.Id.AsString() == productId);
+        var id = new ProductId(productId); 
+        return await _objs.FindAsync(id);
+    }
+
+    public Product Update(Product product)
+    {
+
+        return _objs.Update(product).Entity;
+
     }
 }

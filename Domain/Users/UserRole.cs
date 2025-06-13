@@ -47,4 +47,13 @@ public class UserRole
                 throw new BusinessRuleValidationException("Role field is Invalid");
         }
     }
+
+    public override bool Equals(object? obj)
+    {
+        if (obj is UserRole other)
+        {
+            return RoleName.Equals(other.RoleName, StringComparison.OrdinalIgnoreCase);
+        }
+        return false;
+    }
 }

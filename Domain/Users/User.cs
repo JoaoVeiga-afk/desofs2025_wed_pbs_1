@@ -14,9 +14,9 @@ public class User : Entity<UserId>, IAggregateRoot
 
     public UserEmail Email { get; private set; }
 
-    private string Password { get; set; }
+    public string Password { get; set; }
 
-    private byte[] Salt { get; set; }
+    public byte[] Salt { get; set; }
 
     public UserRole? Role { get; private set; }
 

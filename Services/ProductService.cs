@@ -230,4 +230,39 @@ public class ProductService
         return sysAdmin || storeAdmin || storeColab || clientStore;
     }
 
+    public async Task<ProductDto> UpdateAsync(ProductDto dto)
+    {
+        _logger.LogInformation("Updating product with ID {ProductId} started", dto.Id);
+        
+        if ((await _storeRepo.FindById(dto.StoreId)) == null)
+        {
+            throw new BusinessRuleValidationException("Store Id does not exist");
+        }
+        
+        var product = await _repo.FindById(dto.Id);
+        
+        if (product == null) { throw new BusinessRuleValidationException("Product not found"); }
+        
+        product.Name = dto.Name;
+        product.Description = dto.Description;
+        product.Price = dto.Price;
+        product.Category = dto.Category;
+        product.Status = new ProductStatus(dto.Status);
+
+        try
+        {
+            _repo.Update(product);
+
+            await _unitOfWork.CommitAsync();
+        }
+        catch
+        {
+            throw new BusinessRuleValidationException("Product cannot be updated");
+        }
+        
+        _logger.LogInformation("Updating product with ID {ProductId} completed", dto.Id);
+
+        return dto;
+    }
+
 }

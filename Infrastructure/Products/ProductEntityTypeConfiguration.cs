@@ -9,7 +9,14 @@ public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        builder.HasKey(s => s.Id);
+        builder.HasKey(o => o.Id);
+
+        builder.Property(o => o.Id)
+            .HasConversion(
+                id  => id.AsString(),   
+                str => new ProductId(str) 
+            )
+            .ValueGeneratedNever();
 
         builder.OwnsOne(s => s.Status, status =>
         {
