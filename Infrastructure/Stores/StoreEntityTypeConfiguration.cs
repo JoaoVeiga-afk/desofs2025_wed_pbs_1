@@ -10,7 +10,14 @@ public class StoreEntityTypeConfiguration : IEntityTypeConfiguration<Store>
 {
     public void Configure(EntityTypeBuilder<Store> builder)
     {
-        builder.HasKey(s => s.Id);
+        builder.HasKey(o => o.Id);
+
+        builder.Property(o => o.Id)
+            .HasConversion(
+                id  => id.AsString(),   // StoreId to string (for DB)
+                str => new StoreId(str) // string to StoreId
+            )
+            .ValueGeneratedNever();
 
         builder.OwnsOne(s => s.Address, address =>
         {

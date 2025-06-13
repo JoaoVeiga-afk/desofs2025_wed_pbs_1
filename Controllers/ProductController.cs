@@ -24,16 +24,68 @@ namespace ShopTex.Controllers
 
         // GET: api/product/5
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<ProductDto>> GetProduct(Guid id)
         {
-            var product = await _service.GetByIdAsync(new ProductId(id));
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
 
-            if (product == null)
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+            
+            try
             {
-                return NotFound();
-            }
+                var product = await _service.GetProductByIdAsync(new ProductId(id), userAuth);
 
-            return product;
+                if (product == null)
+                {
+                    return NotFound();
+                }
+                return Ok(product);
+                
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        
+        // GET: api/product/
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<List<ProductDto>>> GetAllProducts()
+        {
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+
+            try
+            {
+                var products = await _service.GetAllProductsAsync(userAuth);
+
+                if (products == null || products.Count == 0)
+                    return NotFound(new { Message = "No products available." });
+
+                return Ok(products);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
         [HttpPatch("{id}")]
@@ -81,7 +133,8 @@ namespace ShopTex.Controllers
         {
             try
             {
-                var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
+                var currentUserEmail =
+                    User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
 
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
@@ -111,16 +164,30 @@ namespace ShopTex.Controllers
         [Authorize]
         public async Task<IActionResult> UploadImage(string id, IFormFile file)
         {
+            const long MaxFileSize = Configurations.MAX_FILE_SIZE;
+            var permittedMimeTypes = new[] { "image/jpeg", "image/png", "image/gif" };
+            var permittedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
+            if (file.Length > MaxFileSize)
+                return BadRequest("File size exceeds 10MB limit.");
+
+            var contentType = file.ContentType.ToLower();
+            var extension = Path.GetExtension(file.FileName).ToLower();
+
+            if (!permittedMimeTypes.Contains(contentType) || !permittedExtensions.Contains(extension))
+                return BadRequest("Invalid file type. Only JPG, PNG, and GIF are allowed.");
             var product = await _service.GetByIdAsync(new ProductId(id));
             if (product == null)
                 return NotFound("Product not found.");
 
             // Validate user permissions here
-            var currentUserEmail = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ??
+                User.FindFirst("email")?.Value;
+            
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
                 return Unauthorized("User email not found in token");

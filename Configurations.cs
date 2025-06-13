@@ -21,6 +21,8 @@ public class Configurations
     public const string STORE_ADMIN_ROLE_NAME = "Store Administrator";
     public const string STORE_COLAB_ROLE_NAME = "Store Collaborator";
     public const string IMAGE_STORAGE_PATH = "ProductImages";
+    // 10 MB
+    public const int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     public static string HashString(string source, byte[] salt)
     {
