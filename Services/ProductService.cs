@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using FluentAssertions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ShopTex.Domain.Users;
+using System.Security.Cryptography;
 
 namespace ShopTex.Services;
 
@@ -17,6 +18,7 @@ public class ProductService
     private readonly ILogger<ProductService> _logger;
     private readonly AuthenticationService _authenticationService;
     private readonly UserService _userService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly string _imageStoragePath;
 
     public ProductService(
@@ -27,6 +29,7 @@ public class ProductService
         ILogger<ProductService> logger,
         AuthenticationService authenticationService,
         UserService userService,
+        IHttpContextAccessor httpContextAccessor,
         string imageStoragePath = Configurations.IMAGE_STORAGE_PATH 
     )
     {
@@ -37,10 +40,11 @@ public class ProductService
         _logger = logger;
         _authenticationService = authenticationService;
         _userService = userService;
+        _httpContextAccessor = httpContextAccessor;
         _imageStoragePath = imageStoragePath;
     }
-
-   public async Task<List<ProductDto>> GetAllProductsAsync(AuthenticatedUserDto userAuth)
+ 
+    public async Task<List<ProductDto>> GetAllProductsAsync(AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Validating access for {Email}", userAuth.Email);
 
@@ -76,6 +80,16 @@ public class ProductService
         var dtoList = list.ConvertAll(product =>
         {
             _logger.LogDebug("Mapping product {ProductId} to ProductDto", product.Id.Value);
+
+            string? imageUrl = null;
+
+            if (product.Image != null && _httpContextAccessor.HttpContext != null)
+            {
+                var request = _httpContextAccessor.HttpContext.Request;
+                var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+                imageUrl = $"{baseUrl}/api/product/{product.Id.AsString()}/image";
+            }
+
             return new ProductDto(
                 product.Id.AsString(),
                 product.Name,
@@ -83,38 +97,18 @@ public class ProductService
                 product.Price,
                 product.Category,
                 product.Status,
-                product.StoreId);
+                product.StoreId,
+                GetImageUrl(product)
+            );
         });
 
         _logger.LogInformation("Product mapping complete. Returning {Count} ProductDto objects", dtoList.Count);
         return dtoList;
     }
 
-
     public async Task<ProductDto?> GetProductByIdAsync(ProductId id, AuthenticatedUserDto userAuth)
     {
-        _logger.LogInformation("Validating access for {Email} to product {ProductId}", userAuth.Email, id.Value);
-
-        var isSysAdmin = await _authenticationService
-            .hasPermission(userAuth.Email, new List<UserRole> { UserRole.SystemRole });
-
-        string? userStoreId = null;
-        if (!isSysAdmin)
-        {
-            var user = await _userService.GetUserByEmailAsync(userAuth.Email)
-                       ?? throw new BusinessRuleValidationException("Authenticated user not found.");
-
-            userStoreId = user.Store?.AsGuid().ToString()
-                          ?? throw new UnauthorizedAccessException("You don't have a store associated with this user.");
-
-            _logger.LogInformation(
-                "User {Email} is not sysadmin – will only access products from store {StoreId}",
-                userAuth.Email, userStoreId);
-        }
-        else
-        {
-            _logger.LogInformation("User {Email} is sysadmin – may access any product", userAuth.Email);
-        }
+        var (isSysAdmin, userStoreId) = await ValidateProductAccessAsync(userAuth, id);
 
         _logger.LogInformation("Fetching product {ProductId}", id.Value);
         var product = await _repo.GetByIdAsync(id);
@@ -140,11 +134,12 @@ public class ProductService
             product.Price,
             product.Category,
             product.Status,
-            product.StoreId);
+            product.StoreId,
+            GetImageUrl(product)
+        );
     }
-
     
-    public async Task<ProductDto?> GetByIdAsync(ProductId id)
+    public async Task<CreatingProductDto?> GetByIdAsync(ProductId id)
     {
         _logger.LogInformation("Fetching product with ID {ProductId} started", id.Value);
         var product = await _repo.FindById(id.AsString());
@@ -156,10 +151,38 @@ public class ProductService
         }
 
         _logger.LogInformation("Product with ID {ProductId} found. Name: {Name}", id.Value, product.Name);
-        return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+        return new CreatingProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+    }
+    
+    public async Task<(byte[] ImageData, string ContentType)?> GetImageAsync(ProductId id, AuthenticatedUserDto userAuth)
+    {
+        var (isSysAdmin, userStoreId) = await ValidateProductAccessAsync(userAuth, id);
+        
+        var product = await _repo.FindById(id.AsString());
+        if (product == null || product.Image == null)
+            return null;
+
+        var path = product.Image.ImagePath;
+        if (!File.Exists(path))
+            return null;
+
+        var encryptedData = await File.ReadAllBytesAsync(path);
+
+        using var aes = Aes.Create();
+        aes.Key = Convert.FromBase64String(product.Image.EncryptionKey);
+        aes.IV = Convert.FromBase64String(product.Image.InitializationVector);
+        aes.Mode = CipherMode.CBC;
+        aes.Padding = PaddingMode.PKCS7;
+
+        using var decryptor = aes.CreateDecryptor();
+        var decryptedData = decryptor.TransformFinalBlock(encryptedData, 0, encryptedData.Length);
+
+        string contentType = GetContentTypeFromBytes(decryptedData);
+
+        return (decryptedData, contentType);
     }
 
-    public async Task<ProductDto> AddAsync(ProductDto dto)
+    public async Task<CreatingProductDto> AddAsync(CreatingProductDto dto)
     {
         _logger.LogInformation("Creating new product with Name: {Name}, Description: {Description}, Price: {Price}, Category: {Category}, Status: {Status}, Store Id: {StoreId}",
             dto.Name, dto.Description, dto.Price, dto.Category, dto.Status, dto.StoreId);
@@ -182,7 +205,42 @@ public class ProductService
             throw new BusinessRuleValidationException("Product already exists");
         }
 
-        return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+        return new CreatingProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+    }
+    
+    public async Task<CreatingProductDto> UpdateAsync(CreatingProductDto dto)
+    {
+        _logger.LogInformation("Updating product with ID {ProductId} started", dto.Id);
+        
+        if ((await _storeRepo.FindById(dto.StoreId)) == null)
+        {
+            throw new BusinessRuleValidationException("Store Id does not exist");
+        }
+        
+        var product = await _repo.FindById(dto.Id);
+        
+        if (product == null) { throw new BusinessRuleValidationException("Product not found"); }
+        
+        product.Name = dto.Name;
+        product.Description = dto.Description;
+        product.Price = dto.Price;
+        product.Category = dto.Category;
+        product.Status = new ProductStatus(dto.Status);
+
+        try
+        {
+            _repo.Update(product);
+
+            await _unitOfWork.CommitAsync();
+        }
+        catch
+        {
+            throw new BusinessRuleValidationException("Product cannot be updated");
+        }
+        
+        _logger.LogInformation("Updating product with ID {ProductId} completed", dto.Id);
+
+        return dto;
     }
 
     public async Task<bool> UploadImage(string productId, byte[] image)
@@ -230,39 +288,58 @@ public class ProductService
         return sysAdmin || storeAdmin || storeColab || clientStore;
     }
 
-    public async Task<ProductDto> UpdateAsync(ProductDto dto)
+    private string GetContentTypeFromBytes(byte[] data)
     {
-        _logger.LogInformation("Updating product with ID {ProductId} started", dto.Id);
-        
-        if ((await _storeRepo.FindById(dto.StoreId)) == null)
+        if (data.Length > 4)
         {
-            throw new BusinessRuleValidationException("Store Id does not exist");
-        }
-        
-        var product = await _repo.FindById(dto.Id);
-        
-        if (product == null) { throw new BusinessRuleValidationException("Product not found"); }
-        
-        product.Name = dto.Name;
-        product.Description = dto.Description;
-        product.Price = dto.Price;
-        product.Category = dto.Category;
-        product.Status = new ProductStatus(dto.Status);
+            if (data[0] == 0x89 && data[1] == 0x50 && data[2] == 0x4E && data[3] == 0x47)
+                return "image/png";
 
-        try
+            if (data[0] == 0xFF && data[1] == 0xD8)
+                return "image/jpeg";
+
+            if (data[0] == 0x47 && data[1] == 0x49 && data[2] == 0x46)
+                return "image/gif";
+        }
+
+        return "application/octet-stream";
+    }
+    
+    private string? GetImageUrl(Product product)
+    {
+        if (product.Image != null && _httpContextAccessor.HttpContext != null)
         {
-            _repo.Update(product);
-
-            await _unitOfWork.CommitAsync();
+            var request = _httpContextAccessor.HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
+            return $"{baseUrl}/api/product/{product.Id.AsString()}/image";
         }
-        catch
+        return null;
+    }
+    
+    private async Task<(bool IsSysAdmin, string? StoreId)> ValidateProductAccessAsync(AuthenticatedUserDto userAuth, ProductId productId)
+    {
+        _logger.LogInformation("Validating access for {Email} to product {ProductId}", userAuth.Email, productId.Value);
+
+        var isSysAdmin = await _authenticationService
+            .hasPermission(userAuth.Email, new List<UserRole> { UserRole.SystemRole });
+
+        if (isSysAdmin)
         {
-            throw new BusinessRuleValidationException("Product cannot be updated");
+            _logger.LogInformation("User {Email} is sysadmin – may access any product", userAuth.Email);
+            return (true, null);
         }
-        
-        _logger.LogInformation("Updating product with ID {ProductId} completed", dto.Id);
 
-        return dto;
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email)
+                   ?? throw new BusinessRuleValidationException("Authenticated user not found.");
+
+        var userStoreId = user.Store?.AsGuid().ToString()
+                          ?? throw new UnauthorizedAccessException("You don't have a store associated with this user.");
+
+        _logger.LogInformation(
+            "User {Email} is not sysadmin – will only access products from store {StoreId}",
+            userAuth.Email, userStoreId);
+
+        return (false, userStoreId);
     }
 
 }
