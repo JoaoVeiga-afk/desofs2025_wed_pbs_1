@@ -29,8 +29,14 @@ public sealed class ProblemDetailsFilter : IResultFilter
             NotFoundResult
                 => Wrap(null, 404, ctx),
 
+            ObjectResult obj when obj.StatusCode is >= 400 and <= 599 && obj.Value is not ProblemDetails
+                => Wrap(obj.Value, obj.StatusCode ?? 500, ctx),
+
             StatusCodeResult sc when sc.StatusCode is >= 400 and <= 599
                 => Wrap(null, sc.StatusCode, ctx),
+            
+            OkObjectResult ok when ok.Value is string str
+                => new OkObjectResult(new { message = str }),
 
             _ => ctx.Result
         };

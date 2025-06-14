@@ -90,7 +90,7 @@ namespace ShopTex.Controllers
 
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<ActionResult<ProductDto>> UpdateProduct(Guid id, ProductDto dto)
+        public async Task<ActionResult<CreatingProductDto>> UpdateProduct(Guid id, CreatingProductDto dto)
         {
             if (dto.Id != id.ToString())
             {
@@ -129,7 +129,7 @@ namespace ShopTex.Controllers
         [HttpPost]
         [Route("create")]
         [Authorize]
-        public async Task<ActionResult<ProductDto>> CreateProduct(ProductDto dto)
+        public async Task<ActionResult<CreatingProductDto>> CreateProduct(CreatingProductDto dto)
         {
             try
             {

@@ -111,6 +111,7 @@ public class Startup
 
     public void ConfigureMyServices(IServiceCollection services)
     {
+        services.AddHttpContextAccessor();
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<UserService>();
