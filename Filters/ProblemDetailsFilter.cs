@@ -34,7 +34,7 @@ public sealed class ProblemDetailsFilter : IResultFilter
 
             StatusCodeResult sc when sc.StatusCode is >= 400 and <= 599
                 => Wrap(null, sc.StatusCode, ctx),
-            
+
             OkObjectResult ok when ok.Value is string str
                 => new OkObjectResult(new { message = str }),
 
@@ -44,17 +44,17 @@ public sealed class ProblemDetailsFilter : IResultFilter
 
     public void OnResultExecuted(ResultExecutedContext ctx)
     {
-        
+
     }
-    
+
     private static string? GetDetail(object? val)
     {
         if (val == null) return null;
 
         if (val is string s) return s;
 
-        var type  = val.GetType();
-        var prop  = type.GetProperty("Message") ?? type.GetProperty("Detail");
+        var type = val.GetType();
+        var prop = type.GetProperty("Message") ?? type.GetProperty("Detail");
         if (prop is { PropertyType: { } pt } && pt == typeof(string))
             return prop.GetValue(val) as string;
 
@@ -66,10 +66,10 @@ public sealed class ProblemDetailsFilter : IResultFilter
         var problem = _factory.CreateProblemDetails(
             c.HttpContext,
             statusCode: status,
-            detail:     GetDetail(val));
-        
+            detail: GetDetail(val));
+
         problem.Extensions.Remove("traceId");
-        
+
         return new ObjectResult(problem) { StatusCode = status };
     }
 }

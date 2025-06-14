@@ -91,7 +91,7 @@ public class AuthenticationService(IUnitOfWork unitOfWork, IUserRepository repo,
 
         return true;
     }
-    
+
     public async Task<bool> clientOnStore(string email, string storeId)
     {
         var user = await repo.FindByEmail(email);

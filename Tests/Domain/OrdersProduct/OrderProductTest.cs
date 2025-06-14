@@ -33,7 +33,7 @@ namespace ShopTex.Tests.Domain.OrdersProduct
 
             var result = new OrderProduct(orderId, productId, 0, 9.99);
 
-            result.Amount.Should().Be(0); 
+            result.Amount.Should().Be(0);
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace ShopTex.Tests.Domain.OrdersProduct
 
             var result = new OrderProduct(orderId, productId, 1, -5.0);
 
-            result.Price.Should().BeNegative(); 
+            result.Price.Should().BeNegative();
         }
     }
 }

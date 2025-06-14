@@ -17,18 +17,18 @@ namespace ShopTex.Tests.Services
 {
     public class OrderServiceTest
     {
-        private readonly Mock<IUnitOfWork>               _unitOfWork       = new();
-        private readonly Mock<IOrderRepository>          _orderRepo        = new();
-        private readonly Mock<IOrderProductRepository>   _orderProductRepo = new();
-        private readonly Mock<IProductRepository>        _productRepo      = new();
-        private readonly Mock<ILogger<OrderService>>     _orderLogger      = new();
-        private readonly Mock<IUserRepository>           _userRepo         = new();
-        private readonly Mock<IConfiguration>            _configuration    = new();
-        private readonly Mock<ILogger<UserService>>      _userLogger       = new();
-        private readonly Mock<ILogger<UserService>>      _authLogger       = new();
+        private readonly Mock<IUnitOfWork> _unitOfWork = new();
+        private readonly Mock<IOrderRepository> _orderRepo = new();
+        private readonly Mock<IOrderProductRepository> _orderProductRepo = new();
+        private readonly Mock<IProductRepository> _productRepo = new();
+        private readonly Mock<ILogger<OrderService>> _orderLogger = new();
+        private readonly Mock<IUserRepository> _userRepo = new();
+        private readonly Mock<IConfiguration> _configuration = new();
+        private readonly Mock<ILogger<UserService>> _userLogger = new();
+        private readonly Mock<ILogger<UserService>> _authLogger = new();
 
         private readonly AuthenticationService _authService;
-        private readonly OrderService          _service;
+        private readonly OrderService _service;
 
         public OrderServiceTest()
         {
@@ -56,7 +56,7 @@ namespace ShopTex.Tests.Services
                 _unitOfWork.Object,
                 _userRepo.Object,
                 _configuration.Object,
-                _authLogger.Object  
+                _authLogger.Object
             );
 
             var userService = new UserService(
@@ -81,17 +81,17 @@ namespace ShopTex.Tests.Services
         public async Task AddAsync_Should_CreateOrder_WithProducts()
         {
             // Arrange
-            var userGuid         = Guid.NewGuid();
+            var userGuid = Guid.NewGuid();
             var fixedProductGuid = Guid.Parse("a886caee-f30d-4c5d-8245-86ec297ba9b0");
 
             var product = new Product(
-                id:          fixedProductGuid.ToString(),
-                name:        "Produto Teste",
+                id: fixedProductGuid.ToString(),
+                name: "Produto Teste",
                 description: "Descrição",
-                price:       15,
-                category:    "Categoria",
-                status:      "enabled",
-                storeId:     Guid.NewGuid().ToString()
+                price: 15,
+                category: "Categoria",
+                status: "enabled",
+                storeId: Guid.NewGuid().ToString()
             );
 
             _productRepo
@@ -113,8 +113,8 @@ namespace ShopTex.Tests.Services
 
             var dto = new CreatingOrderDto
             {
-                UserId   = userGuid,
-                Status   = "pending",
+                UserId = userGuid,
+                Status = "pending",
                 Products = new List<CreatingOrderProductDto>
                 {
                     new() { ProductId = fixedProductGuid, Amount = 2, Price = 15.5 }
@@ -139,9 +139,9 @@ namespace ShopTex.Tests.Services
         public async Task GetByIdAsync_Should_ReturnOrder_WithProducts()
         {
             // Arrange
-            var id        = new OrderId(Guid.NewGuid());
+            var id = new OrderId(Guid.NewGuid());
             var productId = new ProductId(Guid.NewGuid());
-            var order     = new Order(new UserId(Guid.NewGuid()), "processing");
+            var order = new Order(new UserId(Guid.NewGuid()), "processing");
             // populate navigation Products for sysAdmin path
             var prod = new OrderProduct(order.Id, productId, amount: 1, price: 10.0);
             // Use reflection or domain method if available
@@ -189,9 +189,9 @@ namespace ShopTex.Tests.Services
         public async Task PatchAsync_Should_UpdateStatus_And_ReplaceProducts()
         {
             // Arrange
-            var id          = new OrderId(Guid.NewGuid());
+            var id = new OrderId(Guid.NewGuid());
             var productGuid = Guid.NewGuid();
-            var order       = new Order(new UserId(Guid.NewGuid()), "pending");
+            var order = new Order(new UserId(Guid.NewGuid()), "pending");
 
             _orderRepo
                 .Setup(r => r.FindById(id))
@@ -209,18 +209,18 @@ namespace ShopTex.Tests.Services
                     It.Is<ProductId>(pid => pid.AsGuid() == productGuid)
                 ))
                 .ReturnsAsync(new Product(
-                    id:          productGuid.ToString(),
-                    name:        "Produto Patch",
+                    id: productGuid.ToString(),
+                    name: "Produto Patch",
                     description: "Descrição",
-                    price:       9,
-                    category:    "Categoria",
-                    status:      "enabled",
-                    storeId:     Guid.NewGuid().ToString()
+                    price: 9,
+                    category: "Categoria",
+                    status: "enabled",
+                    storeId: Guid.NewGuid().ToString()
                 ));
 
             var dto = new PartialOrderUpdateDto
             {
-                Status   = "delivered",
+                Status = "delivered",
                 Products = new List<CreatingOrderProductDto>
                 {
                     new() { ProductId = productGuid, Amount = 1, Price = 9.99 }
@@ -244,7 +244,7 @@ namespace ShopTex.Tests.Services
         public async Task DeleteAsync_Should_RemoveOrder()
         {
             // Arrange
-            var id    = new OrderId(Guid.NewGuid());
+            var id = new OrderId(Guid.NewGuid());
             var order = new Order(new UserId(Guid.NewGuid()), "cancelled");
 
             _orderRepo

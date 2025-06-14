@@ -15,17 +15,17 @@ public sealed class GlobalExceptionFilter : IExceptionFilter
         int status = ctx.Exception switch
         {
             BusinessRuleValidationException => 400,
-            UnauthorizedAccessException     => 401,
-            _                               => 500
+            UnauthorizedAccessException => 401,
+            _ => 500
         };
 
         var problem = _factory.CreateProblemDetails(
             ctx.HttpContext,
             statusCode: status,
-            title:      ctx.Exception.GetType().Name,
-            detail:     ctx.Exception.Message);
+            title: ctx.Exception.GetType().Name,
+            detail: ctx.Exception.Message);
 
-        problem.Extensions.Remove("traceId");   
+        problem.Extensions.Remove("traceId");
 
         ctx.Result = new ObjectResult(problem) { StatusCode = status };
         ctx.ExceptionHandled = true;

@@ -19,7 +19,7 @@ namespace ShopTex.Controllers
         {
             _orderService = orderService;
         }
-        
+
         // GET: api/order/4c656ea7-8e30-414d-8680-10229a796467
         [HttpGet("{id}")]
         [Authorize]
@@ -52,7 +52,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // GET: api/order?limit=20&offset=0
         [HttpGet]
         [Authorize]
@@ -84,10 +84,10 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // POST: api/order
         [HttpPost]
-        [Authorize]        
+        [Authorize]
         public async Task<ActionResult<OrderDto>> PostOrder([FromBody] CreatingOrderDto orderInfo)
         {
             var currentUserEmail =
@@ -113,7 +113,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // PATCH: api/order/4c656ea7-8e30-414d-8680-10229a796467
         [HttpPatch("{id}")]
         [Authorize]
@@ -144,7 +144,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // DELETE: api/order/4c656ea7-8e30-414d-8680-10229a796467
         [HttpDelete("{id}")]
         [Authorize]
