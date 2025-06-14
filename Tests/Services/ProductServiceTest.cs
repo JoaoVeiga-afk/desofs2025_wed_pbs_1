@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -24,6 +25,7 @@ namespace ShopTex.Tests.Services
         private readonly Mock<IUserRepository>    _userRepo        = new();
         private readonly Mock<ILogger<UserService>>         _userLogger      = new();
         private readonly Mock<ILogger<UserService>>      _authLogger       = new();
+        private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
 
         private readonly AuthenticationService _authService;
         private readonly UserService           _userService;
@@ -54,6 +56,7 @@ namespace ShopTex.Tests.Services
                 _serviceLogger.Object,
                 _authService,
                 _userService,
+                _httpContextAccessor.Object,
                 TestImageStoragePath
             );
         }
@@ -181,7 +184,7 @@ namespace ShopTex.Tests.Services
         [Fact]
         public async Task AddAsync_StoreNotFound_Throws()
         {
-            var dto = new ProductDto(
+            var dto = new CreatingProductDto(
                 id:       "1",
                 name:     "Name",
                 description: "Desc",
@@ -204,7 +207,7 @@ namespace ShopTex.Tests.Services
         {
             var storeId = new StoreId(Guid.NewGuid());
             var store = new Store("S", new StoreAddress("St","C","ST","12345","CL"), "enabled");
-            var dto = new ProductDto(
+            var dto = new CreatingProductDto(
                 id:       "1",
                 name:     "N",
                 description: "D",

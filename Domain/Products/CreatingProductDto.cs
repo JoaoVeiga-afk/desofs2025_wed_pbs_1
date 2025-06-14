@@ -1,8 +1,8 @@
-﻿using ShopTex.Domain.Stores;
+using ShopTex.Domain.Stores;
 
 namespace ShopTex.Domain.Products;
 
-public class ProductDto
+public class CreatingProductDto
 {
     public string Id { get; set; }
 
@@ -18,9 +18,7 @@ public class ProductDto
 
     public string StoreId { get; set; }
 
-    public string? ImageUrl { get; set; }
-
-    public ProductDto(string id, string name, string description, double price, string category, ProductStatus status, StoreId storeId, string? imageUrl = null)
+    public CreatingProductDto(string id, string name, string description, double price, string category, ProductStatus status, StoreId storeId)
     {
         Id = id;
         Name = name;
@@ -29,6 +27,5 @@ public class ProductDto
         Description = description;
         Status = status.ToString();
         StoreId = storeId.AsString();
-        ImageUrl = imageUrl;
     }
 }
