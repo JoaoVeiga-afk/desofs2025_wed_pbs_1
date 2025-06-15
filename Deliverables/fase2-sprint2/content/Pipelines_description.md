@@ -14,6 +14,7 @@ Our project uses modular GitHub Actions to enforce quality, correctness, and ana
 | DCA           | Dynamic Code Analysis      | `.github/workflows/pipe-dca.yml`        |
 
 
+> Note: An IAST pipeline was not included due to the unavailability of free licenses or non-commercial versions suitable for academic environments. The existing solutions on the market are largely aimed at companies (enterprise-grade), which made it impossible to integrate them into this project.
 ---
 
 ## `pipe-main.yml` – Main Pipeline
