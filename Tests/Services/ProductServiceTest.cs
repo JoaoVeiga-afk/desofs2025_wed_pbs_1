@@ -185,7 +185,6 @@ namespace ShopTex.Tests.Services
         public async Task AddAsync_StoreNotFound_Throws()
         {
             var dto = new CreatingProductDto(
-                id:       "1",
                 name:     "Name",
                 description: "Desc",
                 price:    1.0,
@@ -208,7 +207,6 @@ namespace ShopTex.Tests.Services
             var storeId = new StoreId(Guid.NewGuid());
             var store = new Store("S", new StoreAddress("St","C","ST","12345","CL"), "enabled");
             var dto = new CreatingProductDto(
-                id:       "1",
                 name:     "N",
                 description: "D",
                 price:    2.0,
