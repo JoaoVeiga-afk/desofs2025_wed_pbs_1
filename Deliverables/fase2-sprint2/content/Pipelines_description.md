@@ -12,6 +12,7 @@ Our project uses modular GitHub Actions to enforce quality, correctness, and ana
 | Main Pipeline | Orchestrates all jobs      | `.github/workflows/pipe-main.yml`       |
 | Deployment    | Deploy to production       | `.github/workflows/pipe-deploy.yml`     |
 | DCA           | Dynamic Code Analysis      | `.github/workflows/pipe-dca.yml`        |
+| SCA           | Software Composition Analysis      | `.github/workflows/pipe-sca.yml`        |
 
 
 > Note: An IAST pipeline was not included due to the unavailability of free licenses or non-commercial versions suitable for academic environments. The existing solutions on the market are largely aimed at companies (enterprise-grade), which made it impossible to integrate them into this project.
@@ -135,3 +136,16 @@ This workflow is automatically triggered once the "Deploy Pipeline" workflow com
 
 **Tools used**:
 - OWASP ZAP (- [`zaproxy/action-full-scan@v0.12.0`](https://github.com/zaproxy/action-full-scan)): For performing dynamic security analysis of the application’s endpoints, detecting vulnerabilities such as SQL injection, authentication failures, and other security issues.
+
+---
+
+## 'pipe-sca.yml` – Dynamic Code Analysis Workflow'
+
+**Description**:
+This workflow is responsible for performing a security analysis on the project’s dependencies after the deployment process. It checks for known vulnerabilities in the third-party libraries and packages used in the application, ensuring that the dependencies are secure in the production environment. The process is automated to detect vulnerabilities after the deployment has been completed successfully.
+
+**Triggered by**:
+This workflow is automatically triggered once the "Deploy Pipeline" workflow completes successfully.
+
+**Tools used**:
+- Snyk (- [`snyk`](https://snyk.io/)): To perform software composition analysis, checking for vulnerabilities in third-party libraries and suggesting safe fixes or alternatives.

@@ -15,10 +15,19 @@ This document provides a detailed overview of the security testing practices int
 
 ## Software Composition Analysis (SCA)
 
+### Dependabot
 - **Tool**: Dependabot
-- **Integration**: Native GitHub Security feature
-- **Purpose**: Scans third-party dependencies for known vulnerabilities
-- **Scope**: NuGet packages (`.csproj` files), updated via pull requests and alerts
+- **Integration**: Native GitHub Security feature / GitHub Actions
+- **Purpose**: Scans third-party dependencies for known vulnerabilities and provides automated pull requests to update vulnerable packages
+- **Scope**: NuGet packages (`.csproj` files), updated via pull requests and alerts, or manually triggered in workflows with Snyk for detailed security analysis
+
+### Snyk
+
+- **Tool**: Snyk
+- **Integration**: GitHub Actions
+- **Purpose**: Performs security analysis on the project’s dependencies after deployment, detecting vulnerabilities in third-party libraries to ensure the security of the production environment.
+- **Triggered by**: Automatically triggered once the "Deploy Pipeline" workflow completes successfully.
+- **Tools used**: Snyk (via `snyk/snyk-action@v1`) to perform software composition analysis, checking for vulnerabilities in third-party libraries and suggesting fixes or alternatives.
 
 ---
 
