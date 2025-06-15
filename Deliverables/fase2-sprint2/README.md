@@ -6,18 +6,6 @@ To ensure consistency, collaboration, and code quality, we have structured our g
 
 ---
 
-## 📄 Repository Contribution Rules
-
-This section outlines the standards all contributors must follow when working in this repository:
-
-- **Branch Naming** – Structured names based on feature type and issue ID
-- **Commit Messages** – Clear, consistent messages with type and reference
-- **Pull Requests** – Guidelines for creating and reviewing PRs
-
-[View repository rules](content/Repository_rules.md)
-
----
-
 ## ⚙️ CI/CD Pipelines
 We use GitHub Actions to automate our development lifecycle, ensuring each change is properly verified.
 
@@ -59,4 +47,4 @@ We establish a backup policy to ensure data integrity and availability. This con
 ## Other Deliverables
 
 In the content folder, you can find a Postman collection with the API endpoints used in the project, as well as documentation for the API.
-In the same folder you can find the ASVS (Application Security Verification Standard) checklist in the [excel file](content/ASVS_checklist.xlsx).
+In the same folder, you can find the ASVS (Application Security Verification Standard) checklist in the [Excel file](content/ASVS_checklist.xlsx).

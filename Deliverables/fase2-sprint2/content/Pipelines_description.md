@@ -129,7 +129,7 @@ This workflow is responsible for deploying the application to the production env
 ## 'pipe-dca.yml` – Dynamic Code Analysis Workflow'
 
 **Description**:
-This workflow is responsible for performing a dynamic security analysis on the application after the completion of a deploy workflow. It checks specific vulnerabilities on the application's endpoints to ensure the security of the production environment. Additionally, it includes a health check to ensure the application is online before performing the security scan.
+This workflow is responsible for performing a dynamic security analysis on the application after the completion of a deployment workflow. It checks specific vulnerabilities on the application's endpoints to ensure the security of the production environment. Additionally, it includes a health check to ensure the application is online before performing the security scan.
 
 **Triggered by**:
 This workflow is automatically triggered once the "Deploy Pipeline" workflow completes successfully.
