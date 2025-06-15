@@ -182,7 +182,7 @@ Response (200 OK)
 
 **400 Bad Request** – Business rule violation or invalid input.
 
-#### 2.3 'POST /api/store/colab/add'
+#### 2.3 `POST /api/store/colab/add`
 Description: Adds a user as a collaborator to a specific store. Requires the caller to be either a System Administrator or the Store Administrator of the target store.
 
 **Headers**:
@@ -213,6 +213,190 @@ Description: Adds a user as a collaborator to a specific store. Requires the cal
 
 **400 Bad Request** – If the collaborator does not have the correct role or other business rule fails.
 
+### Product Management
+| Method  | Endpoint                         | Description                                 | Access Level                                                    |
+|---------|----------------------------------|---------------------------------------------|-----------------------------------------------------------------|
+| `GET`   | `/api/product/{id}`              | Retrieve a product by its unique identifier | Public                                                          |
+| `GET`   | `/api/product`                   | List all products                           | Public                                                          |
+| `POST`  | `/api/product/create`            | Create a new product                        | System Administrator, Store Administrator or Store Collaborator |
+| `POST`  | `/api/product/{id}/upload-image` | Upload image for a product                  | System Administrator, Store Administrator or Store Collaborator |
+| `PATCH` | `/api/product/{id}`              | Update a product                            | System Administrator, Store Administrator or Store Collaborator |
+
+#### 3.1 `GET /api/product/{id}`
+**Description**: Fetches the details of a product by its unique identifier.
+**Path Parameters**
+- **`id`** *(UUID)* – The unique ID of the product to retrieve.
+
+**Authorization**: Bearer {JWT_TOKEN}
+
+### Response Payload:
+```json
+{
+  "code": 200,
+  "status": "success",
+  "data": [
+    {
+      "id": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff",
+      "name": "Product Name",
+      "description": "Product Description",
+      "price": 19.99,
+      "imageUrl": "https://example.com/image.jpg",
+      "storeId": "store-uuid"
+    }
+  ]
+}
+```
+
+**Errors**
+- **404 Not Found** – Product not found with given ID.
+- **401 Unauthorized** – JWT is missing, expired, or invalid.
+- **400 Bad Request** – Business rule violation or invalid input.
+
+#### 3.2 `GET /api/product`
+**Description**: Lists all products available in the system.
+**Authorization**: Bearer {JWT_TOKEN}
+
+### Response Payload:
+```json
+{
+  "code": 200,
+  "status": "success",
+  "data": [
+    {
+      "id": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff",
+      "name": "Product Name",
+      "description": "Product Description",
+      "price": 19.99,
+      "imageUrl": "https://example.com/image.jpg",
+      "storeId": "store-uuid"
+    },
+    ...
+  ]
+}
+```
+
+**Errors**
+- **401 Unauthorized** – JWT is missing, expired, or invalid.
+- **400 Bad Request** – Business rule violation or invalid input.
+
+#### 3.3 `POST /api/product/create`
+**Description**: Creates a new product. Accessible to System Administrators, Store Administrators, or Store Collaborators.
+**Authorization**: Bearer {JWT_TOKEN}
+
+### Payload Parameters
+- **`name`** *(string)* – Name of the product.
+- **`description`** *(string)* – Description of the product.
+- **`price`** *(number)* – Price of the product.
+- **`category`** *(string)* – Category of the product.
+- **`status`** *(string)* – Status of the product.
+- **`storeId`** *(UUID)* – ID of the store to which the product belongs.
+
+**Example Payload:**
+```json
+{
+  "name": "New Product",
+  "description": "This is a new product.",
+  "price": 29.99,
+  "category": "Electronics",
+  "status": "enabled",
+  "storeId": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff"
+}
+```
+
+### Response Payload:
+```json
+{
+  "code": 200,
+  "status": "success",
+  "data": [
+    {
+      "id": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff",
+      "name": "New Product",
+      "description": "This is a new product.",
+      "price": 29.99,
+      "category": "Electronics",
+      "status": "enabled",
+      "storeId": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff"
+    }
+  ]
+}
+```
+
+**Errors**
+- **401 Unauthorized** – JWT is missing, expired, invalid or user does not have permissions.
+- **400 Bad Request** – Business rule violation or invalid input.
+
+#### 3.4 `POST /api/product/{id}/upload-image`
+**Description**: Uploads an image for a specific product. Accessible to System Administrators, Store Administrators, or Store Collaborators.
+**Path Parameters**
+- **`id`** *(UUID)* – The unique ID of the product for which the image is being uploaded.
+**Authorization**: Bearer {JWT_TOKEN}
+
+### Request Body
+The request body must be a multipart/form-data containing the image file.
+
+### Response Payload:
+```json
+{
+  "code": 200,
+  "status": "success",
+  "data": "Image uploaded successfully",
+}
+```
+
+**Errors**
+- **401 Unauthorized** – JWT is missing, expired, invalid or user does not have permissions.
+- **400 Bad Request** – Business rule violation, invalid input, image size or file format invalid.
+- **404 Not Found** – Product not found with given ID.
+- **500 Internal Server Error** – If the image storage fails.
+
+#### 3.5 `PATCH /api/product/{id}`
+**Description**: Updates an existing product. Accessible to System Administrators, Store Administrators, or Store Collaborators.
+**Path Parameters**
+- **`id`** *(UUID)* – The unique ID of the product to update.
+**Authorization**: Bearer {JWT_TOKEN}
+
+### Payload Parameters
+- **`name`** *(string)* – (Optional) New name of the product.
+- **`description`** *(string)* – (Optional) New description of the product.
+- **`price`** *(number)* – (Optional) New price of the product.
+- **`category`** *(string)* – (Optional) New category of the product.
+- **`status`** *(string)* – (Optional) New status of the product. Possible values: `"enabled"`, `"disabled"`.
+
+**Example Payload:**
+```json
+{
+  "name": "Updated Product Name",
+  "description": "Updated description of the product.",
+  "price": 24.99,
+  "category": "Updated Category",
+  "status": "enabled"
+}
+```
+
+### Response Payload:
+```json
+{
+  "code": 200,
+  "status": "success",
+  "data": [
+    {
+      "id": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff",
+      "name": "Updated Product Name",
+      "description": "Updated description of the product.",
+      "price": 24.99,
+      "category": "Updated Category",
+      "status": "enabled",
+      "storeId": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff"
+    }
+  ]
+}
+```
+
+**Errors**
+- **401 Unauthorized** – JWT is missing, expired, invalid or user does not have permissions.
+- **404 Not Found** – Product not found with given ID.
+- **400 Bad Request** – Business rule violation or invalid input.
 ### Database Management
 
 Created users for the application and the application logs.
