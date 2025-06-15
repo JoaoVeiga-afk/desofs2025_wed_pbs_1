@@ -42,20 +42,33 @@ public class OrderService
         _logger.LogInformation("Fetching order with ID {OrderId}", id);
         await ValidateUserAccessAsync(userAuth);
 
-        var user = await _userService.GetUserByEmailAsync(userAuth.Email);
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email)
+                   ?? throw new BusinessRuleValidationException("User not found");
 
-        var isSysAdmin = await _authenticationService.hasPermission(userAuth.Email, new List<UserRole> { UserRole.SystemRole });
-        var isStoreAdmin = await _authenticationService.managesStore(userAuth.Email, user.Store!.AsGuid().ToString());
-        var isStoreColab = await _authenticationService.worksOnStore(userAuth.Email, user.Store!.AsGuid().ToString());
+        var isSysAdmin = await _authenticationService.hasPermission(
+            userAuth.Email,
+            new List<UserRole> { UserRole.SystemRole }
+        );
+
+        bool isStoreAdmin = false;
+        bool isStoreColab = false;
+        StoreId? storeVo = null;
+
+        if (user.Store != null)
+        {
+            var storeIdStr = user.Store.AsGuid().ToString();
+            isStoreAdmin = await _authenticationService.managesStore(userAuth.Email, storeIdStr);
+            isStoreColab = await _authenticationService.worksOnStore(userAuth.Email, storeIdStr);
+            storeVo = new StoreId(storeIdStr);
+        }
 
         Order? order;
         if (isSysAdmin)
         {
             order = await _repo.FindByIdWithProductsAsync(id);
         }
-        else if (isStoreAdmin || isStoreColab)
+        else if ((isStoreAdmin || isStoreColab) && storeVo != null)
         {
-            var storeVo = new StoreId(user.Store!.AsGuid().ToString());
             order = await _repo.FindByIdByStoreAsync(storeVo, id);
         }
         else
@@ -74,19 +87,17 @@ public class OrderService
 
         return new OrderDto
         {
-            Id = order.Id.AsGuid(),
-            UserId = order.UserId.AsGuid(),
-            Status = order.Status.ToString(),
+            Id        = order.Id.AsGuid(),
+            UserId    = order.UserId.AsGuid(),
+            Status    = order.Status.ToString(),
             CreatedAt = order.CreatedAt,
             UpdatedAt = order.UpdatedAt,
-            Products = products
-                .Select(p => new OrderProductDto
-                {
-                    ProductId = p.ProductId,
-                    Amount = p.Amount,
-                    Price = p.Price
-                })
-                .ToList()
+            Products  = products.Select(p => new OrderProductDto
+            {
+                ProductId = p.ProductId,
+                Amount    = p.Amount,
+                Price     = p.Price
+            }).ToList()
         };
     }
 
@@ -100,18 +111,27 @@ public class OrderService
                    ?? throw new BusinessRuleValidationException("User not found");
 
         var isSysAdmin = await _authenticationService.hasPermission(userAuth.Email, new List<UserRole> { UserRole.SystemRole });
-        var isStoreAdmin = await _authenticationService.managesStore(userAuth.Email, user.Store!.AsGuid().ToString());
-        var isStoreColab = await _authenticationService.worksOnStore(userAuth.Email, user.Store!.AsGuid().ToString());
+
+        bool isStoreAdmin = false;
+        bool isStoreColab = false;
+        Guid? storeGuid = null;
+
+        if (user.Store != null)
+        {
+            storeGuid = user.Store.AsGuid();
+            var storeIdStr = storeGuid.Value.ToString();
+            isStoreAdmin = await _authenticationService.managesStore(userAuth.Email, storeIdStr);
+            isStoreColab = await _authenticationService.worksOnStore(userAuth.Email, storeIdStr);
+        }
 
         List<Order> orders;
         if (isSysAdmin)
         {
             orders = await _repo.GetPagedAsync(offset, limit);
         }
-        else if (isStoreAdmin || isStoreColab)
+        else if ((isStoreAdmin || isStoreColab) && storeGuid.HasValue)
         {
-            var storeGuid = user.Store!.AsGuid();
-            orders = await _repo.GetPagedByStoreAsync(storeGuid, offset, limit);
+            orders = await _repo.GetPagedByStoreAsync(storeGuid.Value, offset, limit);
         }
         else
         {
@@ -147,7 +167,7 @@ public class OrderService
         var (user, userStoreGuid) = await GetValidatedUserWithStoreAsync(userAuth);
 
         var userId = await ResolveAndValidateUserIdAsync(dto.UserId, userAuth);
-
+        
         foreach (var p in dto.Products)
         {
             if (!p.ProductId.HasValue)
@@ -170,8 +190,8 @@ public class OrderService
             .Select(g => new
             {
                 ProductId = g.Key,
-                Amount = g.Sum(x => x.Amount),
-                Price = g.Average(x => x.Price)
+                Amount    = g.Sum(x => x.Amount),
+                Price     = g.Average(x => x.Price)
             })
             .ToList();
 
@@ -190,16 +210,16 @@ public class OrderService
 
         return new OrderDto
         {
-            Id = order.Id.AsGuid(),
-            UserId = order.UserId.AsGuid(),
-            Status = order.Status.ToString(),
+            Id        = order.Id.AsGuid(),
+            UserId    = order.UserId.AsGuid(),
+            Status    = order.Status.ToString(),
             CreatedAt = order.CreatedAt,
             UpdatedAt = order.UpdatedAt,
-            Products = persisted.Select(op => new OrderProductDto
+            Products  = persisted.Select(op => new OrderProductDto
             {
                 ProductId = op.ProductId,
-                Amount = op.Amount,
-                Price = op.Price
+                Amount    = op.Amount,
+                Price     = op.Price
             }).ToList()
         };
     }
@@ -234,7 +254,7 @@ public class OrderService
                         $"Product {p.ProductId} does not belong to your store.");
                 }
             }
-
+            
             await _orderProductRepo.DeleteByOrderIdAsync(id);
 
             var grouped = dto.Products
@@ -242,8 +262,8 @@ public class OrderService
                 .Select(g => new
                 {
                     ProductId = g.Key,
-                    Amount = g.Sum(x => x.Amount),
-                    Price = g.Average(x => x.Price)
+                    Amount    = g.Sum(x => x.Amount),
+                    Price     = g.Average(x => x.Price)
                 })
                 .ToList();
 
@@ -290,7 +310,7 @@ public class OrderService
             return false;
         }
 
-
+        
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
                    ?? throw new UnauthorizedAccessException("Authenticated user not found.");
 
@@ -302,11 +322,11 @@ public class OrderService
             return true;
         }
 
-        var isSysAdmin = await _authenticationService.hasPermission(
+        var isSysAdmin   = await _authenticationService.hasPermission(
                                userAuth.Email,
-                               new List<UserRole> { UserRole.SystemRole }
+                               new List<UserRole>{ UserRole.SystemRole }
                            );
-        var storeId = user.Store!.AsGuid().ToString();
+        var storeId      = user.Store!.AsGuid().ToString();
         var managesStore = await _authenticationService.managesStore(
                                userAuth.Email,
                                storeId
@@ -327,7 +347,7 @@ public class OrderService
         _logger.LogInformation("Order {OrderId} deleted by user {Email}", id, userAuth.Email);
         return true;
     }
-
+    
     private async Task<(User user, Guid storeGuid)> GetValidatedUserWithStoreAsync(AuthenticatedUserDto userAuth)
     {
         await ValidateUserAccessAsync(userAuth);
@@ -341,7 +361,7 @@ public class OrderService
         return (user, storeGuid);
     }
 
-
+    
     private async Task ValidateUserAccessAsync(AuthenticatedUserDto userAuth)
     {
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
@@ -361,7 +381,7 @@ public class OrderService
             throw new UnauthorizedAccessException("You don't have permission");
         }
     }
-
+    
     private async Task<bool> UserCanAccessOrderAsync(string email, String storeId)
     {
         var sysAdmin = await _authenticationService.hasPermission(email, new List<UserRole> { UserRole.SystemRole });
@@ -389,16 +409,16 @@ public class OrderService
             throw new BusinessRuleValidationException("UserId is required.");
 
         var candidate = new UserId(dtoUserId.Value);
-        var existing = await _userService.GetByIdAsync(candidate);
+        var existing  = await _userService.GetByIdAsync(candidate);
         if (existing == null)
         {
             _logger.LogWarning("User with ID {UserId} does not exist", candidate);
             throw new BusinessRuleValidationException("User not found.");
         }
-
+        
         var (caller, callerStoreGuid) = await GetValidatedUserWithStoreAsync(userCtx);
 
-        var targetEmail = existing.Email;
+        var targetEmail = existing.Email; 
         var isOnStore = await _authenticationService.clientOnStore(
             targetEmail,
             callerStoreGuid.ToString()

@@ -75,36 +75,90 @@ public class StoreService
         return new StoreDto(store.Id.AsGuid(), store.Name, store.Address, store.Status);
     }
 
-    public async Task<(bool Success, string Message)> AddStoreColaborator(string storeId, string userEmail)
+    public async Task<(bool Success, string Message)> AddStoreColaborator(AddCollabDto dto)
     {
-        _logger.LogInformation("Adding new collaborator with email {Email} to store with id {StoreId}", userEmail, storeId);
+        _logger.LogInformation("Adding new collaborator with email {Email} to store with id {StoreId}", dto.UserEmail, dto.StoreId);
 
         // Find provided user
-        var user = await _userRepo.FindByEmail(userEmail);
+        var user = await _userRepo.FindByEmail(dto.UserEmail);
         if (user == null)
         {
-            _logger.LogWarning("User with email {Email} not found", userEmail);
+            _logger.LogWarning("User with email {Email} not found", dto.UserEmail);
             return (false, "User not found.");
         }
 
-        var storeExists = (await _repo.FindById(storeId)) != null;
+        var storeExists = (await _repo.FindById(dto.StoreId)) != null;
         if (!storeExists)
         {
-            _logger.LogWarning("Store with ID {StoreId} not found", storeId);
+            _logger.LogWarning("Store with ID {StoreId} not found", dto.StoreId);
             return (false, "Store not found.");
         }
 
-        var success = user.SetStore(storeId); // true or false
+        var success = user.SetStore(dto.StoreId); // true or false
 
         if (!success)
         {
-            _logger.LogWarning("User {Email} does not have a role that allows store assignment", userEmail);
+            _logger.LogWarning("User {Email} does not have a role that allows store assignment", dto.UserEmail);
             return (false, "User does not have the correct role for store assignment.");
         }
 
         _userRepo.Update(user); // Save changes
-        _logger.LogInformation("User {Email} successfully assigned to store {StoreId}", userEmail, storeId);
+        _logger.LogInformation("User {Email} successfully assigned to store {StoreId}", dto.UserEmail, dto.StoreId);
 
         return (true, "Collaborator added to store successfully.");
     }
+    
+    public async Task<(bool Success, string Message)> AddStoreClient(AddClientDto dto, AuthenticatedUserDto userAuth)
+    {
+        User user;
+
+        if (dto.UserId.HasValue)
+        {
+            var userId = new UserId(dto.UserId.Value); 
+
+            user = await _userRepo.FindById(userId);
+            if (user == null)
+            {
+                _logger.LogWarning("User with UserId {UserId} not found", dto.UserId.Value);
+                return (false, "User not found.");
+            }
+        }
+        else
+        {
+            user = await _userRepo.FindByEmail(userAuth.Email);
+            if (user == null)
+            {
+                _logger.LogWarning("User with email {Email} not found", userAuth.Email);
+                return (false, "User not found.");
+            }
+        }
+
+        if (user.Store != null && !user.Store.Equals(default(StoreId)))  
+        {
+            _logger.LogWarning("User {Email} already has a store associated with StoreId {StoreId}", userAuth.Email, user.Store.Value);
+            return (false, "User already has a store associated.");
+        }
+
+        var storeExists = (await _repo.FindById(dto.StoreId.ToString())) != null;
+        if (!storeExists)
+        {
+            _logger.LogWarning("Store with ID {StoreId} not found", dto.StoreId);
+            return (false, "Store not found.");
+        }
+
+        var success = user.SetClientStore(dto.StoreId.ToString());
+
+        if (!success)
+        {
+            _logger.LogWarning("User {Email} does not have a role that allows store assignment", userAuth.Email);
+            return (false, "User does not have the correct role for store assignment.");
+        }
+
+        _userRepo.Update(user);
+        await _unitOfWork.CommitAsync();
+        _logger.LogInformation("User {Email} successfully assigned to store {StoreId}", userAuth.Email, dto.StoreId);
+
+        return (true, "Client added to store successfully.");
+    }
+
 }

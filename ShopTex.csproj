@@ -76,6 +76,7 @@
     <Content Include=".github\workflows\pipe-deploy.yml" />
     <Content Include=".github\workflows\pipe-lint.yml" />
     <Content Include=".github\workflows\pipe-main.yml" />
+    <Content Include=".github\workflows\pipe-sca.yml" />
     <Content Include=".github\workflows\pipe-scan-leaks.yml" />
     <Content Include=".github\workflows\pipe-sonar.yml" />
     <Content Include=".github\workflows\pipe-test.yml" />

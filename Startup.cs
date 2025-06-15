@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
-using ShopTex.Config;
 using ShopTex.Domain.Orders;
 using ShopTex.Domain.OrdersProduct;
 using ShopTex.Domain.Products;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
 using ShopTex.Domain.Users;
+using ShopTex.Filters;
 using ShopTex.Infrastructure.Orders;
 using ShopTex.Infrastructure.Stores;
 using ShopTex.Infrastructure.OrdersProduct;
@@ -51,10 +51,11 @@ public class Startup
         });
         services.AddControllers(opts =>
             {
-                opts.Filters.Add<ProblemDetailsFilter>();
-                opts.Filters.Add<GlobalExceptionFilter>();
+                opts.Filters.Add<ProblemDetailsFilter>(); 
+                opts.Filters.Add<GlobalExceptionFilter>();     
+                opts.Filters.Add<SuccessResponseFilter>();     
             })
-            .AddNewtonsoftJson();
+            .AddNewtonsoftJson(); 
         services.AddSwaggerGen();
 
         var jwtIssuer = Configuration.GetSection("Jwt:Issuer").Get<string>();
@@ -115,14 +116,14 @@ public class Startup
         services.AddTransient<IUnitOfWork, UnitOfWork>();
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<UserService>();
-
+        
         services.AddTransient<IOrderRepository, OrderRepository>();
         services.AddTransient<IOrderProductRepository, OrderProductRepository>();
         services.AddTransient<OrderService>();
-
+        
         services.AddTransient<IStoreRepository, StoreRepository>();
         services.AddTransient<StoreService>();
-
+        
         services.AddTransient<IProductRepository, ProductRepository>();
         services.AddTransient<ProductService>();
 

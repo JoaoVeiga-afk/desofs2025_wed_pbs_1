@@ -14,19 +14,18 @@ namespace ShopTex.Infrastructure.Orders
     {
         private readonly DatabaseContext _context;
 
-        public OrderRepository(DatabaseContext context)
+        public OrderRepository(DatabaseContext context) 
             : base(context.Order)
         {
             _context = context;
         }
-
+        
         public async Task<Order?> FindById(OrderId id)
         {
-            // Passa o VO OrderId; o EF usa seu converter para extrair o Guid
             var order = await _objs.FindAsync(id);
             return order;
         }
-
+        
         public async Task<Order?> FindByIdWithProductsAsync(OrderId id)
         {
             var order = await _objs.FindAsync(id);
@@ -69,16 +68,16 @@ namespace ShopTex.Infrastructure.Orders
                 .Take(limit)
                 .ToListAsync();
         }
-
+        
         public async Task<List<Order>> GetPagedByStoreAsync(Guid storeId, int offset, int limit)
-        {
+        { 
             var storeVo = new StoreId(storeId.ToString());
 
             return await _context.Order
                 .Where(o => _context.User
                     .Any(u =>
-                            u.Id == o.UserId &&
-                            u.Store == storeVo
+                            u.Id     == o.UserId &&
+                            u.Store  == storeVo     
                     )
                 )
                 .OrderBy(o => o.CreatedAt)
@@ -86,17 +85,17 @@ namespace ShopTex.Infrastructure.Orders
                 .Take(limit)
                 .ToListAsync();
         }
-
+        
         public async Task<List<Order>> GetPagedByUserAsync(Guid userId, int offset, int limit)
         {
             return await _objs
-                .Where(o => o.UserId.AsGuid() == userId)
+                .Where(o => o.UserId == new UserId(userId))
                 .OrderBy(o => o.CreatedAt)
                 .Skip(offset)
                 .Take(limit)
                 .ToListAsync();
         }
-
+        
         public Task DeleteAsync(Order order)
         {
             _objs.Remove(order);
