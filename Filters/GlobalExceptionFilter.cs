@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using ShopTex.Domain.Shared;
 
-namespace ShopTex.Config;
+namespace ShopTex.Filters;
 
 public sealed class GlobalExceptionFilter : IExceptionFilter
 {
