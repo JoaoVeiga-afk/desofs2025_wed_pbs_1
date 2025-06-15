@@ -91,7 +91,7 @@ namespace ShopTex.Controllers
                 var authorized_storeadmin = await _authenticationService.managesStore(currentUserEmail, storeId);
                 if (!authorized_sysadmin && !authorized_storeadmin)
                 {
-                    return Unauthorized("You don't have permission to create a store");
+                    return Unauthorized("You don't have permission to add a store colaborator");
                 }
 
                 var userIsColaborator = await _authenticationService.hasPermission(userEmail, new List<UserRole> { UserRole.StoreColabRole });
