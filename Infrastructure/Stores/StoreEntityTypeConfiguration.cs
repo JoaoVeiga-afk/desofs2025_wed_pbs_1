@@ -14,7 +14,7 @@ public class StoreEntityTypeConfiguration : IEntityTypeConfiguration<Store>
 
         builder.Property(o => o.Id)
             .HasConversion(
-                id  => id.AsString(),   // StoreId to string (for DB)
+                id => id.AsString(),   // StoreId to string (for DB)
                 str => new StoreId(str) // string to StoreId
             )
             .ValueGeneratedNever();

@@ -179,7 +179,7 @@ public class UserServiceTest
 
         _unitOfWork.Verify(u => u.CommitAsync(), Times.Never);
     }
-    
+
     [Fact]
     public async Task GetUserByEmailAsync_ShouldReturnUser_WhenExists()
     {

@@ -14,13 +14,13 @@ namespace ShopTex.Infrastructure.OrdersProduct
 
             builder.Property(op => op.ProductId)
                 .HasConversion(
-                    id  => id.AsString(),       // VO → string (36 chars)
+                    id => id.AsString(),       // VO → string (36 chars)
                     str => new ProductId(str))  // string → VO
                 .IsRequired();
 
             builder.Property(op => op.OrderId)
                 .HasConversion(
-                    id  => id.AsString(),
+                    id => id.AsString(),
                     str => new OrderId(str))
                 .IsRequired();
 

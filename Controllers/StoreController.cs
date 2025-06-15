@@ -47,7 +47,7 @@ namespace ShopTex.Controllers
                 var currentUserEmail =
                     User.FindFirst(ClaimTypes.Email)?.Value ??
                     User.FindFirst("email")?.Value;
-                
+
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");
@@ -81,7 +81,7 @@ namespace ShopTex.Controllers
                 var currentUserEmail =
                     User.FindFirst(ClaimTypes.Email)?.Value ??
                     User.FindFirst("email")?.Value;
-                
+
                 if (string.IsNullOrWhiteSpace(currentUserEmail))
                 {
                     return Unauthorized("User email not found in token");

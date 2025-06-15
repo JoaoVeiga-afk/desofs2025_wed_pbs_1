@@ -34,7 +34,7 @@ namespace ShopTex.Controllers
                 return Unauthorized("User e-mail not found in token.");
 
             var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
-            
+
             try
             {
                 var product = await _service.GetProductByIdAsync(new ProductId(id), userAuth);
@@ -44,7 +44,7 @@ namespace ShopTex.Controllers
                     return NotFound();
                 }
                 return Ok(product);
-                
+
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -55,7 +55,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // GET: api/product/
         [HttpGet]
         [Authorize]
@@ -96,14 +96,14 @@ namespace ShopTex.Controllers
             {
                 return BadRequest("Product ID does not match");
             }
-            
+
             var currentUserEmail = User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
 
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
                 return Unauthorized("User email not found in token");
             }
-            
+
             var authorizedSysadmin = await _authenticationService.hasPermission(currentUserEmail, new List<UserRole> { UserRole.SystemRole });
             var authorizedStoreAdmin = await _authenticationService.managesStore(currentUserEmail, dto.StoreId);
             var authorizedStoreColab = await _authenticationService.worksOnStore(currentUserEmail, dto.StoreId);
@@ -122,7 +122,7 @@ namespace ShopTex.Controllers
             {
                 return BadRequest(ex.Message);
             }
-            
+
         }
 
         // POST: api/product/create
@@ -187,7 +187,7 @@ namespace ShopTex.Controllers
             var currentUserEmail =
                 User.FindFirst(ClaimTypes.Email)?.Value ??
                 User.FindFirst("email")?.Value;
-            
+
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
                 return Unauthorized("User email not found in token");

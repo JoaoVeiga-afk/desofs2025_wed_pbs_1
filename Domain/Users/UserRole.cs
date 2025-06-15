@@ -56,4 +56,9 @@ public class UserRole
         }
         return false;
     }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -196,7 +196,7 @@ public class UserService
             throw new BusinessRuleValidationException("User is already disabled");
         }
     }
-    
+
     public async Task<User?> GetUserByEmailAsync(string email)
     {
         _logger.LogInformation("Fetching user with email {Email}", email);
@@ -214,5 +214,5 @@ public class UserService
 
         return user;
     }
-    
+
 }
