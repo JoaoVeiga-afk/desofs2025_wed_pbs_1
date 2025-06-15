@@ -214,7 +214,7 @@ namespace ShopTex.Controllers
             var authorized_storecolab = await _authenticationService.worksOnStore(currentUserEmail, id.ToString());
             if (!(authorized_sysadmin || authorized_storeadmin || authorized_storecolab))
             {
-                return Unauthorized("You don't have permission to create a product");
+                return Unauthorized("You don't have permission to upload an image for this product.");
             }
 
             using var ms = new MemoryStream();
