@@ -35,53 +35,44 @@ The choice of formats used by the API follows the standards established in inter
 
 ### General API Success Response
 
-Successful API responses follow a consistent and clear format, with a status code, operation status, and structured data in the body of the response.
+When an operation completes successfully, the API returns the requested business object and, when applicable, a JWT for subsequent authentication.
 
 **Example of a Successful Response:**
 
 ```json
 {
-  "code": 200,
-  "status": "success",
-  "data": {
-    "username": "john42",
-    "token": "apiblahblahblah",
-    "expiration_date": 3600
-  }
+  "user": {
+    "id": "0192fb33-2ce1-42b3-9d2b-0960a8d04c4a",
+    "name": "Tester",
+    "phone": "912422195",
+    "email": "client12345@example.com",
+    "role": "Client",
+    "status": "enabled"
+  },
+  "token": "eyJhbGciOiJI..."
 }
 ```
 
-**Description of fields:**
-- code (integer): HTTP status code (example: 200 for success, 201 for resource creation).
-
-- status (string): General status of the operation. Can be “success” or “error”.
-
-- data (object): Data resulting from the operation, with detailed information (example: user details or generated token).
-
-  - username (string): Authenticated username.
-
-  - token (string): JWT token for authentication in subsequent requests.
-
-  - expiration_date (integer): Token expiry time, in seconds.
-
 ### General API Insuccess Response
 
-The API implements a robust error handling system, returning appropriate HTTP status codes along with an explanatory message in the body of the response.
+If an operation fails, the API returns a Problem Details object (RFC 9457) providing enough metadata for clients to diagnose the error.
 
 **Example of Insuccess Response:**
 
 ```json
 {
-  "code": 400,
-  "status": "error",
-  "message": "Email already registered. Please provide a unique email address."
+  "type": "https://tools.ietf.org/html/rfc9110#section-15.5.1",
+  "title": "Bad Request",
+  "status": 400,
+  "detail": "User already exists with this email",
 }
 ```
 
 **Description of fields:**
-- code (integer): HTTP status code indicating the type of error (e.g. 400 for validation error, 401 for authentication failure).
-- status (string): Indicates whether the operation was successful or not, “error” for errors.
-- message (string): Explanatory message describing the error in a way that is clear and accessible to the user or developer.
+- type (string, URI): Categorises the error; can point to documentation.
+- title (string): Short, human‑readable summary of the problem.
+- status (integer): HTTP status code associated with the error (e.g. 400 for validation error, 401 for authentication failure).
+- detail (string): Detailed description to help the client take corrective action.
 --- 
 
 ## Endpoints Description Index

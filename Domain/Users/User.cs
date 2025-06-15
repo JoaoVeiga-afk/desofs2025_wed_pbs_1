@@ -14,9 +14,9 @@ public class User : Entity<UserId>, IAggregateRoot
 
     public UserEmail Email { get; private set; }
 
-    private string Password { get; set; }
+    public string Password { get; set; }
 
-    private byte[] Salt { get; set; }
+    public byte[] Salt { get; set; }
 
     public UserRole? Role { get; private set; }
 
@@ -87,6 +87,21 @@ public class User : Entity<UserId>, IAggregateRoot
         if (Role.RoleName == Configurations.STORE_COLAB_ROLE_NAME || Role.RoleName == Configurations.STORE_ADMIN_ROLE_NAME)
         {
             Store = new StoreId(storeId);
+            return true;
+        }
+
+        return false;
+    }
+    
+    public bool SetClientStore(string storeId)
+    {
+        if (Role == null) return false;
+        Console.WriteLine("1111");
+
+        if (Role.RoleName == Configurations.USER_ROLE_NAME)
+        {
+            Store = new StoreId(storeId);
+            Console.WriteLine("store");
             return true;
         }
 

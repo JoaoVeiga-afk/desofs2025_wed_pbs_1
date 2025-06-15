@@ -50,3 +50,8 @@ We have implemented several security-focused practices as part of our CI/CD pipe
 This section provides an overview of the key features implemented in the application, including user authentication, database management, and security measures.
 [View features overview](content/Features.md)
 
+## Backup Policy
+
+We establish a backup policy to ensure data integrity and availability. This consists of regular backups of database and application data, with clear retention and restoration procedures.
+[View backup policy](content/Backup_Policy.md)
+
