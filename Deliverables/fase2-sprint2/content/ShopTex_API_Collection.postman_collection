@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "2baaad1a-08df-454b-9b43-6336d02bb83f",
+		"_postman_id": "768027b0-102a-466f-8c7a-84c10ebc0817",
 		"name": "🛍️ ShopTex API Collection",
 		"description": "This collection allows you to test the main endpoints of the ShopTex API.\n\n- All **resource IDs** (such as `productId`, `storeId`, `userId`) are passed as **path variables** in the URL.\n    \n- Authentication uses a **Bearer Token**, which is **automatically stored** in the `{{bearer_token}}` variable after a successful login and applied to all authenticated requests.\n    \n- Protected endpoints enforce role-based access control (System Admin, Store Admin, or Store Collaborator).\n    \n\nEndFragment",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "34259050"
+		"_exporter_id": "30213881"
 	},
 	"item": [
 		{
@@ -18,7 +18,6 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json",
-								"name": "Content-Type",
 								"type": "text"
 							}
 						],
@@ -577,16 +576,6 @@
 				{
 					"name": "Get Image",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiMmUwZmZlOTgtOGVhNC00ZmZhLWJjMmUtZDM1ZDRlZmI0ZGEzIiwibmFtZSI6IlRlc3RlciIsImVtYWlsIjoic3lzQGV4ZW1wbG8uY29tIiwicm9sZSI6IlN5c3RlbSBBZG1pbmlzdHJhdG9yIiwiZXhwIjoxNzUyNTMyNTEzLCJpc3MiOiJpc2VwLmlwcC5wdCIsImF1ZCI6ImlzZXAuaXBwLnB0In0.lbLlpvTH6KjWJrJPj4DVwA4Df_zg_jT_8SuJTX-AFWw",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
