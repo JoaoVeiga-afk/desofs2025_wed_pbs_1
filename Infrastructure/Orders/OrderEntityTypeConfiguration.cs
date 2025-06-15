@@ -10,18 +10,17 @@ public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
     public void Configure(EntityTypeBuilder<Order> builder)
     {
         builder.HasKey(o => o.Id);
-
         builder.Property(o => o.Id)
             .HasConversion(
-                id  => id.AsString(),   
-                str => new OrderId(str) 
+                id  => id.Value.ToString(),
+                str => new OrderId(str)
             )
             .ValueGeneratedNever();
 
         builder.Property(o => o.UserId)
             .HasConversion(
-                id  => id.AsString(),
-                str => new UserId(str)
+                id => id.Value,       
+                guid => new UserId(guid)
             )
             .IsRequired();
 

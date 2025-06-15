@@ -22,7 +22,6 @@ namespace ShopTex.Infrastructure.Orders
         
         public async Task<Order?> FindById(OrderId id)
         {
-            // Passa o VO OrderId; o EF usa seu converter para extrair o Guid
             var order = await _objs.FindAsync(id);
             return order;
         }
@@ -90,7 +89,7 @@ namespace ShopTex.Infrastructure.Orders
         public async Task<List<Order>> GetPagedByUserAsync(Guid userId, int offset, int limit)
         {
             return await _objs
-                .Where(o => o.UserId.AsGuid() == userId)  
+                .Where(o => o.UserId == new UserId(userId))
                 .OrderBy(o => o.CreatedAt)
                 .Skip(offset)
                 .Take(limit)

@@ -42,20 +42,33 @@ public class OrderService
         _logger.LogInformation("Fetching order with ID {OrderId}", id);
         await ValidateUserAccessAsync(userAuth);
 
-        var user = await _userService.GetUserByEmailAsync(userAuth.Email);
+        var user = await _userService.GetUserByEmailAsync(userAuth.Email)
+                   ?? throw new BusinessRuleValidationException("User not found");
 
-        var isSysAdmin   = await _authenticationService.hasPermission(userAuth.Email,   new List<UserRole>{ UserRole.SystemRole });
-        var isStoreAdmin = await _authenticationService.managesStore(userAuth.Email,   user.Store!.AsGuid().ToString());
-        var isStoreColab = await _authenticationService.worksOnStore(userAuth.Email,    user.Store!.AsGuid().ToString());
+        var isSysAdmin = await _authenticationService.hasPermission(
+            userAuth.Email,
+            new List<UserRole> { UserRole.SystemRole }
+        );
+
+        bool isStoreAdmin = false;
+        bool isStoreColab = false;
+        StoreId? storeVo = null;
+
+        if (user.Store != null)
+        {
+            var storeIdStr = user.Store.AsGuid().ToString();
+            isStoreAdmin = await _authenticationService.managesStore(userAuth.Email, storeIdStr);
+            isStoreColab = await _authenticationService.worksOnStore(userAuth.Email, storeIdStr);
+            storeVo = new StoreId(storeIdStr);
+        }
 
         Order? order;
         if (isSysAdmin)
         {
             order = await _repo.FindByIdWithProductsAsync(id);
         }
-        else if (isStoreAdmin || isStoreColab)
+        else if ((isStoreAdmin || isStoreColab) && storeVo != null)
         {
-            var storeVo = new StoreId(user.Store!.AsGuid().ToString());
             order = await _repo.FindByIdByStoreAsync(storeVo, id);
         }
         else
@@ -79,13 +92,12 @@ public class OrderService
             Status    = order.Status.ToString(),
             CreatedAt = order.CreatedAt,
             UpdatedAt = order.UpdatedAt,
-            Products  = products
-                .Select(p => new OrderProductDto {
-                    ProductId = p.ProductId,
-                    Amount    = p.Amount,
-                    Price     = p.Price
-                })
-                .ToList()
+            Products  = products.Select(p => new OrderProductDto
+            {
+                ProductId = p.ProductId,
+                Amount    = p.Amount,
+                Price     = p.Price
+            }).ToList()
         };
     }
 
@@ -98,19 +110,28 @@ public class OrderService
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
                    ?? throw new BusinessRuleValidationException("User not found");
 
-        var isSysAdmin    = await _authenticationService.hasPermission(userAuth.Email, new List<UserRole>{ UserRole.SystemRole });
-        var isStoreAdmin  = await _authenticationService.managesStore(userAuth.Email,   user.Store!.AsGuid().ToString());
-        var isStoreColab  = await _authenticationService.worksOnStore(userAuth.Email,    user.Store!.AsGuid().ToString());
+        var isSysAdmin = await _authenticationService.hasPermission(userAuth.Email, new List<UserRole> { UserRole.SystemRole });
+
+        bool isStoreAdmin = false;
+        bool isStoreColab = false;
+        Guid? storeGuid = null;
+
+        if (user.Store != null)
+        {
+            storeGuid = user.Store.AsGuid();
+            var storeIdStr = storeGuid.Value.ToString();
+            isStoreAdmin = await _authenticationService.managesStore(userAuth.Email, storeIdStr);
+            isStoreColab = await _authenticationService.worksOnStore(userAuth.Email, storeIdStr);
+        }
 
         List<Order> orders;
         if (isSysAdmin)
         {
             orders = await _repo.GetPagedAsync(offset, limit);
         }
-        else if (isStoreAdmin || isStoreColab)
+        else if ((isStoreAdmin || isStoreColab) && storeGuid.HasValue)
         {
-            var storeGuid = user.Store!.AsGuid();
-            orders = await _repo.GetPagedByStoreAsync(storeGuid, offset, limit);
+            orders = await _repo.GetPagedByStoreAsync(storeGuid.Value, offset, limit);
         }
         else
         {
@@ -122,16 +143,18 @@ public class OrderService
         foreach (var order in orders)
         {
             var products = await _orderProductRepo.GetByOrderIdAsync(order.Id);
-            results.Add(new OrderDto {
-                Id        = order.Id.AsGuid(),
-                UserId    = order.UserId.AsGuid(),
-                Status    = order.Status.ToString(),
+            results.Add(new OrderDto
+            {
+                Id = order.Id.AsGuid(),
+                UserId = order.UserId.AsGuid(),
+                Status = order.Status.ToString(),
                 CreatedAt = order.CreatedAt,
                 UpdatedAt = order.UpdatedAt,
-                Products  = products.Select(p => new OrderProductDto {
+                Products = products.Select(p => new OrderProductDto
+                {
                     ProductId = p.ProductId,
-                    Amount    = p.Amount,
-                    Price     = p.Price
+                    Amount = p.Amount,
+                    Price = p.Price
                 }).ToList()
             });
         }
