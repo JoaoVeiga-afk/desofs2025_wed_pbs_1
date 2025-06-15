@@ -1,4 +1,8 @@
 ﻿# Features
+You can test all the application's features using the Postman collection provided.
+All endpoints are documented below and ready to use with automatic Bearer Token injection after login.
+
+[View Postman Collection](ShopTex_API_Collection.postman_collection)
 
 ## User Management
 
