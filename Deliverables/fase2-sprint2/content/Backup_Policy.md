@@ -30,7 +30,7 @@ No incremental backups will be performed. Each backup will be a full backup to s
 
 ### Backup Storage
 #### Location
-Backups will be store in a separate server (vs235), owned by a different student than the server hosting the application. This ensures that backups are not affected by issues on the primary server.
+Backups will be stored in a separate server (vs235), owned by a different student than the server hosting the application. This ensures that backups are not affected by issues on the primary server.
 
 #### Security
 Backups will be encrypted, after compression, to protect sensitive data using AES file encryption. Access to files will be restricted to authorized personnel only.
