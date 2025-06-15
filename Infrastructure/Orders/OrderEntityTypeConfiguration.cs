@@ -12,14 +12,14 @@ public class OrderEntityTypeConfiguration : IEntityTypeConfiguration<Order>
         builder.HasKey(o => o.Id);
         builder.Property(o => o.Id)
             .HasConversion(
-                id  => id.Value.ToString(),
+                id => id.Value.ToString(),
                 str => new OrderId(str)
             )
             .ValueGeneratedNever();
 
         builder.Property(o => o.UserId)
             .HasConversion(
-                id => id.Value,       
+                id => id.Value,
                 guid => new UserId(guid)
             )
             .IsRequired();

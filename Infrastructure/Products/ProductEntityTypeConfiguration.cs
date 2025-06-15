@@ -13,8 +13,8 @@ public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(o => o.Id)
             .HasConversion(
-                id  => id.AsString(),   
-                str => new ProductId(str) 
+                id => id.AsString(),
+                str => new ProductId(str)
             )
             .ValueGeneratedNever();
 

@@ -31,7 +31,7 @@ public class ProductService
         AuthenticationService authenticationService,
         UserService userService,
         IHttpContextAccessor httpContextAccessor,
-        string imageStoragePath = Configurations.IMAGE_STORAGE_PATH 
+        string imageStoragePath = Configurations.IMAGE_STORAGE_PATH
     )
     {
         _unitOfWork = unitOfWork;
@@ -44,13 +44,13 @@ public class ProductService
         _httpContextAccessor = httpContextAccessor;
         _imageStoragePath = imageStoragePath;
     }
- 
+
     public async Task<List<ProductDto>> GetAllProductsAsync(AuthenticatedUserDto userAuth)
     {
         _logger.LogInformation("Validating access for {Email}", userAuth.Email);
 
         var isSysAdmin = await _authenticationService
-            .hasPermission(userAuth.Email, new List<UserRole>{ UserRole.SystemRole });
+            .hasPermission(userAuth.Email, new List<UserRole> { UserRole.SystemRole });
 
         string? userStoreId = null;
         if (!isSysAdmin)
@@ -60,7 +60,7 @@ public class ProductService
 
             userStoreId = user.Store?.AsGuid().ToString()
                           ?? throw new UnauthorizedAccessException("You don't have a store associated with this user.");
-            
+
             _logger.LogInformation("User {Email} is not sysadmin – will only see products from store {StoreId}", userAuth.Email, userStoreId);
         }
         else
@@ -81,7 +81,7 @@ public class ProductService
         var dtoList = list.ConvertAll(product =>
         {
             _logger.LogDebug("Mapping product {ProductId} to ProductDto", product.Id.Value);
-            
+
             return new ProductDto(
                 product.Id.AsString(),
                 product.Name,
@@ -130,7 +130,7 @@ public class ProductService
             GetImageUrl(product)
         );
     }
-    
+
     public async Task<ProductDto?> GetByIdAsync(ProductId id)
     {
         _logger.LogInformation("Fetching product with ID {ProductId} started", id.Value);
@@ -145,11 +145,11 @@ public class ProductService
         _logger.LogInformation("Product with ID {ProductId} found. Name: {Name}", id.Value, product.Name);
         return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
     }
-    
+
     public async Task<(byte[] ImageData, string ContentType)?> GetImageAsync(ProductId id, AuthenticatedUserDto userAuth)
     {
         var (isSysAdmin, userStoreId) = await ValidateProductAccessAsync(userAuth, id);
-        
+
         var product = await _repo.FindById(id.AsString());
         if (product == null || product.Image == null)
             return null;
@@ -199,7 +199,7 @@ public class ProductService
 
         return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
     }
-    
+
     public async Task<ProductDto> UpdateAsync(ProductId id, PartialProductUpdateDto dto, AuthenticatedUserDto userAuth)
     {
         var (isSysAdmin, userStoreId) = await ValidateProductAccessAsync(userAuth, id);
@@ -210,7 +210,7 @@ public class ProductService
 
         if (dto.Name != null) product.Name = dto.Name;
         if (dto.Description != null) product.Description = dto.Description;
-        if (dto.Price != default(double)) 
+        if (dto.Price != default(double))
         {
             product.Price = dto.Price;
         }
@@ -246,7 +246,7 @@ public class ProductService
         await _unitOfWork.CommitAsync(); // Make sure changes are saved
         return true;
     }
-    
+
     private async Task ValidateUserAccessAsync(AuthenticatedUserDto userAuth)
     {
         var user = await _userService.GetUserByEmailAsync(userAuth.Email)
@@ -266,7 +266,7 @@ public class ProductService
             throw new UnauthorizedAccessException("You don't have permission");
         }
     }
-    
+
     private async Task<bool> UserCanAccessOrderAsync(string email, String storeId)
     {
         var sysAdmin = await _authenticationService.hasPermission(email, new List<UserRole> { UserRole.SystemRole });
@@ -293,7 +293,7 @@ public class ProductService
 
         return "application/octet-stream";
     }
-    
+
     private string? GetImageUrl(Product product)
     {
         if (product.Image != null && _httpContextAccessor.HttpContext != null)
@@ -304,7 +304,7 @@ public class ProductService
         }
         return null;
     }
-    
+
     private async Task<(bool IsSysAdmin, string? StoreId)> ValidateProductAccessAsync(AuthenticatedUserDto userAuth, ProductId productId)
     {
         _logger.LogInformation("Validating access for {Email} to product {ProductId}", userAuth.Email, productId.Value);

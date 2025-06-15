@@ -8,7 +8,7 @@ namespace ShopTex.Domain.Orders;
 public class CreatingOrderDto
 {
     public Guid? UserId { get; set; }
-    
+
     [Required]
     public string Status { get; set; }
 

@@ -92,7 +92,7 @@ public class User : Entity<UserId>, IAggregateRoot
 
         return false;
     }
-    
+
     public bool SetClientStore(string storeId)
     {
         if (Role == null) return false;

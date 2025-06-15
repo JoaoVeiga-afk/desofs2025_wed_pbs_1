@@ -17,19 +17,19 @@ namespace ShopTex.Tests.Services
 {
     public class ProductServiceTest
     {
-        private readonly Mock<IUnitOfWork>        _unitOfWork      = new();
-        private readonly Mock<IProductRepository> _productRepo     = new();
-        private readonly Mock<IStoreRepository>   _storeRepo       = new();
-        private readonly Mock<IConfiguration>     _configuration   = new();
-        private readonly Mock<ILogger<ProductService>>      _serviceLogger   = new();
-        private readonly Mock<IUserRepository>    _userRepo        = new();
-        private readonly Mock<ILogger<UserService>>         _userLogger      = new();
-        private readonly Mock<ILogger<UserService>>      _authLogger       = new();
+        private readonly Mock<IUnitOfWork> _unitOfWork = new();
+        private readonly Mock<IProductRepository> _productRepo = new();
+        private readonly Mock<IStoreRepository> _storeRepo = new();
+        private readonly Mock<IConfiguration> _configuration = new();
+        private readonly Mock<ILogger<ProductService>> _serviceLogger = new();
+        private readonly Mock<IUserRepository> _userRepo = new();
+        private readonly Mock<ILogger<UserService>> _userLogger = new();
+        private readonly Mock<ILogger<UserService>> _authLogger = new();
         private readonly Mock<IHttpContextAccessor> _httpContextAccessor = new();
 
         private readonly AuthenticationService _authService;
-        private readonly UserService           _userService;
-        private readonly ProductService        _service;
+        private readonly UserService _userService;
+        private readonly ProductService _service;
         private const string TestImageStoragePath = "TestProductImages";
 
         public ProductServiceTest()
@@ -185,12 +185,12 @@ namespace ShopTex.Tests.Services
         public async Task AddAsync_StoreNotFound_Throws()
         {
             var dto = new CreatingProductDto(
-                name:     "Name",
+                name: "Name",
                 description: "Desc",
-                price:    1.0,
+                price: 1.0,
                 category: "Cat",
-                status:   new ProductStatus("enabled"),
-                storeId:  new StoreId(Guid.NewGuid())
+                status: new ProductStatus("enabled"),
+                storeId: new StoreId(Guid.NewGuid())
             );
             _storeRepo
                 .Setup(r => r.FindById(dto.StoreId))
@@ -205,14 +205,14 @@ namespace ShopTex.Tests.Services
         public async Task AddAsync_Valid_ReturnsDto()
         {
             var storeId = new StoreId(Guid.NewGuid());
-            var store = new Store("S", new StoreAddress("St","C","ST","12345","CL"), "enabled");
+            var store = new Store("S", new StoreAddress("St", "C", "ST", "12345", "CL"), "enabled");
             var dto = new CreatingProductDto(
-                name:     "N",
+                name: "N",
                 description: "D",
-                price:    2.0,
+                price: 2.0,
                 category: "C",
-                status:   new ProductStatus("enabled"),
-                storeId:  storeId
+                status: new ProductStatus("enabled"),
+                storeId: storeId
             );
             _storeRepo
                 .Setup(r => r.FindById(storeId.AsString()))
@@ -239,7 +239,7 @@ namespace ShopTex.Tests.Services
                 .ReturnsAsync((Product?)null);
 
             await Assert.ThrowsAsync<BusinessRuleValidationException>(
-                () => _service.UploadImage(id, new byte[]{1})
+                () => _service.UploadImage(id, new byte[] { 1 })
             );
         }
     }

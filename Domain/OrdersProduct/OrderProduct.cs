@@ -15,7 +15,7 @@ namespace ShopTex.Domain.OrdersProduct
 
         private OrderProduct() { }
 
-        public OrderProduct(OrderId orderId, ProductId  productId, int amount, double price)
+        public OrderProduct(OrderId orderId, ProductId productId, int amount, double price)
         {
             OrderId = orderId;
             ProductId = productId;
