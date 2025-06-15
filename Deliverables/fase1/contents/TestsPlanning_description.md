@@ -61,22 +61,45 @@ Each section addresses the critical flows, expected behavior, and validation poi
 
 ## Store Management Tests
 
--  Create a new store (`POST /stores`) as `store_admin`.
--  Update store details (`PATCH /stores/{storeId}`) as `store_admin`.
--  Delete a store (`DELETE /stores/{storeId}`) as `store_admin`.
--  Attempt these actions as lower roles and verify access is denied.
+### Create a new store (`POST /stores`) as `store_admin`.
+- Create a new store with valid fields as store_admin. Expect 201 Created with store ID and details.
+- Attempt to create a store with missing required fields (e.g., name or address). Expect 400 Bad Request.
+- Attempt to create a store with invalid field types (e.g., name as a number). Expect validation error.
+
+### Update store details (`PATCH /stores/{storeId}`) as `store_admin`.
+- Update store name or description as store_admin. Expect 200 OK with updated store data.
+- Attempt to update a non-existent store ID. Expect 404 Not Found.
+- Attempt to update a store with invalid values (e.g., empty name). Expect validation error.
+
+### Attempt these actions as lower roles and verify access is denied.
 
 ---
 
 ## Product Management Tests
 
--  List products without filters (`GET /product`).
--  List products using filters (`storeId`, `category`, etc.).
--  Retrieve product details (`GET /product/{productId}`).
--  Create a product as `store_admin`.
--  Update an existing product.
--  Delete a product.
--  Attempt administrative actions as `client` and verify access is denied.
+### List products (`GET /product`).
+- Retrieve all products with no filters. Expect 200 OK and full list.
+- Apply filters (storeId, category, priceRange). Expect 200 OK and filtered results.
+- Apply filters with invalid values (e.g., non-existent category). Expect empty list or validation error.
+- List products as anonymous user (if allowed). Expect 200 OK.
+
+### Retrieve product details (`GET /product/{productId}`).
+- Retrieve existing product details by ID. Expect 200 OK with product info.
+- Request a non-existent product ID. Expect 404 Not Found.
+- Attempt with malformed ID (e.g., string instead of number). Expect 400 Bad Request.
+
+### Create a product (`POST /product`).
+- Create a product as store_admin or same level of authentication. Expect 201 Created with product ID and details.
+- Attempt to create with missing required fields (e.g., name, price). Expect 400.
+- Attempt to create with negative or invalid price. Expect validation error.
+- Attempt to create as client. Expect 403 Forbidden.
+
+### Update an existing product.
+- Update product details (name, stock, price) as store_admin. Expect 200 OK with updated data.
+- Attempt to update a non-existent product. Expect 404 Not Found.
+- Attempt to update with invalid data (e.g., negative stock). Expect 422 Unprocessable Entity.
+
+### Attempt administrative actions with lower authentication level and verify access is denied.
 
 ---
 
