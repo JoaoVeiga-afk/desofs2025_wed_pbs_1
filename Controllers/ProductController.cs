@@ -124,6 +124,32 @@ namespace ShopTex.Controllers
             }
             
         }
+        
+        [HttpGet("{id}/image")]
+        [Authorize]
+        public async Task<IActionResult> GetImage(Guid id)
+        {
+            var currentUserEmail =
+                User.FindFirst(ClaimTypes.Email)?.Value ?? User.FindFirst("email")?.Value;
+
+            if (string.IsNullOrWhiteSpace(currentUserEmail))
+                return Unauthorized("User e-mail not found in token.");
+
+            var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
+            
+            try
+            {
+                var result = await _service.GetImageAsync(new ProductId(id), userAuth);
+                if (result == null)
+                    return NotFound("Image not found.");
+
+                return File(result.Value.ImageData, result.Value.ContentType);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
 
         // POST: api/product/create
         [HttpPost]

@@ -80,16 +80,7 @@ public class ProductService
         var dtoList = list.ConvertAll(product =>
         {
             _logger.LogDebug("Mapping product {ProductId} to ProductDto", product.Id.Value);
-
-            string? imageUrl = null;
-
-            if (product.Image != null && _httpContextAccessor.HttpContext != null)
-            {
-                var request = _httpContextAccessor.HttpContext.Request;
-                var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
-                imageUrl = $"{baseUrl}/api/product/{product.Id.AsString()}/image";
-            }
-
+            
             return new ProductDto(
                 product.Id.AsString(),
                 product.Name,
@@ -335,9 +326,20 @@ public class ProductService
         var userStoreId = user.Store?.AsGuid().ToString()
                           ?? throw new UnauthorizedAccessException("You don't have a store associated with this user.");
 
+        var product = await _repo.FindById(productId.AsString())
+                      ?? throw new BusinessRuleValidationException("Product not found.");
+
+        if (product.StoreId.AsString() != userStoreId)
+        {
+            _logger.LogWarning("Access denied: product {ProductId} belongs to store {ProductStoreId}, not user store {UserStoreId}",
+                productId.Value, product.StoreId.AsString(), userStoreId);
+
+            throw new UnauthorizedAccessException("You don't have permission to access this product.");
+        }
+
         _logger.LogInformation(
-            "User {Email} is not sysadmin – will only access products from store {StoreId}",
-            userAuth.Email, userStoreId);
+            "User {Email} is not sysadmin – access granted to product {ProductId} from store {StoreId}",
+            userAuth.Email, productId.Value, userStoreId);
 
         return (false, userStoreId);
     }
