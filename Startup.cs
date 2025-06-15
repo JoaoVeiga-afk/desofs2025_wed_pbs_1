@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.IdentityModel.Tokens;
-using ShopTex.Config;
 using ShopTex.Domain.Orders;
 using ShopTex.Domain.OrdersProduct;
 using ShopTex.Domain.Products;
 using ShopTex.Domain.Shared;
 using ShopTex.Domain.Stores;
 using ShopTex.Domain.Users;
+using ShopTex.Filters;
 using ShopTex.Infrastructure.Orders;
 using ShopTex.Infrastructure.Stores;
 using ShopTex.Infrastructure.OrdersProduct;
@@ -53,6 +53,7 @@ public class Startup
             {
                 opts.Filters.Add<ProblemDetailsFilter>(); 
                 opts.Filters.Add<GlobalExceptionFilter>();     
+                opts.Filters.Add<SuccessResponseFilter>();     
             })
             .AddNewtonsoftJson(); 
         services.AddSwaggerGen();
