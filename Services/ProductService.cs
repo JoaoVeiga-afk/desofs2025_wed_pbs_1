@@ -6,6 +6,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Http.HttpResults;
 using ShopTex.Domain.Users;
 using System.Security.Cryptography;
+using ShopTex.Domain.Orders;
 
 namespace ShopTex.Services;
 
@@ -80,16 +81,7 @@ public class ProductService
         var dtoList = list.ConvertAll(product =>
         {
             _logger.LogDebug("Mapping product {ProductId} to ProductDto", product.Id.Value);
-
-            string? imageUrl = null;
-
-            if (product.Image != null && _httpContextAccessor.HttpContext != null)
-            {
-                var request = _httpContextAccessor.HttpContext.Request;
-                var baseUrl = $"{request.Scheme}://{request.Host}{request.PathBase}";
-                imageUrl = $"{baseUrl}/api/product/{product.Id.AsString()}/image";
-            }
-
+            
             return new ProductDto(
                 product.Id.AsString(),
                 product.Name,
@@ -139,7 +131,7 @@ public class ProductService
         );
     }
     
-    public async Task<CreatingProductDto?> GetByIdAsync(ProductId id)
+    public async Task<ProductDto?> GetByIdAsync(ProductId id)
     {
         _logger.LogInformation("Fetching product with ID {ProductId} started", id.Value);
         var product = await _repo.FindById(id.AsString());
@@ -151,7 +143,7 @@ public class ProductService
         }
 
         _logger.LogInformation("Product with ID {ProductId} found. Name: {Name}", id.Value, product.Name);
-        return new CreatingProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+        return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
     }
     
     public async Task<(byte[] ImageData, string ContentType)?> GetImageAsync(ProductId id, AuthenticatedUserDto userAuth)
@@ -182,7 +174,7 @@ public class ProductService
         return (decryptedData, contentType);
     }
 
-    public async Task<CreatingProductDto> AddAsync(CreatingProductDto dto)
+    public async Task<ProductDto> AddAsync(CreatingProductDto dto)
     {
         _logger.LogInformation("Creating new product with Name: {Name}, Description: {Description}, Price: {Price}, Category: {Category}, Status: {Status}, Store Id: {StoreId}",
             dto.Name, dto.Description, dto.Price, dto.Category, dto.Status, dto.StoreId);
@@ -205,42 +197,39 @@ public class ProductService
             throw new BusinessRuleValidationException("Product already exists");
         }
 
-        return new CreatingProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
+        return new ProductDto(product.Id.AsString(), product.Name, product.Description, product.Price, product.Category, product.Status, product.StoreId);
     }
     
-    public async Task<CreatingProductDto> UpdateAsync(CreatingProductDto dto)
+    public async Task<ProductDto> UpdateAsync(ProductId id, PartialProductUpdateDto dto, AuthenticatedUserDto userAuth)
     {
-        _logger.LogInformation("Updating product with ID {ProductId} started", dto.Id);
-        
-        if ((await _storeRepo.FindById(dto.StoreId)) == null)
-        {
-            throw new BusinessRuleValidationException("Store Id does not exist");
-        }
-        
-        var product = await _repo.FindById(dto.Id);
-        
-        if (product == null) { throw new BusinessRuleValidationException("Product not found"); }
-        
-        product.Name = dto.Name;
-        product.Description = dto.Description;
-        product.Price = dto.Price;
-        product.Category = dto.Category;
-        product.Status = new ProductStatus(dto.Status);
+        var (isSysAdmin, userStoreId) = await ValidateProductAccessAsync(userAuth, id);
 
-        try
-        {
-            _repo.Update(product);
+        var product = await _repo.FindById(id.AsString());
+        if (product == null)
+            throw new BusinessRuleValidationException("Product not found");
 
-            await _unitOfWork.CommitAsync();
-        }
-        catch
+        if (dto.Name != null) product.Name = dto.Name;
+        if (dto.Description != null) product.Description = dto.Description;
+        if (dto.Price != default(double)) 
         {
-            throw new BusinessRuleValidationException("Product cannot be updated");
+            product.Price = dto.Price;
         }
-        
-        _logger.LogInformation("Updating product with ID {ProductId} completed", dto.Id);
+        if (dto.Category != null) product.Category = dto.Category;
+        if (dto.Status != null) product.Status = new ProductStatus(dto.Status);
+        if (dto.StoreId != null) product.StoreId = new StoreId(dto.StoreId);
 
-        return dto;
+        _repo.Update(product);
+        await _unitOfWork.CommitAsync();
+
+        return new ProductDto(
+            product.Id.AsString(),
+            product.Name,
+            product.Description,
+            product.Price,
+            product.Category,
+            product.Status,
+            product.StoreId
+        );
     }
 
     public async Task<bool> UploadImage(string productId, byte[] image)
@@ -335,9 +324,20 @@ public class ProductService
         var userStoreId = user.Store?.AsGuid().ToString()
                           ?? throw new UnauthorizedAccessException("You don't have a store associated with this user.");
 
+        var product = await _repo.FindById(productId.AsString())
+                      ?? throw new BusinessRuleValidationException("Product not found.");
+
+        if (product.StoreId.AsString() != userStoreId)
+        {
+            _logger.LogWarning("Access denied: product {ProductId} belongs to store {ProductStoreId}, not user store {UserStoreId}",
+                productId.Value, product.StoreId.AsString(), userStoreId);
+
+            throw new UnauthorizedAccessException("You don't have permission to access this product.");
+        }
+
         _logger.LogInformation(
-            "User {Email} is not sysadmin – will only access products from store {StoreId}",
-            userAuth.Email, userStoreId);
+            "User {Email} is not sysadmin – access granted to product {ProductId} from store {StoreId}",
+            userAuth.Email, productId.Value, userStoreId);
 
         return (false, userStoreId);
     }

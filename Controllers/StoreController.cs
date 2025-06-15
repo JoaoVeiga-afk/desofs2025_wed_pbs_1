@@ -73,7 +73,7 @@ namespace ShopTex.Controllers
         [HttpPost]
         [Route("colab/add")]
         [Authorize]
-        public async Task<ActionResult> AddColaborator(string storeId, string userEmail)
+        public async Task<ActionResult> AddColaborator(AddCollabDto dto)
         {
             try
             {
@@ -88,20 +88,20 @@ namespace ShopTex.Controllers
                 }
 
                 var authorized_sysadmin = await _authenticationService.hasPermission(currentUserEmail, new List<UserRole> { UserRole.SystemRole });
-                var authorized_storeadmin = await _authenticationService.managesStore(currentUserEmail, storeId);
+                var authorized_storeadmin = await _authenticationService.managesStore(currentUserEmail, dto.StoreId);
                 if (!authorized_sysadmin && !authorized_storeadmin)
                 {
                     return Unauthorized("You don't have permission to add a store colaborator");
                 }
 
-                var userIsColaborator = await _authenticationService.hasPermission(userEmail, new List<UserRole> { UserRole.StoreColabRole });
+                var userIsColaborator = await _authenticationService.hasPermission(dto.UserEmail, new List<UserRole> { UserRole.StoreColabRole });
                 if (!userIsColaborator)
                 {
                     return BadRequest("Provided user is not a store colaborator");
                 }
 
                 // Add collaborator
-                var (success, message) = await _service.AddStoreColaborator(storeId, userEmail);
+                var (success, message) = await _service.AddStoreColaborator(dto);
                 if (!success)
                 {
                     return BadRequest(message);
