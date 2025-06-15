@@ -92,6 +92,21 @@ public class User : Entity<UserId>, IAggregateRoot
 
         return false;
     }
+    
+    public bool SetClientStore(string storeId)
+    {
+        if (Role == null) return false;
+        Console.WriteLine("1111");
+
+        if (Role.RoleName == Configurations.USER_ROLE_NAME)
+        {
+            Store = new StoreId(storeId);
+            Console.WriteLine("store");
+            return true;
+        }
+
+        return false;
+    }
 
 
     public void ChangeRole(UserRole role)
