@@ -59,3 +59,4 @@ We establish a backup policy to ensure data integrity and availability. This con
 ## Other Deliverables
 
 In the content folder, you can find a Postman collection with the API endpoints used in the project, as well as documentation for the API.
+In the same folder you can find the ASVS (Application Security Verification Standard) checklist in the [excel file](content/ASVS_checklist.xlsx).
