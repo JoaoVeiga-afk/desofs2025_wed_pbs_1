@@ -10,7 +10,6 @@ permissions:
   contents: write
   checks: write
 
-
 jobs:
   snyk-sca:
     runs-on: ubuntu-latest
