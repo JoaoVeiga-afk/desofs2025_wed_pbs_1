@@ -9,7 +9,7 @@
 | `POST` | `/auth/signup` | Creates the user account                      | Public       |
 | `GET`  | `/auth/me`     | Get user info by token                        | Public        |
 
-### `POST /auth/signup`
+### 1.1  `POST /auth/signup`
 
 #### Payload Parameters
 
@@ -42,19 +42,21 @@ The parameters required to create a new user:
   "code": 200,
   "status": "success",
   "data": [
-    "user":{
-      "id":1,
-      "Name": "John",
-      "Email": "john@x.com",
-      "Phone": "1234567890",
-      "RoleId": "client",
-      "Status": "enabled"
+    {
+      "user": {
+        "id": 1,
+        "Name": "John",
+        "Email": "john@x.com",
+        "Phone": "1234567890",
+        "RoleId": "client",
+        "Status": "enabled"
+      }
     }
-    ]
+  ]
 }
 ```
 
-### 1.2 `POST /auth/signin'
+### 1.2 `POST /auth/signin`
 
 #### Payload Parameters
 
@@ -80,15 +82,17 @@ The request body must include the following parameters:
   "code": 200,
   "status": "success",
   "data": [
-    "user"{
-      "id":1,
+    {
+      "user": {
+      "id": 1,
       "Name": "John",
       "Email": "john@x.com",
       "Phone": "1234567890",
       "RoleId": "client",
       "Status": "enabled"
     },
-    "token":"apiblahblahblahblah"
+    "token": "apiblahblahblahblah"
+    }
   ]
 }
 ```
@@ -130,12 +134,13 @@ This endpoint retrieves the authenticated user's information based on the provid
 | `POST` | `/api/store/client/add`| Add a client to an existing store         | Client, SysAdmin, StoreAdmin, StoreColab |
 
 
-### 2.1 'GET /api/store/{id}'
+### 2.1 `GET /api/store/{id}`
 
 **Description**: Fetches the details of a store by its unique identifier.
 
 **Path Parameters**
-id (UUID) – The unique ID of the store to retrieve.
+
+**`id`** *(UUID)* – The unique ID of the store to retrieve.
 
 #### Response Payload:
 
@@ -155,7 +160,7 @@ Response (200 OK)
 
 - **404 Not Found** – Store not found with given ID.
 
-### 2.2 'POST /api/store/create'
+### 2.2 `POST /api/store/create`
 **Description**: Creates a new store. Only accessible to users with the System Administrator role.
 
 **Headers**:
@@ -174,18 +179,22 @@ Response (200 OK)
   "code": 200,
   "status": "success",
   "data": [
-        "id": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff",
-        "name": "Main Street Store",
-        "address": "123 Main St, Springfield",
-        "status": "Active"
+    {
+      "id": "ecf28a43-3cce-4df8-8a70-fde15b0f00ff",
+      "name": "Main Street Store",
+      "address": "123 Main St, Springfield",
+      "status": "Active"
+    }
+  ]
 }
 ```
 **Errors**:
-**401 Unauthorized** – JWT is missing, expired, or invalid.
 
-**403 Forbidden** – Authenticated user does not have system admin rights.
+- **401 Unauthorized** – JWT is missing, expired, or invalid.
 
-**400 Bad Request** – Business rule violation or invalid input.
+- **403 Forbidden** – Authenticated user does not have system admin rights.
+
+- **400 Bad Request** – Business rule violation or invalid input.
 
 ### 2.3 `POST /api/store/colab/add`
 Description: Adds a user as a collaborator to a specific store. Requires the caller to be either a System Administrator or the Store Administrator of the target store.
