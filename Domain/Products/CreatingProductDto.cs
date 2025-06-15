@@ -4,8 +4,6 @@ namespace ShopTex.Domain.Products;
 
 public class CreatingProductDto
 {
-    public string Id { get; set; }
-
     public string Name { get; set; }
 
     public string Description { get; set; }
@@ -18,9 +16,10 @@ public class CreatingProductDto
 
     public string StoreId { get; set; }
 
-    public CreatingProductDto(string id, string name, string description, double price, string category, ProductStatus status, StoreId storeId)
+    public CreatingProductDto() { }
+
+    public CreatingProductDto(string name, string description, double price, string category, ProductStatus status, StoreId storeId)
     {
-        Id = id;
         Name = name;
         Price = price;
         Category = category;
