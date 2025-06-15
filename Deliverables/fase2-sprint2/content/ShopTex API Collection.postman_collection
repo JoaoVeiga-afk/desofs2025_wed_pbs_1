@@ -1,0 +1,669 @@
+{
+	"info": {
+		"_postman_id": "2baaad1a-08df-454b-9b43-6336d02bb83f",
+		"name": "🛍️ ShopTex API Collection",
+		"description": "This collection allows you to test the main endpoints of the ShopTex API.\n\n- All **resource IDs** (such as `productId`, `storeId`, `userId`) are passed as **path variables** in the URL.\n    \n- Authentication uses a **Bearer Token**, which is **automatically stored** in the `{{bearer_token}}` variable after a successful login and applied to all authenticated requests.\n    \n- Protected endpoints enforce role-based access control (System Admin, Store Admin, or Store Collaborator).\n    \n\nEndFragment",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34259050"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Get User",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"name": "Content-Type",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/auth/:userId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "cfe33275-227a-4cca-88b1-d866f4638931"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by Token",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/me",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"const token = jsonData.data[0].token;\r",
+									"\r",
+									"pm.globals.set(\"bearer_token\", token);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Email\": \"storeadmi111n@exemplo.com\",\r\n    \"Password\": \"StrongP@ssw0rd2025!\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signin",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Signup",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\":\"Tester\",\r\n    \"Phone\":\"912422195\",\r\n    \"Email\": \"cliente@exemplo.com\",\r\n    \"Password\": \"StrongP@ssw0rd2025!\",\r\n    \"RoleId\":\"Store Administrator\",\r\n    \"Status\":\"enabled\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enable User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/enable/:userId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"enable",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "cfe33275-227a-4cca-88b1-d866f4638931"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Disable User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/auth/disable/:userId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"auth",
+								"disable",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "userId",
+									"value": "cfe33275-227a-4cca-88b1-d866f4638931"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "Ping",
+					"protocolProfileBehavior": {
+						"protocolVersion": "auto"
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/ping",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"ping"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Post Order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"cfe33275-227a-4cca-88b1-d866f4638931\",\r\n  \"status\": \"delivered\",\r\n  \"products\": [\r\n    {\r\n      \"productId\": \"89d6bacf-8ca2-4666-822e-6b687c370e0e\",\r\n      \"amount\": 2,\r\n      \"price\": 19.99\r\n    },\r\n    {\r\n      \"productId\": \"89d6bacf-8ca2-4666-822e-6b687c370e0e\",\r\n      \"amount\": 1,\r\n      \"price\": 49.95\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/order",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch Order",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"userId\": \"9f2f94e9-c953-4106-8048-e2b9ab95e0aa\",\r\n  \"status\": \"pending\",\r\n  \"products\": [\r\n    {\r\n      \"productId\": \"44335b8a-8102-4ef1-bf65-866c9d894111\",\r\n      \"amount\": 2,\r\n      \"price\": 19.99\r\n    },\r\n    {\r\n      \"productId\": \"44335b8a-8102-4ef1-bf65-866c9d894111\",\r\n      \"amount\": 2,\r\n      \"price\": 19.99\r\n    }\r\n  ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/order/:orderId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "4109b063-b361-4ca7-bc14-2a03d5e33521"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Order",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/order/63434b9e-e34c-4521-b2ac-e9de9454a8bb",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order",
+								"63434b9e-e34c-4521-b2ac-e9de9454a8bb"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/order/?offset=0&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order",
+								""
+							],
+							"query": [
+								{
+									"key": "offset",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Order",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/order/:orderId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"order",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "4109b063-b361-4ca7-bc14-2a03d5e33521"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Store",
+			"item": [
+				{
+					"name": "Post Store",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"My Store 2\",\r\n  \"address\": {\r\n    \"street\": \"123 Main St\",\r\n    \"city\": \"Lisbon\",\r\n    \"state\": \"Lisboa\",\r\n    \"zipCode\": \"1000-100\",\r\n    \"country\": \"Portugal\"\r\n  },\r\n  \"status\": \"enabled\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/store/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"store",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Collab",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"storeId\": \"8e8a5a87-b4d3-4069-a42c-edf55ce0a28b\",\r\n    \"userEmail\": \"client@exemplo.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/store/colab/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"store",
+								"colab",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Client",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"storeId\": \"8e8a5a87-b4d3-4069-a42c-edf55ce0a28b\",\r\n    \"userId\": \"2e0ffe98-8ea4-4ffa-bc2e-d35d4efb4da3\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/store/client/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"store",
+								"client",
+								"add"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Post Product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Camiseta Manga Curta\",\r\n  \"description\": \"100% algodão com estampa personalizada\",\r\n  \"price\": 29.99,\r\n  \"category\": \"Vestuário\",\r\n  \"status\": \"enabled\",\r\n  \"storeId\": \"8e8a5a87-b4d3-4069-a42c-edf55ce0a28b\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product/create",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product",
+								"create"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Patch Product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Camiseta23332\",\r\n  \"description\": \"algodão com estampa personalizada\",\r\n  \"price\": 0,\r\n  \"category\": \"Vestuário\",\r\n  \"status\": \"enabled\",\r\n  \"storeId\": \"8e8a5a87-b4d3-4069-a42c-edf55ce0a28b\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product/:productId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product",
+								":productId"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "7b56cb7d-0ece-4349-9a0e-76c260ea5907"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Post Image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/luisa/Downloads/png-transparent-wood-dust-cleaning-agent-furniture-product-aloevera-furniture-supermarket-cleaning.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/product/:productId/upload-image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product",
+								":productId",
+								"upload-image"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "d644b974-1e29-40f0-96cb-20f6ed7ee1fe"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product/:productId",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product",
+								":productId"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "d644b974-1e29-40f0-96cb-20f6ed7ee1fe"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJndWlkIjoiMmUwZmZlOTgtOGVhNC00ZmZhLWJjMmUtZDM1ZDRlZmI0ZGEzIiwibmFtZSI6IlRlc3RlciIsImVtYWlsIjoic3lzQGV4ZW1wbG8uY29tIiwicm9sZSI6IlN5c3RlbSBBZG1pbmlzdHJhdG9yIiwiZXhwIjoxNzUyNTMyNTEzLCJpc3MiOiJpc2VwLmlwcC5wdCIsImF1ZCI6ImlzZXAuaXBwLnB0In0.lbLlpvTH6KjWJrJPj4DVwA4Df_zg_jT_8SuJTX-AFWw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/product/:productId/image",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"product",
+								":productId",
+								"image"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "d644b974-1e29-40f0-96cb-20f6ed7ee1fe"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearer_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "{{localHttpsUrl}}",
+			"type": "string"
+		},
+		{
+			"key": "localHttpsUrl",
+			"value": "https://0.0.0.0:7266/api",
+			"type": "string"
+		},
+		{
+			"key": "localHttpUrl",
+			"value": "http://0.0.0.0:7266/api",
+			"type": "string"
+		},
+		{
+			"key": "prodUrl",
+			"value": "https://vs-gate.dei.isep.ipp.pt:10531/api",
+			"type": "string"
+		}
+	]
+}
