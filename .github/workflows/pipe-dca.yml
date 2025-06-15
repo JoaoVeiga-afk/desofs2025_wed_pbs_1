@@ -28,6 +28,7 @@ jobs:
           - /api/store
           - /api/store/create
           - /api/store/colab/add
+          - /api/store/client/add
           - /api/order
 
     steps:
