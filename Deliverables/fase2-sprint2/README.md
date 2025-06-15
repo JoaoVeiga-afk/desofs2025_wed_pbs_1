@@ -55,3 +55,7 @@ This section provides an overview of the key features implemented in the applica
 
 We establish a backup policy to ensure data integrity and availability. This consists of regular backups of database and application data, with clear retention and restoration procedures.
 [View backup policy](content/Backup_Policy.md)
+
+## Other Deliverables
+
+In the content folder, you can find a Postman collection with the API endpoints used in the project, as well as documentation for the API.
