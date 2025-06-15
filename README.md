@@ -1,4 +1,4 @@
-# desofs2025_w-ed_pbs_1
+# desofs2025_wed_pbs_1
 Repository for group 1 of DESOFT
 
 Fase Index:
