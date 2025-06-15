@@ -221,103 +221,103 @@ public class StoreServiceTest
         Assert.True(success);
         Assert.Equal("Collaborator added to store successfully.", message);
     }
-    
+
     [Fact]
-        public async Task AddStoreClient_UserNotFound_ReturnsFalseWithMessage()
+    public async Task AddStoreClient_UserNotFound_ReturnsFalseWithMessage()
+    {
+        // Arrange
+        var dto = new AddClientDto
         {
-            // Arrange
-            var dto = new AddClientDto
-            {
-                StoreId = Guid.NewGuid(),
-                UserId = Guid.NewGuid()
-            };
-            var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
+            StoreId = Guid.NewGuid(),
+            UserId = Guid.NewGuid()
+        };
+        var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
-            _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync((User)null);
+        _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync((User)null);
 
-            var service = CreateService();
+        var service = CreateService();
 
-            // Act
-            var (success, message) = await service.AddStoreClient(dto, userAuth);
+        // Act
+        var (success, message) = await service.AddStoreClient(dto, userAuth);
 
-            // Assert
-            Assert.False(success);
-            Assert.Equal("User not found.", message);
-        }
+        // Assert
+        Assert.False(success);
+        Assert.Equal("User not found.", message);
+    }
 
-        [Fact]
-        public async Task AddStoreClient_StoreNotFound_ReturnsFalseWithMessage()
+    [Fact]
+    public async Task AddStoreClient_StoreNotFound_ReturnsFalseWithMessage()
+    {
+        // Arrange
+        var dto = new AddClientDto
         {
-            // Arrange
-            var dto = new AddClientDto
-            {
-                StoreId = Guid.NewGuid(),
-                UserId = Guid.NewGuid()
-            };
-            var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
+            StoreId = Guid.NewGuid(),
+            UserId = Guid.NewGuid()
+        };
+        var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
-            var user = new User("John", "123456789", "john@example.com", "password", "Client", new byte[0]);
-            _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync(user);
-            _storeRepository.Setup(r => r.FindById(It.IsAny<string>())).ReturnsAsync((Store)null);
+        var user = new User("John", "123456789", "john@example.com", "password", "Client", new byte[0]);
+        _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync(user);
+        _storeRepository.Setup(r => r.FindById(It.IsAny<string>())).ReturnsAsync((Store)null);
 
-            var service = CreateService();
+        var service = CreateService();
 
-            // Act
-            var (success, message) = await service.AddStoreClient(dto, userAuth);
+        // Act
+        var (success, message) = await service.AddStoreClient(dto, userAuth);
 
-            // Assert
-            Assert.False(success);
-            Assert.Equal("Store not found.", message);
-        }
-        
-        [Fact]
-        public async Task AddStoreClient_UserDoesNotHaveCorrectRole_ReturnsFalseWithMessage()
+        // Assert
+        Assert.False(success);
+        Assert.Equal("Store not found.", message);
+    }
+
+    [Fact]
+    public async Task AddStoreClient_UserDoesNotHaveCorrectRole_ReturnsFalseWithMessage()
+    {
+        // Arrange
+        var dto = new AddClientDto
         {
-            // Arrange
-            var dto = new AddClientDto
-            {
-                StoreId = Guid.NewGuid(),
-                UserId = Guid.NewGuid()
-            };
-            var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
+            StoreId = Guid.NewGuid(),
+            UserId = Guid.NewGuid()
+        };
+        var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
-            var user = new User("John", "123456789", "john@example.com", "password", "Store Administrator", new byte[0]);
-            _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync(user);
-            _storeRepository.Setup(r => r.FindById(It.IsAny<string>())).ReturnsAsync(new Store("Test Store", new StoreAddress("Street", "City", "State", "12345", "Country"), "enabled"));
+        var user = new User("John", "123456789", "john@example.com", "password", "Store Administrator", new byte[0]);
+        _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync(user);
+        _storeRepository.Setup(r => r.FindById(It.IsAny<string>())).ReturnsAsync(new Store("Test Store", new StoreAddress("Street", "City", "State", "12345", "Country"), "enabled"));
 
-            var service = CreateService();
+        var service = CreateService();
 
-            // Act
-            var (success, message) = await service.AddStoreClient(dto, userAuth);
+        // Act
+        var (success, message) = await service.AddStoreClient(dto, userAuth);
 
-            // Assert
-            Assert.False(success);
-            Assert.Equal("User does not have the correct role for store assignment.", message);
-        }
+        // Assert
+        Assert.False(success);
+        Assert.Equal("User does not have the correct role for store assignment.", message);
+    }
 
-        [Fact]
-        public async Task AddStoreClient_SuccessfulAssignment_ReturnsTrueWithMessage()
+    [Fact]
+    public async Task AddStoreClient_SuccessfulAssignment_ReturnsTrueWithMessage()
+    {
+        // Arrange
+        var dto = new AddClientDto
         {
-            // Arrange
-            var dto = new AddClientDto
-            {
-                StoreId = Guid.NewGuid(),
-                UserId = Guid.NewGuid()
-            };
-            var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
+            StoreId = Guid.NewGuid(),
+            UserId = Guid.NewGuid()
+        };
+        var userAuth = new AuthenticatedUserDto { Email = "test@example.com" };
 
-            var user = new User("John", "123456789", "john@example.com", "password", "Client", new byte[0]);
-            _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync(user);
-            _storeRepository.Setup(r => r.FindById(It.IsAny<string>())).ReturnsAsync(new Store("Test Store", new StoreAddress("Street", "City", "State", "12345", "Country"), "enabled"));
-            _userReporitory.Setup(repo => repo.Update(It.IsAny<User>()));
+        var user = new User("John", "123456789", "john@example.com", "password", "Client", new byte[0]);
+        _userReporitory.Setup(repo => repo.FindById(It.IsAny<UserId>())).ReturnsAsync(user);
+        _storeRepository.Setup(r => r.FindById(It.IsAny<string>())).ReturnsAsync(new Store("Test Store", new StoreAddress("Street", "City", "State", "12345", "Country"), "enabled"));
+        _userReporitory.Setup(repo => repo.Update(It.IsAny<User>()));
 
-            var service = CreateService();
+        var service = CreateService();
 
-            // Act
-            var (success, message) = await service.AddStoreClient(dto, userAuth);
+        // Act
+        var (success, message) = await service.AddStoreClient(dto, userAuth);
 
-            // Assert
-            Assert.True(success);
-            Assert.Equal("Client added to store successfully.", message);
-        }
+        // Assert
+        Assert.True(success);
+        Assert.Equal("Client added to store successfully.", message);
+    }
 }

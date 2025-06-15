@@ -9,10 +9,10 @@ public class AddClientDtoTests
     {
         // Arrange
         var storeId = Guid.NewGuid();
-        
+
         // Act
         var dto = new AddClientDto { StoreId = storeId };
-        
+
         // Assert
         Assert.Equal(storeId, dto.StoreId);
     }
@@ -22,10 +22,10 @@ public class AddClientDtoTests
     {
         // Arrange
         var userId = Guid.NewGuid();
-        
+
         // Act
         var dto = new AddClientDto { UserId = userId };
-        
+
         // Assert
         Assert.Equal(userId, dto.UserId);
     }

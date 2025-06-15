@@ -34,7 +34,7 @@ namespace ShopTex.Controllers
                 return Unauthorized("User e-mail not found in token.");
 
             var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
-            
+
             try
             {
                 var product = await _service.GetProductByIdAsync(new ProductId(id), userAuth);
@@ -44,7 +44,7 @@ namespace ShopTex.Controllers
                     return NotFound();
                 }
                 return Ok(product);
-                
+
             }
             catch (UnauthorizedAccessException ex)
             {
@@ -55,7 +55,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // GET: api/product/
         [HttpGet]
         [Authorize]
@@ -114,7 +114,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         [HttpGet("{id}/image")]
         [Authorize]
         public async Task<IActionResult> GetImage(Guid id)
@@ -126,7 +126,7 @@ namespace ShopTex.Controllers
                 return Unauthorized("User e-mail not found in token.");
 
             var userAuth = new AuthenticatedUserDto { Email = currentUserEmail };
-            
+
             try
             {
                 var result = await _service.GetImageAsync(new ProductId(id), userAuth);
@@ -203,7 +203,7 @@ namespace ShopTex.Controllers
             var currentUserEmail =
                 User.FindFirst(ClaimTypes.Email)?.Value ??
                 User.FindFirst("email")?.Value;
-            
+
             if (string.IsNullOrWhiteSpace(currentUserEmail))
             {
                 return Unauthorized("User email not found in token");

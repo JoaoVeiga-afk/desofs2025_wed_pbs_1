@@ -114,7 +114,7 @@ namespace ShopTex.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        
+
         // POST: api/store/client/add
         [HttpPost]
         [Route("client/add")]
@@ -143,7 +143,7 @@ namespace ShopTex.Controllers
 
                     return Ok(new { Message = "Client added to store successfully" });
                 }
-                
+
                 var authorized_sysadmin = await _authenticationService.hasPermission(currentUserEmail, new List<UserRole> { UserRole.SystemRole });
                 var authorized_storeadmin = await _authenticationService.managesStore(currentUserEmail, dto.StoreId.ToString());
                 var userIsColaborator = await _authenticationService.hasPermission(currentUserEmail, new List<UserRole> { UserRole.StoreColabRole });

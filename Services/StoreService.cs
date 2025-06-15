@@ -107,14 +107,14 @@ public class StoreService
 
         return (true, "Collaborator added to store successfully.");
     }
-    
+
     public async Task<(bool Success, string Message)> AddStoreClient(AddClientDto dto, AuthenticatedUserDto userAuth)
     {
         User user;
 
         if (dto.UserId.HasValue)
         {
-            var userId = new UserId(dto.UserId.Value); 
+            var userId = new UserId(dto.UserId.Value);
 
             user = await _userRepo.FindById(userId);
             if (user == null)
@@ -133,7 +133,7 @@ public class StoreService
             }
         }
 
-        if (user.Store != null && !user.Store.Equals(default(StoreId)))  
+        if (user.Store != null && !user.Store.Equals(default(StoreId)))
         {
             _logger.LogWarning("User {Email} already has a store associated with StoreId {StoreId}", userAuth.Email, user.Store.Value);
             return (false, "User already has a store associated.");

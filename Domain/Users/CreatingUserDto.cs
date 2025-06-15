@@ -17,7 +17,7 @@ public class CreatingUserDto
     public string Email { get; set; }
 
     [Required]
-    [PasswordValidation] 
+    [PasswordValidation]
     public string Password { get; set; }
 
     public string? RoleId { get; set; }
